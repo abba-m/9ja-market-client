@@ -3,33 +3,46 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Textarea,
   VStack,
-  HStack,
 } from "@chakra-ui/react";
+import { useRef } from "react";
+import { useDispatch } from "react-redux";
+import { createPost } from "store/actions";
 
 const UserForm = () => {
+  const dispatch = useDispatch();
+
+  const title = useRef();
+  const description = useRef();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const newPost = {
+      title: title.current.value,
+      desc: description.current.value,
+    };
+    dispatch(createPost(newPost));
+
+    e.target.reset();
+  };
+
   return (
-    <form
-      style={{ border: "1px solid dotted", width: "400px", padding: "1rem" }}
-    >
+    <form onSubmit={handleSubmit} style={{ width: "400px", padding: "1rem" }}>
       <VStack spacing={4}>
         <FormControl>
-          <FormLabel>First Name</FormLabel>
-          <Input type="text" name="first-name" />
+          <FormLabel>Post title</FormLabel>
+          <Input type="text" ref={title} name="first-name" />
         </FormControl>
         <FormControl>
-          <FormLabel>Last Name</FormLabel>
-          <Input type="text" name="last-name" />
+          <FormLabel>Post description</FormLabel>
+          <Textarea ref={description} name="last-name" />
         </FormControl>
 
-        <HStack>
-          <Button variant="primary" size="sm" type="submit">
-            Print
-          </Button>
-          <Button variant="primaryOutline" size="sm" type="reset">
-            Clear
-          </Button>
-        </HStack>
+        <Button variant="primary" size="md" type="submit">
+          Post
+        </Button>
       </VStack>
     </form>
   );
