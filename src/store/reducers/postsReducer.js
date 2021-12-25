@@ -10,6 +10,9 @@ const createPostObj = ({ title, desc }) => {
   };
 };
 
+const deleteFromDb = (arr, idToDelete) =>
+  arr.filter((element, index) => index !== Number(idToDelete));
+
 const postsReducer = (state = postsInitialState, action) => {
   switch (action.type) {
     case CREATE_POST:
@@ -20,7 +23,7 @@ const postsReducer = (state = postsInitialState, action) => {
     case DELETE_POST:
       return {
         ...state,
-        Posts: state.Posts.filter((post) => post.id !== action.payload),
+        Posts: [...deleteFromDb(state.Posts, action.payload)],
       };
     default:
       return state;
