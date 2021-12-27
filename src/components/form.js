@@ -19,6 +19,9 @@ const UserForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if ((title.current.value === "") & (description.current.value === ""))
+      return;
+
     const newPost = {
       title: title.current.value,
       desc: description.current.value,

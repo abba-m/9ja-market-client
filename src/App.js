@@ -1,17 +1,18 @@
-import { ChakraProvider } from "@chakra-ui/react";
-import { theme } from "theme";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import UserForm from "components/form";
-import ListComponent from "components/list";
+import Dashboard from "pages/dashboardPage";
+import TestPage from "pages/testPage";
 
 function App() {
   return (
-    <ChakraProvider resetCSS theme={theme}>
-      <div className="App">
-        <UserForm />
-        <ListComponent />
-      </div>
-    </ChakraProvider>
+    <div className="App">
+      <Router>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/test" element={<TestPage />} />
+        </Routes>
+      </Router>
+    </div>
   );
 }
 

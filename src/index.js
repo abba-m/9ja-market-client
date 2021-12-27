@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
+import { ChakraProvider } from "@chakra-ui/react";
+import { theme } from "./theme";
 import { Provider } from "react-redux";
 import configureStore from "store/root";
 
@@ -10,9 +12,11 @@ const store = configureStore();
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <ChakraProvider resetCSS theme={theme}>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </ChakraProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
