@@ -8,3 +8,13 @@ export const formatAmount = (amount) => {
   }
   return `${"\u20A6"} ${formattedAmount}`;
 };
+
+export const truncateString = (str, num) => {
+  if (str.length <= num) return str
+
+   let newStr = str.substring(0, num)
+   let lastSpace = newStr.lastIndexOf(" ")
+  let result = newStr.substring(0, lastSpace)
+
+  return result + "..."
+}
