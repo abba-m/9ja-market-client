@@ -68,7 +68,7 @@ export default function Register({ isOpen, onClose, openLogin }) {
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        isValid && alert(JSON.stringify(data, null, 2));
+        alert(JSON.stringify({ Message: "Registeration Succssful" }));
         resolve();
         reset();
       }, 2500);

@@ -31,6 +31,7 @@ export default function SearchBox() {
       gap={["0.2rem", "1rem"]}
       borderRadius="md"
       h="5rem"
+      bg="whiteAlpha.900"
       p="4"
       width={["100%", "80%"]}
       shadow="md">

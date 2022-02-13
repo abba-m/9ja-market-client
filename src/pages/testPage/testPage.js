@@ -1,4 +1,11 @@
-import { Box, Button, Center, HStack, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Container,
+  HStack,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
 import UserForm from "components/testComp/form";
@@ -23,9 +30,13 @@ function TestPage() {
   } = useDisclosure();
 
   return (
-    <Box p={4}>
-      <SearchBox />
-      <CategoriesGrid />
+    <Container
+      //style={{ border: "1px solid red" }}
+      maxWidth={["100%", "90vw"]}
+      h="calc(100vh - 80px)"
+      justifyContent="center">
+      {/* <SearchBox /> */}
+      {/* <CategoriesGrid /> */}
       <HeroesAdGrid />
 
       <HStack mt="12">
@@ -50,7 +61,7 @@ function TestPage() {
         onClose={onRegisterClose}
         openLogin={onLoginOpen}
       />
-    </Box>
+    </Container>
   );
 }
 

@@ -1,7 +1,9 @@
 import {
+  Button,
   Center,
   FormControl,
   FormErrorMessage,
+  Image,
   Input,
   Modal,
   ModalOverlay,
@@ -11,8 +13,7 @@ import {
   ModalBody,
   ModalCloseButton,
   Text,
-  Button,
-  Image,
+  useToast,
 } from "@chakra-ui/react";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
@@ -29,6 +30,7 @@ import loginDivider from "assets/images/loginOrWithDivider.svg";
 
 export default function Login({ isOpen, onClose, openRegister }) {
   const initialRef = useRef();
+  const toast = useToast();
 
   const {
     handleSubmit,
@@ -52,9 +54,14 @@ export default function Login({ isOpen, onClose, openRegister }) {
     //TODO: login logic
     return new Promise((resolve) => {
       setTimeout(() => {
-        isValid && alert(JSON.stringify(data, null, 2));
+        toast({
+          position: "top",
+          title: "Login Succesfull",
+          status: "success",
+          isClosable: true,
+        });
         resolve();
-        reset();
+        onClose();
       }, 2500);
     });
   };

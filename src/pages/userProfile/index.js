@@ -5,7 +5,10 @@ import UserProfileNav from "./userNav";
 
 function UserProfile() {
   return (
-    <Container maxW="container.lg" minH="80vh" display="flex" p="0">
+    <Container
+      maxWidth={["100%", "80vw"]}
+      h="calc(100vh - 80px)"
+      justifyContent="center">
       <UserProfileNav />
       <Box p={4}>
         <Outlet />
