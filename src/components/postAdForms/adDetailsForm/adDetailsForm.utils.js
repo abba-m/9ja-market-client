@@ -43,7 +43,7 @@ export const formStructure = {
       label: "Description",
       placeholder: "Enter phone description here",
     },
-    //REVIEW:
+    //REVIEW: get location from an api
     {
       name: "location",
       type: "text",
@@ -71,7 +71,7 @@ export const formStructure = {
       label: "Description",
       placeholder: "Enter Ad description here",
     },
-    //REVIEW:
+    //REVIEW: get location from an api
     {
       name: "location",
       type: "text",

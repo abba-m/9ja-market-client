@@ -59,10 +59,11 @@ function AdImagesForm() {
           </Text>
         </VStack>
       </Center>
-      <SimpleGrid columns={["2", "3", "4"]} spacing={2}>
+      <Box display="flex" gap={3} flexWrap="wrap">
+
         {previews.length !== 0 &&
-          previews.map((value) => <Image key={uid()} src={value} />)}
-      </SimpleGrid>
+          previews.map((value) => <Image key={uid()} src={value} h={200} w={200} />)}
+          </Box>
     </Box>
   );
 }

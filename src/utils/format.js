@@ -1,6 +1,6 @@
 export const formatAmount = (amount) => {
-  if (typeof amount !== "number") return;
   const value = Number(amount);
+  if(isNaN(value)) return
   let formattedAmount = "0";
 
   if (!isNaN(value)) {
