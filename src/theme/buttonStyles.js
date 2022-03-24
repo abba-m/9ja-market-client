@@ -22,6 +22,24 @@ export const ButtonStyles = {
         transform: "scale(1.05)",
       },
     },
+    secondary: {
+      bg: "secondary",
+      color: "white",
+      outline: "none",
+      _hover: {
+        opacity: "0.9"
+      },
+    },
+    secondaryOutline: {
+      bg: "transparent",
+      border: "1px solid",
+      color: "secondary",
+      transition: "all 300ms ease-in",
+      _hover: {
+        boxShadow: "md",
+        transform: "scale(1.05)",
+      },
+    },
   },
   // default values for `size` and `variant`
   defaultProps: {},

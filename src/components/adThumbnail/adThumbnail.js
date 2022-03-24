@@ -1,24 +1,9 @@
 import { useState } from "react";
 import { Box, Image, Text } from "@chakra-ui/react";
 import { formatAmount } from "utils/format";
-import { PRIMARY_COLOR } from "utils/constants";
 import { BsBookmarkHeartFill, BsBookmarkHeart } from "react-icons/bs";
 
-const sampleTitles = [
-  "Hello world there how are you and how is the family",
-  "Lorem ipsum dolor sit amet consectetur adipiscing",
-  "Hello World",
-  "Tiny Kiddies Jacket",
-];
-
-const defaultData = {
-  ImageSrc: "https://picsum.photos/200",
-  AdTitle: sampleTitles[Math.floor(Math.random() * sampleTitles.length)],
-  AdPrice: 198000,
-  AdLocation: "Garki, Abuja",
-};
-
-function AdThumbnail({ imageSrc, adTitle, adPrice, adLocation }) {
+function AdThumbnail({ imageSrc, adTitle, postId, adPrice, adLocation }) {
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   return (
@@ -45,14 +30,15 @@ function AdThumbnail({ imageSrc, adTitle, adPrice, adLocation }) {
               // mt="0.2rem"
               fontWeight="semibold"
               fontSize="sm"
-              color={PRIMARY_COLOR}>
+              color="primary">
               {formatAmount(adPrice)}
             </Text>
-            <Text fontSize={["0.678rem", "0.875rem"]} color="gray.600">
+            <Text fontSize={["0.678rem", "0.875rem"]} color="gray.600" noOfLines="1">
               {adLocation}
             </Text>
           </Box>
           <Box
+            //TODO: Add post to favs logic          
             onClick={() => setIsBookmarked(!isBookmarked)}
             ml="1"
             flexGrow="1"
@@ -60,9 +46,9 @@ function AdThumbnail({ imageSrc, adTitle, adPrice, adLocation }) {
             h={["1rem"]}
             w={["1rem"]}>
             {isBookmarked ? (
-              <BsBookmarkHeartFill size="100%" color={PRIMARY_COLOR} />
+              <BsBookmarkHeartFill size="100%" color="#00CC88" />
             ) : (
-              <BsBookmarkHeart size="100%" color={PRIMARY_COLOR} />
+              <BsBookmarkHeart size="100%" color="#00CC88" />
             )}
           </Box>
         </Box>

@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { MdCall } from "react-icons/md";
 
-import { PRIMARY_COLOR, WHITE_COLOR } from "utils/constants";
+import { WHITE_COLOR } from "utils/constants";
 import { formatAmount } from "utils/format";
 
 export default function AdContactCard() {
@@ -20,7 +20,7 @@ export default function AdContactCard() {
       borderRadius="md"
       overflow="hidden">
       <Box display="flex" h="16rem" flexDirection="column">
-        <VStack p="4" bg={PRIMARY_COLOR}>
+        <VStack p="4" bg="primary">
           <Center>
             <Text fontSize="36px" fontWeight="bold" color={WHITE_COLOR}>
               {formatAmount(200000)}
@@ -29,7 +29,7 @@ export default function AdContactCard() {
           {/* FIXME: Put the left phone icon */}
           <Button
             isFullWidth
-            textColor={PRIMARY_COLOR}
+            textColor="primary"
             bg="white"
             variant="solid">
             Place a call
@@ -44,7 +44,7 @@ export default function AdContactCard() {
             alignItems="flex-start">
             <Text
               fontSize="xl"
-              color={PRIMARY_COLOR}
+              color="primary"
               mb="1"
               mt="1"
               casing="capitalize">
@@ -71,10 +71,10 @@ export default function AdContactCard() {
           </Box>
         </Box>
       </Box>
-      <Box p="2" bg={PRIMARY_COLOR} h="4rem">
+      <Box p="2" bg="primary" h="4rem">
         <Button
           isFullWidth
-          textColor={PRIMARY_COLOR}
+          textColor="primary"
           bg="white"
           variant="solid">
           Start chat

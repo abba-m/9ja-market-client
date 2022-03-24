@@ -11,35 +11,40 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  Link,
   Text,
   Button,
   Image,
   InputGroup,
-  InputLeftAddon,
+  InputRightElement,
   FormControl,
   FormErrorMessage,
+  useToast,
 } from "@chakra-ui/react";
-import { useRef } from "react";
-import { Link } from "react-router-dom";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { useRef, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-//components
+
+/** components */
 import GoogleButton from "components/myButtons/googleButton";
 import FacebookButton from "components/myButtons/facebookButton";
 
-//Icons
-
-import { PRIMARY_COLOR } from "utils/constants";
+/** Icons and assets */
 import loginDivider from "assets/images/loginOrWithDivider.svg";
+import { sendRequest } from "utils/connection";
 
 export default function Register({ isOpen, onClose, openLogin }) {
   const initialRef = useRef();
+  const toast = useToast();
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const {
     handleSubmit,
     register,
     reset,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const handleLoginClick = () => {
@@ -63,23 +68,56 @@ export default function Register({ isOpen, onClose, openLogin }) {
     );
   };
 
-  const handleRegister = (data) => {
-    if (!data.phone) return alert("Invalid phone number");
+  const toggleShowPassword = () => setShowPassword(!showPassword);
 
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        alert(JSON.stringify({ Message: "Registeration Succssful" }));
-        resolve();
-        reset();
-      }, 2500);
-    });
+  const handleRegister = async (data) => {
+    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/auth/local/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    }))
+
+    if (error) {
+      return toast({
+        position: "top",
+        title: `[Error]: Sign up failed. Please try again.`,
+        status: "error",
+        isClosable: true,
+      });
+    }
+
+    const value = await res.json();
+    if (value && value?.error) {
+      return toast({
+        position: "top",
+        title: `${value?.error?.message || "Register failed"}.`,
+        status: "error",
+        isClosable: true,
+      });
+    }
+
+
+    if (value && value?.user) {
+      handleClose();
+      toast({
+        position: "top",
+        title: "Account created.",
+        description: "Your account has been created! Please check your inbox to confirm your email and sign in.",
+        status: "info",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
+
 
   return (
     <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent px={4}>
-        <ModalHeader color={PRIMARY_COLOR}>Register</ModalHeader>
+        <ModalHeader color="primary">Register</ModalHeader>
         <ModalCloseButton />
 
         <ModalBody>
@@ -118,43 +156,42 @@ export default function Register({ isOpen, onClose, openLogin }) {
               </FormErrorMessage>
             </FormControl>
 
-            <FormControl mb={8} isInvalid={errors.phone}>
-              <InputGroup>
-                <InputLeftAddon children="+234" />
-                <Input
-                  type="tel"
-                  w="100%"
-                  name="phone"
-                  {...register("phone", {
-                    required: "Phone number is required for sign up",
-                    valueAsNumber: true,
-                    minLength: { value: 10, message: "Invalid phone number" },
-                  })}
-                  bg="#FAF3F391"
-                  placeholder="Phone"
-                />
-              </InputGroup>
+            <FormControl mb={8} isInvalid={errors.username}>
+              <Input
+                type="text"
+                w="100%"
+                name="username"
+                {...register("username", {
+                  required: "Username is required for sign up",
+                  pattern: { value: /^\S*$/, message: "No whitespaces allowed in username." },
+                })}
+                bg="#FAF3F391"
+                placeholder="Username"
+              />
 
               <FormErrorMessage>
-                {errors.phone && errors.phone.message}
+                {errors.email && errors.username.message}
               </FormErrorMessage>
             </FormControl>
 
             <FormControl mb={8} isInvalid={errors.password}>
-              <Input
-                type="password"
-                w="100%"
-                name="password"
-                {...register("password", {
-                  required: "Password is required for sign up",
-                  minLength: {
-                    value: 8,
-                    message: "Password must be 8 characters or more",
-                  },
-                })}
-                bg="#FAF3F391"
-                placeholder="Password"
-              />
+              <InputGroup>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  w="100%"
+                  name="password"
+                  {...register("password", {
+                    required: "Password is required for sign up",
+                    minLength: {
+                      value: 8,
+                      message: "Password must be 8 characters or more",
+                    },
+                  })}
+                  bg="#FAF3F391"
+                  placeholder="Password"
+                />
+                <InputRightElement onClick={toggleShowPassword} children={showPassword ? <ViewOffIcon color="gray.500" /> : <ViewIcon color="gray.500" />} />
+              </InputGroup>
 
               <FormErrorMessage>
                 {errors.password && errors.password.message}
@@ -173,18 +210,20 @@ export default function Register({ isOpen, onClose, openLogin }) {
 
           <Image src={loginDivider} mb={5} />
 
-          <GoogleButton onClick={() => alert("SAY HELLO")} />
+          <Link href={`${process.env.REACT_APP_SERVER_URL}/api/connect/google`}>
+            <GoogleButton />
+          </Link>
           <FacebookButton onClick={() => alert("SAY HELLO")} />
         </ModalBody>
 
         <Center>
           <Text>
             Already have an account?
-            <Link to="#">
+            <Link href="#">
               <span
                 onClick={handleLoginClick}
                 style={{
-                  color: PRIMARY_COLOR,
+                  color: "primary",
                   textDecoration: "underline",
                   marginLeft: ".5rem",
                 }}>

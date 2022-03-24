@@ -4,17 +4,23 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 import { ChakraProvider } from "@chakra-ui/react";
+import { ApolloProvider } from "@apollo/client";
 import { theme } from "./theme";
 import { Provider } from "react-redux";
 import configureStore from "store/root";
+import CreateClient from "graphQL/clientConfig";
+
 
 const store = configureStore();
+const client = CreateClient()
 
 ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider resetCSS theme={theme}>
       <Provider store={store}>
-        <App />
+        <ApolloProvider client={client}>
+          <App />
+        </ApolloProvider>
       </Provider>
     </ChakraProvider>
   </React.StrictMode>,

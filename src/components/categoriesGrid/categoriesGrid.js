@@ -14,7 +14,6 @@ import {
   useMediaQuery,
 } from "@chakra-ui/react";
 import { BsList } from "react-icons/bs";
-import { PRIMARY_COLOR } from "utils/constants";
 import { v4 } from "uuid";
 
 const categoriesList = [
@@ -44,7 +43,7 @@ export default function CategoriesGrid() {
 
   return (
     <Box
-      bg={PRIMARY_COLOR}
+      bg="primary"
       color="white"
       borderRadius="md"
       display="flex"

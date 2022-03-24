@@ -9,7 +9,7 @@ import {
 } from "./dynamicFormComponents";
 
 export const formStructure = {
-  Phones: [
+  Phone: [
     {
       name: "title",
       component: "input",

@@ -1,9 +1,14 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Heading, Text } from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+
 
 function ProfileView() {
+  const { currentUser } = useSelector((state) => ({ currentUser: state.auth.user }))
+
   return (
     <Box>
-      <Text>Hello my main profile view</Text>
+      <Heading color="secondary">{currentUser?.fullName}</Heading>
+
     </Box>
   );
 }
