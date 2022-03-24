@@ -1,14 +1,14 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Box } from "@chakra-ui/react";
+import { Box, Spinner, useToast } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
-import Dashboard from "pages/dashboardPage";
+import Dashboard from "pages/dashboardPage/dashboard";
 import TestPage from "pages/testPage/testPage";
-
-//Nav Bar
+/** Nav Bar */
 import NavBar from "components/appNavBar/appNavBar";
-
-//user profile views
-import UserProfile from "pages/userProfile";
+/** User profile views */
+import UserProfile from "pages/userProfile/userProfile";
 import FavoritesView from "pages/userProfile/views/favorites";
 import NotificationsVeiw from "pages/userProfile/views/notifications";
 import OrdersView from "pages/userProfile/views/orders";
@@ -19,7 +19,71 @@ import SettingsView from "pages/userProfile/views/settings";
 import NotFound from "components/404notFound";
 import PostAd from "pages/postAd/postAd";
 
+/** Actions */
+import { authError, userLoading, userLoaded } from "store/actions";
+/** Queries */
+import { sendRequest } from "utils/connection";
+import { stringify } from "qs";
+import GoogleAuthRedirect from "components/auth/googleAuthRedirect";
+
 function App() {
+  const dispatch = useDispatch();
+  const toast = useToast();
+  const [isLoading, setIsLoading] = useState(false)
+  const token = localStorage.getItem('token');
+  const populateQuery = stringify({
+    populate: "*",
+  }, {
+    encodeValuesOnly: true,
+  });
+
+  const getLoggedInUser = async () => {
+    setIsLoading(true);
+    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/me?${populateQuery}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    }));
+
+    if (error) {
+      console.log(error)
+      return toast({
+        position: "top",
+        title: "Something is wrong! Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+    }
+
+    const data = await res.json()
+
+    if (data && data?.error) {
+      console.log(data.error)
+      return toast({
+        position: "top",
+        title: `[Error]: ${data?.error?.message}`,
+        status: "error",
+        isClosable: true,
+      });
+    }
+
+    if (data) {
+      dispatch(userLoaded(data));
+    }
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    getLoggedInUser();
+  }, [])
+
+  useEffect(() => {
+    if (isLoading) {
+      return <Spinner />
+    }
+  }, [isLoading])
+
+
   return (
     <Router>
       <Box className="App">
@@ -39,12 +103,14 @@ function App() {
               <Route path="reviews" element={<ReviewsView />} />
               <Route path="settings" element={<SettingsView />} />
             </Route>
+            <Route path="/connect/google/callback" element={<GoogleAuthRedirect />} />
             <Route path="/test" element={<TestPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Box>
       </Box>
     </Router>
+
   );
 }
 

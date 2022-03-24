@@ -1,17 +1,51 @@
-import { Avatar, AvatarBadge, Box, Divider, Text } from "@chakra-ui/react";
-import { NavLink } from "react-router-dom";
+import { Avatar, AvatarBadge, Box, Divider, Spinner, Text } from "@chakra-ui/react";
+import { NavLink, useLocation } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 
 import { Rating } from "react-simple-star-rating";
 import { FiCamera } from "react-icons/fi";
+import { stringify } from "qs";
 
-import faPolo from "assets/images/faPolo.jpeg";
-import { PRIMARY_COLOR } from "utils/constants";
 
 function UserProfileNav() {
   const rating = 3;
+  const [userAvatarUrl] = useState(""); //TODO: please remove
+  const imagePicker = useRef();
+  const { pathname } = useLocation();
+
+  const populateQuery = stringify({
+    populate: "*",
+    //sort: ["createdAt:desc"]
+  }, {
+    encodeValuesOnly: true,
+  });
+
+
+  const { currentUser } = useSelector((state) => ({
+    currentUser: state.auth.user
+  }))
+
+  const isProfileIndex = pathname === "/profile"
+
+
+  const handleChangeProfile = async (e) => {
+    console.log("Changing...", e.target.files);
+
+    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/5?${populateQuery}`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+
+    const datum = await res.json()
+    console.log("[datum]:", datum)
+
+  }
+
 
   const activeClassName = {
-    color: PRIMARY_COLOR,
+    color: "#00CC88",
   };
 
   const styleActiveLink = ({ isActive }) => (isActive ? activeClassName : null);
@@ -20,23 +54,25 @@ function UserProfileNav() {
     <Box w="25%" display="flex" flexDirection="column" pl="4">
       {/* avatar section */}
       <Box mb="3">
-        <Avatar size="xl" name="User Profile" src="https://bit.ly/dan-abramov">
+        <Avatar size="xl" name={currentUser?.fullName || "New User"} src={userAvatarUrl}>
           <AvatarBadge boxSize="1em" bg="white">
-            <FiCamera color={PRIMARY_COLOR} />
+            {/* TODO: add file input */}
+            <FiCamera color="#00CC88" onClick={() => imagePicker.current.click()} />
           </AvatarBadge>
         </Avatar>
-        <Text fontSize="2xl" mb="1" mt="1" casing="capitalize">
-          <b>Dan Abramov</b>
+        <Text my={2} wordBreak="keep-all" casing="capitalize">
+          <b>@{currentUser?.username || ""}</b>
         </Text>
+        <input type="file" ref={imagePicker} onChange={handleChangeProfile} style={{ display: "none" }} accept="image/png, image/jpg" />
 
         <Box display="flex">
-          <Rating
+          {rating && <Rating
             ratingValue={rating}
             style={{ alignItems: "center" }}
             size="20"
             readonly
-          />
-          <Text pl="2">No Reviews</Text>
+          />}
+          {!rating && <Text pl="2">No Reviews</Text>}
         </Box>
       </Box>
 
@@ -44,7 +80,7 @@ function UserProfileNav() {
 
       <Box mt="3" mb="3">
         <Text>
-          <NavLink to="/profile">Profile</NavLink>
+          <NavLink style={isProfileIndex ? styleActiveLink : null} to="/profile">Profile</NavLink>
         </Text>
         <Text>
           <NavLink style={styleActiveLink} to="/profile/posts">

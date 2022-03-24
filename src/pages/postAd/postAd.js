@@ -7,24 +7,48 @@ import {
   Progress,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FormView from "./postAd.formView";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from 'react-redux'
 
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import { PostAdProvider } from "providers/postAdProvider";
 
+
 export default function PostAd() {
   const [step, setStep] = useState(1);
+  const navigate = useNavigate();
+
+  const { submitPost } = useSelector((state) => ({ submitPost: state.posts.createPost }))
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      navigate("/", {
+        state: {
+          openLogin: true,
+        }
+      })
+    }
+  }, [])
+
+
 
   const pageTitles = {
     1: "Category",
     2: "Ad Details",
-    3: "Ad  Images",
+    3: "Ad Images",
     4: "Preview Ad",
   };
 
+
   const handleNext = () => {
-    if (step >= 4) return;
+    if (step >= 4) {
+      if (typeof submitPost === 'function') {
+        submitPost(setStep, 1);
+      }
+      return
+    };
     setStep(step + 1);
   };
   const handlePrevious = () => {
@@ -66,24 +90,3 @@ export default function PostAd() {
     </PostAdProvider>
   );
 }
-
-const color = [
-  "whiteAlpha" |
-    "blackAlpha" |
-    "gray" |
-    "red" |
-    "orange" |
-    "yellow" |
-    "green" |
-    "teal" |
-    "blue" |
-    "cyan" |
-    "purple" |
-    "pink" |
-    "linkedin" |
-    "facebook" |
-    "messenger" |
-    "whatsapp" |
-    "twitter" |
-    "telegram",
-];

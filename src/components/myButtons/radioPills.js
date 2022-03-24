@@ -1,5 +1,4 @@
 import { Box, useRadio } from "@chakra-ui/react";
-import { PRIMARY_COLOR } from "utils/constants";
 
 export const RadioPill = (props) => {
   const { getInputProps, getCheckboxProps } = useRadio(props);
@@ -15,11 +14,11 @@ export const RadioPill = (props) => {
         cursor="pointer"
         borderWidth="1px"
         borderRadius="20px"
-        borderColor={PRIMARY_COLOR}
+        borderColor="primary"
         boxShadow="sm"
         w="fit-content"
         _checked={{
-          bg: PRIMARY_COLOR,
+          bg: "primary",
           color: "white",
         }}
         mx={1}

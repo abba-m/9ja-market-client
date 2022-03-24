@@ -8,7 +8,6 @@ import {
 } from "@chakra-ui/react";
 import { BsList, BsSearch } from "react-icons/bs";
 import { CATEGORIES } from "utils/constants";
-import { PRIMARY_COLOR } from "utils/constants";
 import ShortUniqueId from "short-unique-id";
 
 export default function SearchBox() {
@@ -36,7 +35,7 @@ export default function SearchBox() {
       width={["100%", "80%"]}
       shadow="md">
       <Box display="flex" alignItems="center" gap="0.5rem">
-        <BsList color={PRIMARY_COLOR} size="1.5rem" display={hideOnMobile} />
+        <BsList color="primary" size="1.5rem" display={hideOnMobile} />
         <Select placeholder="Select categories" variant="unstyled">
           {CATEGORIES.map((category) =>
             Object.values(category)[0].map((value) => (
@@ -55,7 +54,7 @@ export default function SearchBox() {
         bg="#FAF3F391"
         placeholder={seearchPlaceholder}
       />
-      <Button w="fit-content" bg={PRIMARY_COLOR} color="white" variant="solid">
+      <Button w="fit-content" bg="primary" color="white" variant="solid">
         {seearchText}
       </Button>
     </Box>

@@ -1,6 +1,10 @@
-import { postsInitialState } from "store/initialStates/postsInitialState";
-import { CREATE_POST, DELETE_POST } from "store/types";
-import { generateId } from "utils/generate";
+import { CREATE_POST, DELETE_POST, SET_SUBMIT_POST_FUNCTION } from "store/types";
+import { generateId } from "utils/connection";
+
+const postsInitialState = {
+  Posts: [],
+};
+
 
 const createPostObj = ({ title, desc }) => {
   return {
@@ -25,6 +29,11 @@ const postsReducer = (state = postsInitialState, action) => {
         ...state,
         Posts: [...deleteFromDb(state.Posts, action.payload)],
       };
+    case SET_SUBMIT_POST_FUNCTION:
+      return {
+        ...state,
+        createPost: action.payload
+      }
     default:
       return state;
   }

@@ -5,6 +5,9 @@ import {
   FormErrorMessage,
   Image,
   Input,
+  InputGroup,
+  InputRightElement,
+  Link,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -15,28 +18,36 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { useRef } from "react";
-import { Link } from "react-router-dom";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
-//components
+
+/** Api request methods */
+import { loginSuccess } from "store/actions";
+import { sendRequest } from "utils/connection";
+
+/** components */
 import GoogleButton from "components/myButtons/googleButton";
 import FacebookButton from "components/myButtons/facebookButton";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
-//Icons
-
-import { PRIMARY_COLOR } from "utils/constants";
+/**Icons */
 import loginDivider from "assets/images/loginOrWithDivider.svg";
 
 export default function Login({ isOpen, onClose, openRegister }) {
   const initialRef = useRef();
   const toast = useToast();
+  const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const toggleShowPassword = () => setShowPassword(!showPassword);
 
   const {
     handleSubmit,
     register,
     reset,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const handleRegisterClick = () => {
@@ -50,27 +61,51 @@ export default function Login({ isOpen, onClose, openRegister }) {
     onClose();
   };
 
-  const handleLogin = (data) => {
-    //TODO: login logic
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        toast({
-          position: "top",
-          title: "Login Succesfull",
-          status: "success",
-          isClosable: true,
-        });
-        resolve();
-        onClose();
-      }, 2500);
-    });
+  const handleLogin = async (data) => {
+    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/auth/local/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    }));
+
+    if (error) {
+      return toast({
+        position: "top",
+        title: `[Error]: Login failed. Please try again.`,
+        status: "error",
+        isClosable: true,
+      });
+    }
+
+    const value = await res.json();
+    if (value && value?.error) {
+      return toast({
+        position: "top",
+        title: `${value?.error?.message || "Login failed"}.`,
+        status: "error",
+        isClosable: true,
+      });
+    }
+
+    if (value && value?.user) {
+      handleClose();
+      toast({
+        position: "top",
+        title: "Login succesful.",
+        status: "info",
+        isClosable: true,
+      });
+      dispatch(loginSuccess(value))
+    }
   };
 
   return (
     <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent px={4}>
-        <ModalHeader color={PRIMARY_COLOR}>Sign in</ModalHeader>
+        <ModalHeader color="primary">Sign in</ModalHeader>
         <ModalCloseButton />
 
         <ModalBody>
@@ -93,16 +128,19 @@ export default function Login({ isOpen, onClose, openRegister }) {
             </FormControl>
 
             <FormControl mb={8} isInvalid={errors.password}>
-              <Input
-                type="password"
-                w="100%"
-                {...register("password", {
-                  required: "Password is required for sign in",
-                })}
-                name="password"
-                bg="#FAF3F391"
-                placeholder="Password"
-              />
+              <InputGroup>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  w="100%"
+                  {...register("password", {
+                    required: "Password is required for sign in",
+                  })}
+                  name="password"
+                  bg="#FAF3F391"
+                  placeholder="Password"
+                />
+                <InputRightElement onClick={toggleShowPassword} children={showPassword ? <ViewOffIcon color="gray.500" /> : <ViewIcon color="gray.500" />} />
+              </InputGroup>
 
               <FormErrorMessage>
                 {errors.password && errors.password.message}
@@ -121,7 +159,10 @@ export default function Login({ isOpen, onClose, openRegister }) {
 
           <Image src={loginDivider} mb={5} />
 
-          <GoogleButton onClick={() => alert("SAY HELLO")} />
+          {/* <Link href={`${process.env.REACT_APP_SERVER_URL}/api/connect/google`}> */}
+          <Link href={`${process.env.REACT_APP_SERVER_URL}/api/connect/google`}>
+            <GoogleButton />
+          </Link>
           <FacebookButton onClick={() => alert("SAY HELLO")} />
         </ModalBody>
 
@@ -132,7 +173,7 @@ export default function Login({ isOpen, onClose, openRegister }) {
               <span
                 onClick={handleRegisterClick}
                 style={{
-                  color: PRIMARY_COLOR,
+                  color: "primary",
                   textDecoration: "underline",
                   marginLeft: ".5rem",
                 }}>

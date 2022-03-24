@@ -13,33 +13,92 @@ import {
   MenuList,
   Text,
   useBreakpointValue,
+  useDisclosure,
   useMediaQuery,
+  useToast,
 } from "@chakra-ui/react";
-import {
-  PRIMARY_COLOR,
-  COMPLEMENTARY_COLOR_DARK,
-  COMPLEMENTARY_COLOR_LIGHT,
-} from "utils/constants";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import NotificationBadge from "react-notification-badge";
-import { AiOutlinePlus } from "react-icons/ai";
+import { AiOutlinePlus, AiOutlineUser, AiOutlinePoweroff } from "react-icons/ai";
 import { IoMdNotifications } from "react-icons/io";
+import { FiSettings } from "react-icons/fi"
 import { FaHeart } from "react-icons/fa";
 import { NavLink, useLocation } from "react-router-dom";
+import { useQuery } from "@apollo/client";
 
 import SearchBox from "components/searchBox/searchBox";
+import Login from "components/auth/login";
+import Register from "components/auth/register";
+
+import { logoutSuccess, setLoginFormOpenFunction } from "store/actions";
+import { getCurrentUser } from "graphQL/queries/user.queries";
+
 
 function NavBar() {
-  const isAuthenticated = true;
-  const navItemsSpacing = useBreakpointValue({ baseline: 3, md: 6 });
+  const dispatch = useDispatch();
+  const toast = useToast();
   const { pathname } = useLocation();
+  const [currentUserState, setCurrentUserState] = useState({});
+
+  const { isAuthenticated, currentUser } = useSelector((state) => ({ isAuthenticated: state.auth.isAuthenticated, currentUser: state.auth.user }));
+  const navItemsSpacing = useBreakpointValue({ baseline: 3, md: 6 });
+  const {
+    isOpen: isLoginOpen,
+    onOpen: onLoginOpen,
+    onClose: onLoginClose,
+  } = useDisclosure();
+  const {
+    isOpen: isRegisterOpen,
+    onOpen: onRegisterOpen,
+    onClose: onRegisterClose,
+  } = useDisclosure();
+
   const isHomePage = pathname === "/";
   const [isLargeScreen, isSmallScreen] = useMediaQuery([
     "(min-width: 768px)",
     "(max-width: 480px)",
   ]);
 
+  const { data, error, loading } = useQuery(getCurrentUser, {
+    variables: { id: currentUser?.id }
+  })
+
+  //console.log("imageUrl: ", `${process.env.REACT_APP_SERVER_URL}${currentUserState?.avatar?.data?.attributes?.url}`)
+
+  const handleLogOut = () => {
+    //TODO: show chakra alert dialogue
+    if (!window.confirm("Are you sure you want to logout?")) return;
+
+    dispatch(logoutSuccess());
+
+    toast({
+      position: "top",
+      title: "Logout successful",
+      status: "info",
+      isClosable: true,
+    });
+  }
+
+  useEffect(() => {
+    if (data) {
+      setCurrentUserState(data?.usersPermissionsUser?.data?.attributes);
+    }
+
+    if (error) {
+      console.log("[userError]: ", error)
+    }
+  }, [data, error])
+
+
+  useEffect(() => {
+    dispatch(setLoginFormOpenFunction(onLoginOpen))
+
+    //eslint-disable-next-line
+  }, [])
+
   return (
-    <Box bg={PRIMARY_COLOR} h="fit-content" w="100%" py="4" px="6" mb={3}>
+    <Box bg="primary" h="fit-content" w="100%" py="4" px="6" mb={3}>
       <HStack spacing={["2", "4"]} justify="space-between" mb={3}>
         <HStack spacing={{ base: "3rem", md: "5rem", lg: "6rem" }} w="50%">
           <NavLink to="/">
@@ -52,14 +111,12 @@ function NavBar() {
         </HStack>
 
         <HStack spacing={navItemsSpacing}>
-          <HStack spacing={3}>
+          {isAuthenticated && <HStack spacing={3} mr={3}>
             <Link href="#">
               <FaHeart color="#fff" size="1.4rem" />
-              {/* <Icon as={FaHeart} color="whiteAlpha.900" h={5} w={5} /> */}
             </Link>
             <Link href="#">
               <HStack>
-                {/* <IoMdNotifications color="#fff" size="1.5rem" /> */}
                 <Box w={7} h={7}>
                   <NotificationBadge
                     count={4}
@@ -77,46 +134,34 @@ function NavBar() {
                   />
                 </Box>
 
-                {/* {isLargeScreen && (
-                <Text color="whiteAlpha.900">Notifications</Text>
-              )} */}
               </HStack>
             </Link>
-          </HStack>
+          </HStack>}
 
           {isAuthenticated ? (
             <Menu>
               <MenuButton>
-                <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
+                <Avatar name={currentUserState?.fullName || "New User"} src={`${process.env.REACT_APP_SERVER_URL}${currentUserState?.avatar?.data?.attributes?.url}`} />
               </MenuButton>
               <MenuList>
                 <NavLink to="new-post">
-                  <MenuItem color={PRIMARY_COLOR}>Post new ad</MenuItem>
+                  <MenuItem><AiOutlinePlus style={{ marginRight: ".7rem" }} /> Post new ad</MenuItem>
                 </NavLink>
                 <MenuDivider />
-                <MenuItem>Your profile</MenuItem>
-                <MenuItem>Your profile</MenuItem>
+                <NavLink to="profile">
+                  <MenuItem><AiOutlineUser style={{ marginRight: ".7rem" }} /> Your profile</MenuItem>
+                </NavLink>
+                <MenuItem><FiSettings style={{ marginRight: ".7rem" }} /> Settings</MenuItem>
                 <MenuDivider />
-                <MenuItem>Settings</MenuItem>
+                <MenuItem color="red.500" onClick={handleLogOut} ><AiOutlinePoweroff style={{ marginRight: ".7rem" }} /> Log out</MenuItem>
               </MenuList>
             </Menu>
           ) : (
             //TODO: Hide if not logged in
-            <HStack>
-              <Link href="#">
-                <Text fontWeight="bold" color="whiteAlpha.900">
-                  Sign In
-                </Text>
-              </Link>
-              {!isSmallScreen && (
-                <>
-                  <Text color="whiteAlpha.900">|</Text>
-                  <Link href="#">
-                    <Text fontWeight="bold" color="whiteAlpha.900">
-                      Register
-                    </Text>
-                  </Link>
-                </>
+            <HStack mr={3}>
+              <Button size="sm" variant="secondaryOutline" borderRadius="40px" onClick={onLoginOpen}>Sign In</Button>
+              {isLargeScreen && (
+                <Button size="sm" variant="secondary" borderRadius="40px" onClick={onRegisterOpen}>Register</Button>
               )}
             </HStack>
           )}
@@ -125,23 +170,32 @@ function NavBar() {
             <NavLink to="new-post">
               <Button
                 leftIcon={<AiOutlinePlus color="whiteAlpa.900" />}
-                bg={COMPLEMENTARY_COLOR_DARK}
-                //bg={COMPLEMENTARY_COLOR_DARK}
-                _hover={{ opacity: "0.9" }}
-                color="whiteAlpha.900"
+                variant="secondary"
                 size="sm"
-                variant="solid">
+              >
                 Post new ad
               </Button>
             </NavLink>
           )}
         </HStack>
+
       </HStack>
       {isHomePage && (
         <Center>
           <SearchBox />
         </Center>
       )}
+
+      <Login
+        isOpen={isLoginOpen}
+        onClose={onLoginClose}
+        openRegister={onRegisterOpen}
+      />
+      <Register
+        isOpen={isRegisterOpen}
+        onClose={onRegisterClose}
+        openLogin={onLoginOpen}
+      />
     </Box>
   );
 }
