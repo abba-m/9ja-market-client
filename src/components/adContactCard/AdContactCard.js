@@ -8,11 +8,12 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { MdCall } from "react-icons/md";
+import { PhoneIcon } from "@chakra-ui/icons";
 
 import { WHITE_COLOR } from "utils/constants";
 import { formatAmount } from "utils/format";
 
-export default function AdContactCard() {
+export default function AdContactCard({ price, userName }) {
   return (
     <Box
       w={["80vw", "40vw"]}
@@ -23,7 +24,7 @@ export default function AdContactCard() {
         <VStack p="4" bg="primary">
           <Center>
             <Text fontSize="36px" fontWeight="bold" color={WHITE_COLOR}>
-              {formatAmount(200000)}
+              {formatAmount(price || 0)}
             </Text>
           </Center>
           {/* FIXME: Put the left phone icon */}
@@ -32,6 +33,7 @@ export default function AdContactCard() {
             textColor="primary"
             bg="white"
             variant="solid">
+            <PhoneIcon mx={4} />
             Place a call
           </Button>
         </VStack>
@@ -48,7 +50,7 @@ export default function AdContactCard() {
               mb="1"
               mt="1"
               casing="capitalize">
-              <b>steve williams</b>
+              <b>{userName || "9jaMarket User"}</b>
             </Text>
             <Text fontSize="xs" color="gray.400">
               Member since September, 2017

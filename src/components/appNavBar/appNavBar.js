@@ -64,8 +64,6 @@ function NavBar() {
     variables: { id: currentUser?.id }
   })
 
-  //console.log("imageUrl: ", `${process.env.REACT_APP_SERVER_URL}${currentUserState?.avatar?.data?.attributes?.url}`)
-
   const handleLogOut = () => {
     //TODO: show chakra alert dialogue
     if (!window.confirm("Are you sure you want to logout?")) return;
@@ -141,7 +139,7 @@ function NavBar() {
           {isAuthenticated ? (
             <Menu>
               <MenuButton>
-                <Avatar name={currentUserState?.fullName || "New User"} src={`${process.env.REACT_APP_SERVER_URL}${currentUserState?.avatar?.data?.attributes?.url}`} />
+                <Avatar name={currentUser?.fullName || "New User"} src={`${process.env.REACT_APP_SERVER_URL}${currentUserState?.avatar?.data?.attributes?.url}`} />
               </MenuButton>
               <MenuList>
                 <NavLink to="new-post">

@@ -9,8 +9,7 @@ import {
   Spinner,
   useToast
 } from "@chakra-ui/react";
-import { useQuery } from "@apollo/client"
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { stringify } from "qs";
 
@@ -28,6 +27,7 @@ function Dashboard({ showLogin }) {
   //TODO: get All posts 
   //const [allPosts,  setAllPosts] = useState([]);
   const { state } = useLocation();
+  const navigate = useNavigate();
   const { displayLoginForm } = useSelector((state) => ({ displayLoginForm: state.auth.displayLoginForm }));
 
   const populateQuery = stringify({
@@ -86,16 +86,19 @@ function Dashboard({ showLogin }) {
             const { images, title, price, location } = attributes;
             const imgPath = images?.data ? images?.data[0]?.attributes?.url : null;
             const imageUrl = `${process.env.REACT_APP_SERVER_URL}${imgPath}`;
+            //let urlTitle = title.replace(/\s/, "-")
 
             return (
-              <AdThumbnail
-                key={uid()}
-                postId={id}
-                imageSrc={imgPath ? imageUrl : defaultImage}
-                adTitle={title}
-                adPrice={price}
-                adLocation={location}
-              />
+              <Link to={`/post/${id}/${title}`}>
+                <AdThumbnail
+                  key={uid()}
+                  postId={id}
+                  imageSrc={imgPath ? imageUrl : defaultImage}
+                  adTitle={title}
+                  adPrice={price}
+                  adLocation={location}
+                />
+              </Link>
             )
           })
         }

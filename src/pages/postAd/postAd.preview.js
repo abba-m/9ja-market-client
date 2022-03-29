@@ -11,7 +11,6 @@ import ShortUniqueId from "short-unique-id";
 
 /** Actions & Mutations */
 import { setSubmitPostFunction } from "store/actions";
-import { createPostMutation, createUploadMutation } from "graphQL/mutations";
 
 function PreviewAd() {
   const { handleForm: { getValues, reset }, imagesPreviewState: [images, setImages], currentImagesState: [currentImages, setCurrentImages], selectedCategoryState: [selectedCategory, setSelectedCategory] } = useContext(PostAdContext);
@@ -19,9 +18,9 @@ function PreviewAd() {
   const toast = useToast();
   const values = getValues();
   const uid = new ShortUniqueId({ length: 5 });
-  const client = useApolloClient();
   const { currentUserId } = useSelector((state) => ({ currentUserId: state.auth.user.id }));
   const [imagesToBeUploaded, setImagesToBeUploaded] = useState([]);
+  const [isLoading, setIsloading] = useState(false);
   const token = localStorage.getItem("token");
 
   const validateInputs = () => {
@@ -48,6 +47,10 @@ function PreviewAd() {
   }
 
   const handleSubmit = async (callback, step) => {
+    if (isLoading) return
+
+    setIsloading(true)
+
     const errors = validateInputs()
     if (errors.length) {
       errors.forEach(err => toast({
@@ -56,6 +59,7 @@ function PreviewAd() {
         status: "error",
         isClosable: true,
       }))
+      setIsloading(false)
       return
     };
     console.log("Submitting form....");
@@ -65,25 +69,21 @@ function PreviewAd() {
     values.price = Number(values.price)
 
     const postFormData = new FormData()
-    postFormData.append("images", imagesToBeUploaded)
 
-    for (const [key, value] of Object.entries(values)) {
-      postFormData.append(key, value);
+    for (const i in imagesToBeUploaded) {
+      const current = imagesToBeUploaded[i]
+      postFormData.append(`files.images`, current, current?.name)
     }
 
-    const body = { data: values }
+    postFormData.append("data", JSON.stringify(values))
 
     try {
-
-      //debugger;
-
       const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts`, {
         method: "POST",
-        //"Content-Type": "multipart/form-data",
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        body,
+        body: postFormData
       })
 
       const data = await res.json()
@@ -92,37 +92,14 @@ function PreviewAd() {
         throw new Error(data)
       }
 
-      console.log("[datum]:", data)
+      //console.log("[datum]:", data)
+      toast({
+        position: "top",
+        title: `Post with ticket no. (${uid()}) has been submitted succesfully`,
+        status: "info",
+        isClosable: true,
+      });
 
-      // const imagesData = await client.mutate({
-      //   mutation: createUploadMutation,
-      //   variables: {
-      //     files: imagesToBeUploaded
-      //   }
-      // });
-
-      // const postedImagesId = []
-
-      // for (let i = 0; i < imagesData.data.multipleUpload.length; i++) {
-      //   const current = imagesData.data.multipleUpload[i];
-      //   postedImagesId.push(current.data.id)
-      // }
-
-      // values.images = postedImagesId
-
-      // const postData = await client.mutate({
-      //   mutation: createPostMutation,
-      //   variables: values
-      // })
-
-      // if (postData) {
-      //   toast({
-      //     position: "top",
-      //     title: `Post with ticket no. (${uid()}) has been submitted succesfully`,
-      //     status: "info",
-      //     isClosable: true,
-      //   });
-      // }
 
       //reset all fields
       reset();
@@ -130,7 +107,7 @@ function PreviewAd() {
       setCurrentImages([]);
       setSelectedCategory("");
       callback(step);
-
+      setIsloading(false);
 
     } catch (err) {
       //TODO: display error properly
