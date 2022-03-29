@@ -25,6 +25,7 @@ import { authError, userLoading, userLoaded } from "store/actions";
 import { sendRequest } from "utils/connection";
 import { stringify } from "qs";
 import GoogleAuthRedirect from "components/auth/googleAuthRedirect";
+import SingleAdPage from "pages/singleAdPage/singleAdPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -93,6 +94,7 @@ function App() {
         <Box>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/post/:id/:title" element={<SingleAdPage />} />
             <Route path="/new-post" element={<PostAd />} />
             <Route path="/profile" element={<UserProfile />}>
               <Route index element={<ProfileView />} />

@@ -52,18 +52,20 @@ function AdImagesForm() {
       <Center>
         <VStack my={2} spacing={-1}>
           <Text color="gray.600" fontSize="2xl">
-            Add Photo
+            Add Photos
           </Text>
           <Text color="gray.600" fontSize="xs">
             Supported formats: ".jpg", ".png"
           </Text>
+          {images.length && images.length < 3 && <span style={{ fontSize: ".9rem", color: "#FF0000" }}>(add at least 3 images)</span>}
         </VStack>
       </Center>
       <Box display="flex" gap={3} flexWrap="wrap">
 
         {previews.length !== 0 &&
+          // TODO: Add a delete image logic
           previews.map((value) => <Image key={uid()} src={value} h={200} w={200} />)}
-          </Box>
+      </Box>
     </Box>
   );
 }

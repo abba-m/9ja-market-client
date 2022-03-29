@@ -7,7 +7,7 @@ function ImagesCarousel({ data }) {
     fontWeight: "bold",
   };
   return (
-    <Box w={["100%", "50%"]}>
+    <Box w={["100%", "100%", "50%"]}>
       <Carousel
         data={data}
         time={2000}
