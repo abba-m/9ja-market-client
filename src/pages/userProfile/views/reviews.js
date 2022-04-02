@@ -4,7 +4,7 @@ import React from "react";
 function ReviewsView() {
   return (
     <Box>
-      <Text>Hello my reviews view</Text>
+      <Text>No reviews yet.</Text>
     </Box>
   );
 }

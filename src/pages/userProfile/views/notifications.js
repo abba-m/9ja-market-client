@@ -3,7 +3,7 @@ import { Box, Text } from "@chakra-ui/react";
 function NotificationsVeiw() {
   return (
     <Box>
-      <Text>Hello my Notifications view</Text>
+      <Text>You don't have any notifications yet.</Text>
     </Box>
   );
 }

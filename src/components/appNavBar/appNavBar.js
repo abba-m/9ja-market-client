@@ -60,7 +60,7 @@ function NavBar() {
     "(max-width: 480px)",
   ]);
 
-  const { data, error, loading } = useQuery(getCurrentUser, {
+  const { data, error } = useQuery(getCurrentUser, {
     variables: { id: currentUser?.id }
   })
 
@@ -115,22 +115,24 @@ function NavBar() {
             </Link>
             <Link href="#">
               <HStack>
-                <Box w={7} h={7}>
-                  <NotificationBadge
-                    count={4}
-                    style={{ top: "-5px", right: "-5px", zIndex: "1" }}
-                  />
-                  <Icon
-                    as={IoMdNotifications}
-                    color="whiteAlpha.900"
-                    sx={{
-                      position: "absolute",
-                      top: "1.8rem",
-                    }}
-                    h={6}
-                    w={6}
-                  />
-                </Box>
+                <Link href="/profile/notifications">
+                  <Box w={7} h={7}>
+                    <NotificationBadge
+                      count={4}
+                      style={{ top: "-5px", right: "-5px", zIndex: "1" }}
+                    />
+                    <Icon
+                      as={IoMdNotifications}
+                      color="whiteAlpha.900"
+                      sx={{
+                        position: "absolute",
+                        top: "1.8rem",
+                      }}
+                      h={6}
+                      w={6}
+                    />
+                  </Box>
+                </Link>
 
               </HStack>
             </Link>

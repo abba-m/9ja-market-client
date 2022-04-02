@@ -7,7 +7,6 @@ import { Rating } from "react-simple-star-rating";
 import { FiCamera } from "react-icons/fi";
 import { stringify } from "qs";
 
-
 function UserProfileNav() {
   const rating = 3;
   const [userAvatarUrl] = useState(""); //TODO: please remove
@@ -47,10 +46,15 @@ function UserProfileNav() {
 
   const activeClassName = {
     color: "#00CC88",
-    backgroungColor: "transparent",
+    backgroundColor: "transparent",
   };
 
-  const styleActiveLink = ({ isActive }) => (isActive ? activeClassName : null);
+  const notActiveClass = {
+    color: "#2C3E50",
+    backgroundColor: "transparent",
+  }
+
+  const styleActiveLink = ({ isActive }) => (isActive ? activeClassName : notActiveClass);
 
   return (
     <Box w="25%" display="flex" flexDirection="column" pl="4">
@@ -81,7 +85,7 @@ function UserProfileNav() {
 
       <Box mt="3" mb="3">
         <Text>
-          <NavLink style={isProfileIndex ? styleActiveLink : null} to="/profile">Profile</NavLink>
+          <NavLink style={isProfileIndex ? styleActiveLink : notActiveClass} to="/profile">Profile</NavLink>
         </Text>
         <Text>
           <NavLink style={styleActiveLink} to="/profile/posts">
