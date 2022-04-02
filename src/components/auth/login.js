@@ -159,7 +159,6 @@ export default function Login({ isOpen, onClose, openRegister }) {
 
           <Image src={loginDivider} mb={5} />
 
-          {/* <Link href={`${process.env.REACT_APP_SERVER_URL}/api/connect/google`}> */}
           <Link href={`${process.env.REACT_APP_SERVER_URL}/api/connect/google`}>
             <GoogleButton />
           </Link>

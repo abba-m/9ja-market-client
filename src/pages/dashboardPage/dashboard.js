@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import {
   Box,
-  Button,
   Container,
   Heading,
   SimpleGrid,
   Text,
   Spinner,
-  useToast
 } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -54,7 +52,6 @@ function Dashboard({ showLogin }) {
     }
 
     const data = await res.json()
-    console.log("[REstPosts]", data)
     if (data && data?.data) {
       setIsLoading(false);
       setPostsToDisplay(data?.data)

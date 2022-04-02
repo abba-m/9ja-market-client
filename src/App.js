@@ -20,7 +20,7 @@ import NotFound from "components/404notFound";
 import PostAd from "pages/postAd/postAd";
 
 /** Actions */
-import { authError, userLoading, userLoaded } from "store/actions";
+import { userLoaded } from "store/actions";
 /** Queries */
 import { sendRequest } from "utils/connection";
 import { stringify } from "qs";
@@ -60,12 +60,13 @@ function App() {
 
     if (data && data?.error) {
       console.log(data.error)
-      return toast({
-        position: "top",
-        title: `You are not logged in. Sign in or create account to enjoy 9jaMarket`,
-        status: "info",
-        isClosable: true,
-      });
+      //TODO: find a better approach
+      // return toast({
+      //   position: "top",
+      //   title: `You are not logged in. Sign in or create account to enjoy 9jaMarket`,
+      //   status: "info",
+      //   isClosable: true,
+      // });
     }
 
     if (data) {

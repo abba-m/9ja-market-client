@@ -11,57 +11,36 @@ export default function GoogleAuthRedirect(props) {
   const toast = useToast();
   const dispatch = useDispatch();
 
-  // const processRequest = async () => {
-  //   const [res, error] = sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/connect/google/callback/${location.search}`))
 
-  //   if (error) {
-  //     toast({
-  //       position: "top",
-  //       title: "An Error occured! Please try again.",
-  //       status: "error",
-  //       isClosable: true,
-  //     });
-  //     console.log(error);
-  //     //navigate("/")
-  //   }
+  const processRequest = async () => {
+    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/auth/google/callback/${location.search}`))
 
-  //   const data = await res.json();
-  //   if (data) {
-  //     console.log("[googleRes]:", data);
-  //   }
-  // }
+    if (error) {
+      toast({
+        position: "top",
+        title: "An Error occured! Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+      navigate("/")
+    }
 
-  useEffect(() => {
-    fetch(`${process.env.REACT_APP_SERVER_URL}/api/connect/google/callback/${location.search}`).then((res) => {
-      if (res.status !== 200) {
-        throw new Error(`Couldn't login to 9jaMarket. Status: ${res.status}`)
-      }
-      return res
-    }).then((res) => res.json())
-      .then((res) => {
-        console.log("[googleRes]:", res);
-        return res;
-      })
-      .then((data) => dispatch(loginSuccess(data)))
-      .then(() => toast({
+    const data = await res.json();
+    if (data) {
+      dispatch(loginSuccess(data))
+      toast({
         position: "top",
         title: "Login successful!.",
         status: "info",
         isClosable: true,
-      }))
-      .catch((err) => {
-        toast({
-          position: "top",
-          title: "An Error occured! Please try again.",
-          status: "error",
-          isClosable: true,
-        });
-        console.log(err)
       })
-      .finally(navigate("/"))
-  }, [])
+      navigate("/")
+    }
+  }
 
-  // console.log("[LOCATION]", location.search)
+  useEffect(() => {
+    processRequest();
+  }, [])
 
   return (
     <div>Please wait...</div>
