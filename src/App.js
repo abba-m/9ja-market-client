@@ -62,8 +62,8 @@ function App() {
       console.log(data.error)
       return toast({
         position: "top",
-        title: `[Error]: ${data?.error?.message}`,
-        status: "error",
+        title: `You are not logged in. Sign in or create account to enjoy 9jaMarket`,
+        status: "info",
         isClosable: true,
       });
     }

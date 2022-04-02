@@ -1,9 +1,9 @@
-import { Box, Container, Heading, HStack, Spinner, useToast } from "@chakra-ui/react";
+import { Box, Container, Heading, HStack, Spinner, useMediaQuery, useToast } from "@chakra-ui/react";
 
 import { Suspense, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ImagesCarousel from "components/adImagesCarousel/imagesCarousel";
-import AdContactCard from "components/adContactCard/AdContactCard";
+import AdContactCard from "components/adContactCard/adContactCard";
 
 export default function SingleAdPage() {
   const { id } = useParams();
@@ -11,6 +11,10 @@ export default function SingleAdPage() {
   const [postToDisplay, setPostToDisplay] = useState({});
   const [postImages, setPostImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLargeScreen] = useMediaQuery([
+    "(min-width: 768px)",
+    "(max-width: 480px)",
+  ]);
 
   const getPost = async () => {
     setIsLoading(true)
@@ -24,10 +28,7 @@ export default function SingleAdPage() {
       }
 
       setPostToDisplay(data?.data)
-
-      console.log(data?.data)
       setIsLoading(false);
-
     } catch (err) {
       toast({
         position: "top",
@@ -77,10 +78,15 @@ export default function SingleAdPage() {
         justifyContent="center">
         <Heading my={3} > {postToDisplay ? postToDisplay?.attributes?.title : "Hello iPhone 13"}</Heading>
         {/* <Heading>Hello iPhone 13</Heading> */}
-        <HStack spacing={4}>
-          {postImages.length && <ImagesCarousel data={postImages} />}
-          {postToDisplay && <AdContactCard price={postToDisplay?.attributes?.price || 0} />}
-        </HStack>
+        <Box display="flex" mx="auto" flexDirection={isLargeScreen ? "row" : "column"} gap={4} flexWrap="wrap">
+          <Box>
+            {postImages.length && <ImagesCarousel data={postImages} />}
+          </Box>
+          <Box>
+            {postToDisplay && <AdContactCard price={postToDisplay?.attributes?.price || 0} />}
+
+          </Box>
+        </Box>
       </Container >
     </Suspense>
   );

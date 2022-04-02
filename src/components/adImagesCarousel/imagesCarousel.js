@@ -6,8 +6,11 @@ function ImagesCarousel({ data }) {
     fontSize: "10px",
     fontWeight: "bold",
   };
+
+  //minWidth={["100%", "50%"]}
+
   return (
-    <Box w={["100%", "100%", "50%"]}>
+    <Box w="100%" mx="auto" h="fit-content" display="inline-block">
       <Carousel
         data={data}
         time={2000}
