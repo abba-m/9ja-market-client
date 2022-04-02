@@ -101,7 +101,7 @@ function NavBar() {
         <HStack spacing={{ base: "3rem", md: "5rem", lg: "6rem" }} w="50%">
           <NavLink to="/">
             <Box display="flex">
-              <Text color="whiteAlpha.900" fontSize="1.5rem">
+              <Text color="whiteAlpha.900" bg="primary" fontSize="1.5rem">
                 <b>9jaMarket</b>
               </Text>
             </Box>

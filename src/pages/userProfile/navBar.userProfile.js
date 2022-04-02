@@ -30,6 +30,7 @@ function UserProfileNav() {
 
 
   const handleChangeProfile = async (e) => {
+    //TODO: submit user profile picture
     console.log("Changing...", e.target.files);
 
     const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/5?${populateQuery}`, {
@@ -46,6 +47,7 @@ function UserProfileNav() {
 
   const activeClassName = {
     color: "#00CC88",
+    backgroungColor: "transparent",
   };
 
   const styleActiveLink = ({ isActive }) => (isActive ? activeClassName : null);
@@ -56,7 +58,6 @@ function UserProfileNav() {
       <Box mb="3">
         <Avatar size="xl" name={currentUser?.fullName || "New User"} src={userAvatarUrl}>
           <AvatarBadge boxSize="1em" bg="white">
-            {/* TODO: add file input */}
             <FiCamera color="#00CC88" onClick={() => imagePicker.current.click()} />
           </AvatarBadge>
         </Avatar>
