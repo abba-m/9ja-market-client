@@ -12,7 +12,7 @@ import { BsFillChatRightTextFill } from "react-icons/bs"
 
 import { formatAmount } from "utils/format";
 
-export default function AdContactCardSmall({ price, userName }) {
+export default function AdContactCardSmall({ price, fullName, dateJoined }) {
   return (
     <Box
       w="100%"
@@ -64,18 +64,18 @@ export default function AdContactCardSmall({ price, userName }) {
               mb="1"
               mt="1"
               casing="capitalize">
-              <b>{userName || "9jaMarket User"}</b>
+              <b>{fullName || "9jaMarket User"}</b>
             </Text>
             <Text fontSize="xs" color="secondary">
-              Member since September, 2017
+              {dateJoined ? `Member since ${dateJoined}.` : ""}
             </Text>
           </Box>
-          {/* TODO: Add badge to Avatar */}
+          {/* TODO: Add online badge to Avatar */}
           <Box display="flex" alignItems="center" flexGrow="1">
             <Avatar
               size="xl"
-              name="User Profile"
-              src="https://picsum.photos/200"
+              name={fullName}
+              src="https://picsum.phtos/200"
             />
           </Box>
         </Box>

@@ -4,12 +4,18 @@ import { Suspense, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ImagesCarousel from "components/adImagesCarousel/imagesCarousel";
 import AdContactCard from "components/adContactCard/adContactCard";
+import { formatDateJoined } from "utils/format";
 
 export default function SingleAdPage() {
   const { id } = useParams();
   const toast = useToast();
   const [postToDisplay, setPostToDisplay] = useState({});
   const [postImages, setPostImages] = useState([]);
+
+  const [postPrice, setPostPrice] = useState(0);
+  const [postedByFullName, setPostedByFullName] = useState("");
+  const [postedByCreatedAt, setPostedByCreatedAt] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [isLargeScreen] = useMediaQuery([
     "(min-width: 768px)",
@@ -52,14 +58,12 @@ export default function SingleAdPage() {
     }
     setIsLoading(true);
 
-    //TODO: remove
-    if (!postToDisplay.attributes?.images?.data) {
-      return;
-    }
+    const mappedImages = postToDisplay.attributes.images.data.map(img => ({ image: `${process.env.REACT_APP_SERVER_URL}${img.attributes.url}` }));
 
-    const mappedImages = postToDisplay.attributes.images.data.map(img => ({ image: `${process.env.REACT_APP_SERVER_URL}${img.attributes.url}` }))
-
-    setPostImages(mappedImages)
+    setPostImages(mappedImages);
+    setPostPrice(postToDisplay?.attributes?.price || 0);
+    setPostedByFullName(postToDisplay?.attributes?.postedBy?.data?.attributes?.fullName);
+    setPostedByCreatedAt(postToDisplay?.attributes?.postedBy?.data?.attributes?.createdAt);
     setIsLoading(false)
   }, [postToDisplay])
 
@@ -83,8 +87,7 @@ export default function SingleAdPage() {
             {postImages.length && <ImagesCarousel data={postImages} />}
           </Box>
           <Box>
-            {postToDisplay && <AdContactCard price={postToDisplay?.attributes?.price || 0} />}
-
+            {postToDisplay && <AdContactCard price={postPrice} fullName={postedByFullName} dateJoined={formatDateJoined(postedByCreatedAt)} />}
           </Box>
         </Box>
       </Container >

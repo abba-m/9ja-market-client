@@ -13,7 +13,7 @@ import { BsFillChatRightTextFill } from "react-icons/bs"
 import { WHITE_COLOR } from "utils/constants";
 import { formatAmount } from "utils/format";
 
-export default function AdContactCardBig({ price, userName }) {
+export default function AdContactCardBig({ price, fullName, dateJoined }) {
   return (
     <Box
       minWidth={["80vw", "40vw"]}
@@ -50,24 +50,16 @@ export default function AdContactCardBig({ price, userName }) {
               mb="1"
               mt="1"
               casing="capitalize">
-              <b>{userName || "9jaMarket User"}</b>
+              <b>{fullName || "9jaMarket User"}</b>
             </Text>
             <Text fontSize="xs" color="gray.400">
-              Member since September, 2017
+              {dateJoined ? `Member since ${dateJoined}.` : ""}
             </Text>
           </Box>
-          {/* FIXME: Use the Avatar component (Plus badge)*/}
           <Box display="flex" alignItems="center" flexGrow="1">
-            {/* <img
-              src="https://bit.ly/dan-abramov"
-              alt="User Profile"
-              width="80px"
-              height="80px"
-              style={{ borderRadius: "50%" }}
-            /> */}
             <Avatar
               size="xl"
-              name="User Profile"
+              name={fullName || "New User"}
               src="https://picsum.photos/200"
             />
           </Box>
