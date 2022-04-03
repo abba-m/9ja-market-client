@@ -1,6 +1,6 @@
-import { Avatar, AvatarBadge, Box, Divider, Spinner, Text } from "@chakra-ui/react";
+import { Avatar, AvatarBadge, Box, Divider, Text } from "@chakra-ui/react";
 import { NavLink, useLocation } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
 
 import { Rating } from "react-simple-star-rating";
