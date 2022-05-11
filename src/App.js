@@ -18,6 +18,8 @@ import ReviewsView from "pages/userProfile/views/reviews";
 import SettingsView from "pages/userProfile/views/settings";
 import NotFound from "components/404notFound";
 import PostAd from "pages/postAd/postAd";
+import ResetPassword from "pages/resetPassword/resetPassword"
+import NewPassword from "pages/resetPassword/newPassword";
 
 /** Actions */
 import { userLoaded } from "store/actions";
@@ -104,10 +106,12 @@ function App() {
               <Route path="orders" element={<OrdersView />} />
               <Route path="posts" element={<PostsView />} />
               <Route path="reviews" element={<ReviewsView />} />
-              <Route path="settings" element={<SettingsView />} />
+              <Route path="notifications" element={<SettingsView />} />
             </Route>
             <Route path="/connect/google/callback" element={<GoogleAuthRedirect />} />
             <Route path="/test" element={<TestPage />} />
+            <Route path="/resetPassword" element={<ResetPassword />} />
+            <Route path="/newpassword" element={<NewPassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Box>
