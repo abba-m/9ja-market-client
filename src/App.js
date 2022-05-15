@@ -20,6 +20,7 @@ import NotFound from "components/404notFound";
 import PostAd from "pages/postAd/postAd";
 import ResetPassword from "pages/resetPassword/resetPassword"
 import NewPassword from "pages/resetPassword/newPassword";
+import ProfilePage from "pages/ProfilePage"
 
 /** Actions */
 import { userLoaded } from "store/actions";
@@ -110,6 +111,7 @@ function App() {
             </Route>
             <Route path="/connect/google/callback" element={<GoogleAuthRedirect />} />
             <Route path="/test" element={<TestPage />} />
+            <Route path="/profilePage" element={<ProfilePage />} />
             <Route path="/resetPassword" element={<ResetPassword />} />
             <Route path="/newpassword" element={<NewPassword />} />
             <Route path="*" element={<NotFound />} />
