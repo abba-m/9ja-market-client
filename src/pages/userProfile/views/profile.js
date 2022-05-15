@@ -1,4 +1,4 @@
-import { Box, Heading, HStack, Text } from "@chakra-ui/react";
+import { Box, Checkbox, Heading, HStack, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 
 import { FaRegEdit } from "react-icons/fa"
@@ -11,17 +11,12 @@ function ProfileView() {
   return (
     <Box>
       <HStack>
-        <Heading color="secondary">{currentUser?.fullName}</Heading><FaRegEdit style={{ color: "#2C3E50" }} />
+        <Heading size="lg" color="secondary">{currentUser?.fullName || "9jaMarket User"}</Heading><FaRegEdit style={{ color: "#2C3E50" }} />
       </HStack>
 
       <Box my={2}>
         <Text color="primary">Date Joined</Text>
         <Text>{formatDateJoined(currentUser?.createdAt)}</Text>
-      </Box>
-
-      <Box my={2}>
-        <Text color="primary">Username</Text>
-        <Text>{currentUser?.username || ""}</Text>
       </Box>
 
       <Box my={2}>
@@ -31,7 +26,11 @@ function ProfileView() {
 
       <Box my={2}>
         <Text color="primary">Phone</Text>
-        <Text>{currentUser?.phone || ""}</Text>
+        <Text color="gray.400">{currentUser?.phone || "Not available"}</Text>
+      </Box>
+
+      <Box my={2}>
+        <Checkbox isChecked={currentUser?.confirmed}>Verified Email</Checkbox>
       </Box>
 
     </Box>

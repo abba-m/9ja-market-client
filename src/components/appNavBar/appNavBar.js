@@ -17,7 +17,7 @@ import {
   useMediaQuery,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import NotificationBadge from "react-notification-badge";
 import { AiOutlinePlus, AiOutlineUser, AiOutlinePoweroff } from "react-icons/ai";
@@ -25,21 +25,17 @@ import { IoMdNotifications } from "react-icons/io";
 import { FiSettings } from "react-icons/fi"
 import { FaHeart } from "react-icons/fa";
 import { NavLink, useLocation } from "react-router-dom";
-import { useQuery } from "@apollo/client";
 
 import SearchBox from "components/searchBox/searchBox";
 import Login from "components/auth/login";
 import Register from "components/auth/register";
 
 import { logoutSuccess, setLoginFormOpenFunction } from "store/actions";
-import { getCurrentUser } from "graphQL/queries/user.queries";
-
 
 function NavBar() {
   const dispatch = useDispatch();
   const toast = useToast();
   const { pathname } = useLocation();
-  const [currentUserState, setCurrentUserState] = useState({});
 
   const { isAuthenticated, currentUser } = useSelector((state) => ({ isAuthenticated: state.auth.isAuthenticated, currentUser: state.auth.user }));
   const navItemsSpacing = useBreakpointValue({ baseline: 3, md: 6 });
@@ -60,9 +56,6 @@ function NavBar() {
     "(max-width: 480px)",
   ]);
 
-  const { data, error } = useQuery(getCurrentUser, {
-    variables: { id: currentUser?.id }
-  })
 
   const handleLogOut = () => {
     //TODO: show chakra alert dialogue
@@ -77,16 +70,6 @@ function NavBar() {
       isClosable: true,
     });
   }
-
-  useEffect(() => {
-    if (data) {
-      setCurrentUserState(data?.usersPermissionsUser?.data?.attributes);
-    }
-
-    if (error) {
-      console.log("[userError]: ", error)
-    }
-  }, [data, error])
 
 
   useEffect(() => {
@@ -141,7 +124,7 @@ function NavBar() {
           {isAuthenticated ? (
             <Menu>
               <MenuButton>
-                <Avatar name={currentUser?.fullName || "New User"} src={`${process.env.REACT_APP_SERVER_URL}${currentUserState?.avatar?.data?.attributes?.url}`} />
+                <Avatar name={currentUser?.fullName || "New User"} src={currentUser.avatarUrl} />
               </MenuButton>
               <MenuList>
                 <NavLink to="new-post">
@@ -157,7 +140,6 @@ function NavBar() {
               </MenuList>
             </Menu>
           ) : (
-            //TODO: Hide if not logged in
             <HStack mr={3}>
               <Button size="sm" variant="secondaryOutline" borderRadius="40px" onClick={onLoginOpen}>Sign In</Button>
               {isLargeScreen && (

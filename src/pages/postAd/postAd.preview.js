@@ -1,11 +1,9 @@
 import { Box, Divider, Image, Text, useToast } from "@chakra-ui/react";
 import { PostAdContext } from "providers/postAdProvider";
 import { formatAmount } from "utils/format";
-import axios from "axios";
 
 import { useContext, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useMutation, useApolloClient } from "@apollo/client";
+import { useDispatch } from "react-redux";
 
 import ShortUniqueId from "short-unique-id";
 
@@ -18,7 +16,6 @@ function PreviewAd() {
   const toast = useToast();
   const values = getValues();
   const uid = new ShortUniqueId({ length: 5 });
-  const { currentUserId } = useSelector((state) => ({ currentUserId: state.auth.user.id }));
   const [imagesToBeUploaded, setImagesToBeUploaded] = useState([]);
   const [isLoading, setIsloading] = useState(false);
   const token = localStorage.getItem("token");
@@ -64,7 +61,7 @@ function PreviewAd() {
     };
     console.log("Submitting form....");
 
-    values.postedBy = currentUserId;
+    //values.userId = currentUserId;
     values.category = selectedCategory;
     values.price = Number(values.price)
 
@@ -72,7 +69,7 @@ function PreviewAd() {
 
     for (const i in imagesToBeUploaded) {
       const current = imagesToBeUploaded[i]
-      postFormData.append(`files.images`, current, current?.name)
+      postFormData.append(`images`, current, current?.name)
     }
 
     postFormData.append("data", JSON.stringify(values))
@@ -113,24 +110,6 @@ function PreviewAd() {
       //TODO: display error properly
       alert(`${err?.status || "Something went wrong."} Please try again.`)
       console.log("[createPostError]:", err || "Something went wrong.")
-    }
-  }
-
-  const deletePost = async () => {
-    try {
-      const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts/4`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-
-      const data = await res.json()
-      if (data) {
-        console.log("[deletePost]:", data)
-      }
-    } catch (error) {
-      console.warn(error)
     }
   }
 

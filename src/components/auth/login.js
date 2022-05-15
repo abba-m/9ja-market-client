@@ -18,6 +18,7 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -39,6 +40,7 @@ export default function Login({ isOpen, onClose, openRegister }) {
   const initialRef = useRef();
   const toast = useToast();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
@@ -61,8 +63,13 @@ export default function Login({ isOpen, onClose, openRegister }) {
     onClose();
   };
 
+  const gotoResetPasswordPage = () => {
+    onClose();
+    navigate("/reset-password");
+  }
+
   const handleLogin = async (data) => {
-    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/auth/local/`, {
+    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -127,6 +134,8 @@ export default function Login({ isOpen, onClose, openRegister }) {
               </FormErrorMessage>
             </FormControl>
 
+
+
             <FormControl mb={8} isInvalid={errors.password}>
               <InputGroup>
                 <Input
@@ -156,6 +165,23 @@ export default function Login({ isOpen, onClose, openRegister }) {
               Sign in
             </Button>
           </form>
+
+          <Center mb={2}>
+            <Text>
+              Forgotten password?
+              <Link to="#">
+                <span
+                  onClick={() => gotoResetPasswordPage()}
+                  style={{
+                    color: "primary",
+                    textDecoration: "underline",
+                    marginLeft: ".5rem",
+                  }}>
+                  Reset password
+                </span>
+              </Link>
+            </Text>
+          </Center>
 
           <Image src={loginDivider} mb={5} />
 

@@ -7,9 +7,8 @@ import {
   Text,
   Spinner,
 } from "@chakra-ui/react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { stringify } from "qs";
 
 import { Link } from "react-router-dom";
 import ShortUniqueId from "short-unique-id";
@@ -25,15 +24,7 @@ function Dashboard({ showLogin }) {
   //TODO: get All posts 
   //const [allPosts,  setAllPosts] = useState([]);
   const { state } = useLocation();
-  const navigate = useNavigate();
   const { displayLoginForm } = useSelector((state) => ({ displayLoginForm: state.auth.displayLoginForm }));
-
-  const populateQuery = stringify({
-    populate: "*",
-    sort: ["createdAt:desc"]
-  }, {
-    encodeValuesOnly: true,
-  });
 
   useEffect(() => {
     if (state && state?.openLogin) {
@@ -45,17 +36,19 @@ function Dashboard({ showLogin }) {
 
   const getLatestPosts = async () => {
     setIsLoading(true);
-    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts?${populateQuery}`));
+    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts`));
 
     if (error) {
-      console.log("[getPostsError]:", error)
+      console.log("[getPostsError]:", error);
+      setIsLoading(false);
+      return
     }
 
     const data = await res.json()
-    if (data && data?.data) {
-      setIsLoading(false);
-      setPostsToDisplay(data?.data)
+    if (data) {
+      setPostsToDisplay(data);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -79,18 +72,16 @@ function Dashboard({ showLogin }) {
       <Heading my={3}>Latest Ads</Heading>
       <SimpleGrid columns={[2, 3, 4, 5]} spacing={4}>
         {
-          postsToDisplay.length !== 0 && postsToDisplay.map(({ id, attributes }) => {
-            const { images, title, price, location } = attributes;
-            const imgPath = images?.data ? images?.data[0]?.attributes?.url : null;
-            const imageUrl = `${process.env.REACT_APP_SERVER_URL}${imgPath}`;
-            //let urlTitle = title.replace(/\s/, "-")
+          postsToDisplay.length !== 0 && postsToDisplay.map(({ postId, images, title, price, location, slug }) => {
+            //TODO: optimize images
+            const imagesUrl = images.split(",");
 
             return (
-              <Link to={`/post/${id}/${title}`}>
+              <Link to={`/post/${slug}`}>
                 <AdThumbnail
                   key={uid()}
-                  postId={id}
-                  imageSrc={imgPath ? imageUrl : defaultImage}
+                  postId={postId}
+                  imageSrc={imagesUrl.length ? imagesUrl[0] : defaultImage}
                   adTitle={title}
                   adPrice={price}
                   adLocation={location}

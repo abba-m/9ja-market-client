@@ -3,7 +3,6 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-  Center,
   HStack,
   Menu,
   MenuButton,
@@ -14,14 +13,16 @@ import {
   useMediaQuery,
 } from "@chakra-ui/react";
 import { BsList } from "react-icons/bs";
-import { v4 } from "uuid";
+import ShortUniqueId from "short-unique-id";
+
+const uid = new ShortUniqueId({ length: 5 });
 
 const categoriesList = [
-  { id: v4(), categoryName: "Properties" },
-  { id: v4(), categoryName: "Phones & Accessories" },
-  { id: v4(), categoryName: "Autos and Spare Parts" },
-  { id: v4(), categoryName: "Electronics" },
-  { id: v4(), categoryName: "Fashion" },
+  { id: uid(), categoryName: "Properties" },
+  { id: uid(), categoryName: "Phones & Accessories" },
+  { id: uid(), categoryName: "Autos and Spare Parts" },
+  { id: uid(), categoryName: "Electronics" },
+  { id: uid(), categoryName: "Fashion" },
 ];
 
 export const CategoryPill = ({ category, isLastChild, spacing, separator }) => (

@@ -3,7 +3,7 @@ import { Box, Image, Text } from "@chakra-ui/react";
 import { formatAmount } from "utils/format";
 import { BsBookmarkHeartFill, BsBookmarkHeart } from "react-icons/bs";
 
-function AdThumbnail({ imageSrc, adTitle, postId, adPrice, adLocation }) {
+function AdThumbnail({ imageSrc, adTitle, postId, adPrice, adLocation, hideSaveBtn = false }) {
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   return (
@@ -45,11 +45,11 @@ function AdThumbnail({ imageSrc, adTitle, postId, adPrice, adLocation }) {
             justifyContent="flex-end"
             h={["1rem"]}
             w={["1rem"]}>
-            {isBookmarked ? (
+            {!hideSaveBtn ? isBookmarked ? (
               <BsBookmarkHeartFill size="100%" color="#00CC88" />
             ) : (
               <BsBookmarkHeart size="100%" color="#00CC88" />
-            )}
+            ) : null}
           </Box>
         </Box>
       </Box>

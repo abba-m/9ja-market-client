@@ -1,24 +1,18 @@
-import { Avatar, AvatarBadge, Box, Divider, Text } from "@chakra-ui/react";
+import { Avatar, AvatarBadge, Box, Divider, Spinner, Text, useToast } from "@chakra-ui/react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
 
 import { Rating } from "react-simple-star-rating";
 import { FiCamera } from "react-icons/fi";
-import { stringify } from "qs";
 
 function UserProfileNav() {
   const rating = 3;
-  const [userAvatarUrl] = useState(""); //TODO: please remove
+  const token = localStorage.getItem("token");
+  const toast = useToast();
   const imagePicker = useRef();
   const { pathname } = useLocation();
-
-  const populateQuery = stringify({
-    populate: "*",
-    //sort: ["createdAt:desc"]
-  }, {
-    encodeValuesOnly: true,
-  });
+  const [isLoadingProfilechange, setIsLoadingProfileChange] = useState(false);
 
 
   const { currentUser } = useSelector((state) => ({
@@ -27,19 +21,45 @@ function UserProfileNav() {
 
   const isProfileIndex = pathname === "/profile"
 
-
   const handleChangeProfile = async (e) => {
-    //TODO: submit user profile picture
-    console.log("Changing...", e.target.files);
+    setIsLoadingProfileChange(true);
+    //TODO: implement loading component
+    const file = e.target.files[0];
 
-    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/5?${populateQuery}`, {
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem("token")}`
+    const formData = new FormData();
+    formData.append(`avatar`, file);
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/upload/`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+        body: formData
+      });
+      const data = await response.json();
+      if (data[0] === 1) {
+        toast({
+          position: "top",
+          title: "Profile photo updated",
+          status: "info",
+          isClosable: true,
+        });
+        setIsLoadingProfileChange(false);
       }
-    });
 
-    const datum = await res.json()
-    console.log("[datum]:", datum)
+    } catch (err) {
+      console.log(err);
+      setIsLoadingProfileChange(false);
+      toast({
+        position: "top",
+        title: "Upload failed. Try again later.",
+        status: "error",
+        isClosable: true,
+      })
+    }
+
+
 
   }
 
@@ -60,13 +80,13 @@ function UserProfileNav() {
     <Box w="25%" display="flex" flexDirection="column" pl="4">
       {/* avatar section */}
       <Box mb="3">
-        <Avatar size="xl" name={currentUser?.fullName || "New User"} src={userAvatarUrl}>
+        <Avatar size="xl" name={currentUser?.fullName || "New User"} src={currentUser.avatarUrl}>
           <AvatarBadge boxSize="1em" bg="white">
-            <FiCamera color="#00CC88" onClick={() => imagePicker.current.click()} />
+            {isLoadingProfilechange ? <Spinner color="blue.900" /> : <FiCamera color="#00CC88" onClick={() => imagePicker.current.click()} />}
           </AvatarBadge>
         </Avatar>
         <Text my={2} wordBreak="keep-all" casing="capitalize">
-          <b>@{currentUser?.username || ""}</b>
+          <b>{currentUser?.fullName || ""}</b>
         </Text>
         <input type="file" ref={imagePicker} onChange={handleChangeProfile} style={{ display: "none" }} accept="image/png, image/jpg" />
 
