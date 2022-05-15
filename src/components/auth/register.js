@@ -22,8 +22,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "store/actions"
 
 
 /** components */
@@ -37,6 +39,7 @@ import { sendRequest } from "utils/connection";
 export default function Register({ isOpen, onClose, openLogin }) {
   const initialRef = useRef();
   const toast = useToast();
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
 
 
@@ -71,7 +74,7 @@ export default function Register({ isOpen, onClose, openLogin }) {
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
   const handleRegister = async (data) => {
-    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/auth/local/register`, {
+    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -92,7 +95,7 @@ export default function Register({ isOpen, onClose, openLogin }) {
     if (value && value?.error) {
       return toast({
         position: "top",
-        title: `${value?.error?.message || "Register failed"}.`,
+        title: `${value?.message || "Register failed"}.`,
         status: "error",
         isClosable: true,
       });
@@ -100,11 +103,12 @@ export default function Register({ isOpen, onClose, openLogin }) {
 
 
     if (value && value?.user) {
+      dispatch(loginSuccess(value))
       handleClose();
       toast({
         position: "top",
         title: "Account created.",
-        description: "Your account has been created! Please check your inbox to confirm your email and sign in.",
+        description: "Please check your inbox to confirm your email.",
         status: "info",
         duration: 9000,
         isClosable: true,
@@ -156,21 +160,20 @@ export default function Register({ isOpen, onClose, openLogin }) {
               </FormErrorMessage>
             </FormControl>
 
-            <FormControl mb={8} isInvalid={errors.username}>
+            <FormControl mb={8} isInvalid={errors.phone}>
               <Input
-                type="text"
+                type="tel"
                 w="100%"
-                name="username"
-                {...register("username", {
-                  required: "Username is required for sign up",
-                  pattern: { value: /^\S*$/, message: "No whitespaces allowed in username." },
+                name="phone"
+                {...register("phone", {
+                  required: "phone number is required for sign up",
                 })}
                 bg="#FAF3F391"
-                placeholder="Username"
+                placeholder="Phone"
               />
 
               <FormErrorMessage>
-                {errors.email && errors.username.message}
+                {errors.phone && errors.phone.message}
               </FormErrorMessage>
             </FormControl>
 

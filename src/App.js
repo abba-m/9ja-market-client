@@ -20,10 +20,9 @@ import NotFound from "components/404notFound";
 import PostAd from "pages/postAd/postAd";
 
 /** Actions */
-import { userLoaded } from "store/actions";
+import { userLoaded, authError } from "store/actions";
 /** Queries */
 import { sendRequest } from "utils/connection";
-import { stringify } from "qs";
 import GoogleAuthRedirect from "components/auth/googleAuthRedirect";
 import SingleAdPage from "pages/singleAdPage/singleAdPage";
 
@@ -32,15 +31,10 @@ function App() {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false)
   const token = localStorage.getItem('token');
-  const populateQuery = stringify({
-    populate: "*",
-  }, {
-    encodeValuesOnly: true,
-  });
 
   const getLoggedInUser = async () => {
     setIsLoading(true);
-    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/me?${populateQuery}`, {
+    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`
       },
@@ -58,8 +52,11 @@ function App() {
 
     const data = await res.json()
 
-    if (data && data?.error) {
-      console.log(data.error)
+    if (data && (data?.Error || data.error)) {
+      const error = data.Error ? data.Error : data.error;
+      dispatch(authError(error.message ?? "something went wrong"))
+      console.log(error);
+      return
       //TODO: find a better approach
       // return toast({
       //   position: "top",
@@ -95,7 +92,7 @@ function App() {
         <Box>
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/post/:id/:title" element={<SingleAdPage />} />
+            <Route path="/post/:slug" element={<SingleAdPage />} />
             <Route path="/new-post" element={<PostAd />} />
             <Route path="/profile" element={<UserProfile />}>
               <Route index element={<ProfileView />} />
