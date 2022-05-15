@@ -1,121 +1,180 @@
+import { ArrowBackIcon } from "@chakra-ui/icons";
 import {
   Button,
   Box,
   FormControl,
-  FormErrorMessage,
   Input,
-  InputGroup,
   Center,
-  Text
+  Text,
+  useToast
 } from "@chakra-ui/react";
-import { useRef } from "react";
-import { useForm } from "react-hook-form";
+import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { sendRequest } from "utils/connection";
 
+function UpdatePassword() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const toast = useToast()
+  const navigate = useNavigate();
+  const newPasswordRef = useRef();
+  const resetCodeRef = useRef();
+  const confirmNewPasswordRef = useRef();
+  const token = localStorage.getItem("token");
 
+  const handleSubmit = async (e) => {
+    if (isSubmitting) {
+      return;
+    }
+    e.preventDefault();
 
-const UpdatePassword = () => {
-  const {
-    handleSubmit,
-    register,
-    watch,
-    formState: { errors, isSubmitting },
-  } = useForm();
-  const newPassword = useRef({});
-  newPassword.current.value = watch("newPassword", "");
+    setIsSubmitting(true);
+    const resetCode = resetCodeRef.current.value
+    const newPassword = newPasswordRef.current.value
+    const confirmNewPassword = confirmNewPasswordRef.current.value
 
+    if (!resetCode || !newPassword || !confirmNewPassword) {
+      setIsSubmitting(false);
+      return toast({
+        position: "top",
+        title: "All fields are required.",
+        status: "error",
+        isClosable: true,
+      })
+    }
 
+    if (newPassword !== confirmNewPassword) {
+      setIsSubmitting(false);
+      return toast({
+        position: "top",
+        title: "Passwords do not match",
+        status: "error",
+        isClosable: true,
+      })
+    }
 
-  const handlePasswordReset = () => {
-    console.log("success two")
+    const reqData = {
+      resetCode,
+      password: newPassword,
+    }
+
+    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/auth/update-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(reqData),
+    }))
+
+    if (error) {
+      setIsSubmitting(false);
+      toast({
+        position: "top",
+        title: error.title ?? "Something is wrong! Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+      return
+    }
+
+    const data = await res.json();
+
+    if (data.error) {
+      setIsSubmitting(false);
+      return toast({
+        position: "top",
+        title: data.error.message ?? "Something is wrong! Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+    }
+
+    toast({
+      position: "top",
+      title: data.message ?? "Request successful.",
+      status: "success",
+      isClosable: true,
+    })
+    setIsSubmitting(false);
+    resetCodeRef.current.value = "";
+    newPasswordRef.current.value = "";
+    confirmNewPasswordRef.current.value = "";
+    navigate("/", {
+      state: {
+        openLogin: true,
+      }
+    })
+
   }
 
   return (
-    <Box
-      w="70vh"
-      m="100px auto"
-      p="30px"
-      borderRadius="6px"
-      border="1px solid gray">
-      <Text
-        textAlign="center"
-        pb="2"
-        mb="6"
-        fontSize="1.5rem"
-        color="green.500">
-        Proceed to change password
-      </Text>
+    <>
+      <Box w="100%" display="flex" justifyContent="flex-start">
+        <Button onClick={() => navigate("/reset-password")} leftIcon={<ArrowBackIcon />} variant='primaryOutline'>
+          Prev page
+        </Button>
+      </Box>
+      <Box
+        w={["80%", "70%", "50%"]}
+        m="70px auto"
+        p={4}
+        borderRadius="6px"
+        border="1px solid gray">
+        <Text
+          textAlign="center"
+          pb="2"
+          mb="6"
+          fontSize="1.5rem"
+          color="green.500">
+          Change password
+        </Text>
 
-      <form>
-        <FormControl mb="6" isInValid={errors.OTP}>
-          <Input
-            type="text"
-            name="OTP"
-            w="100%"
-            placeholder="Enter validation code sent to mail"
-            {...register("OTP", {
-              required: "Enter the One Times Password sent to your Email"
-            })}
-            bg="#FAF3F391"
+        <form onSubmit={handleSubmit}>
+          <FormControl mb="6" isRequired>
+            <Input
+              type="text"
+              ref={resetCodeRef}
+              name="resetCode"
+              w="100%"
+              placeholder="Enter reset code sent to email"
+              bg="#FAF3F391"
+            />
+          </FormControl>
 
-          />
-          <FormErrorMessage>
-            {errors.OTP && errors.OTP.message}
-          </FormErrorMessage>
+          <FormControl mb="6" isRequired>
+            <Input
+              type="password"
+              ref={newPasswordRef}
+              name="newPassword"
+              w="100%"
+              placeholder="Enter new password"
+              bg="#FAF3F391"
+            />
 
-        </FormControl>
-
-        <FormControl mb="6" isInValid={errors.newPassword}>
-          <Input
-            ref={newPassword}
-            type="password"
-            name="newPassword"
-            w="100%"
-            placeholder="Enter new password"
-            {...register("newPassword", {
-              required: "You must specify a new password",
-              minLength: {
-                value: 8,
-                message: "Password must have at least 8 characters"
-              }
-            })}
-            bg="#FAF3F391"
-
-          />
-          <FormErrorMessage>
-            {errors.newPassword && errors.newPassword.message}
-          </FormErrorMessage>
-
-        </FormControl>
-        <FormControl mb="6" isInValid={errors.confirmNewPassword}>
-          <Input
-            type="password"
-            name="confirmNewPassword"
-            w="100%"
-            placeholder="confirm new password"
-            {...register("confirmNewPassword", {
-              validate: value =>
-                value === newPassword.current.value || "The passwords do not match"
-            })}
-            bg="#FAF3F391"
-
-          />
-          <FormErrorMessage>
-            {errors.confirmNewPassword && errors.confirmNewPassword.message}
-          </FormErrorMessage>
-
-        </FormControl>
-        <Center>
-          <Button
-            w="50%"
-            type="submit"
-            isLoading={isSubmitting}
-            mb="o"
-            variant="primary"
-          >submit
-          </Button>
-        </Center>
-      </form>
-    </Box>
+          </FormControl>
+          <FormControl mb="6" isRequired>
+            <Input
+              type="password"
+              ref={confirmNewPasswordRef}
+              name="confirmNewPassword"
+              w="100%"
+              placeholder="Confirm new password"
+              bg="#FAF3F391"
+            />
+          </FormControl>
+          <Center>
+            <Button
+              w="50%"
+              type="submit"
+              isLoading={isSubmitting}
+              mb="o"
+              variant="primary"
+            >submit
+            </Button>
+          </Center>
+        </form>
+      </Box>
+    </>
 
   )
 };
