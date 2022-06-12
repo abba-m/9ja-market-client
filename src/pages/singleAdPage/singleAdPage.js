@@ -19,6 +19,7 @@ export default function SingleAdPage() {
   ]);
 
   const getPost = async () => {
+    //TODO: use react query
     setIsLoading(true)
     try {
       const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts/${slug}`);
