@@ -8,6 +8,7 @@ import TestPage from "pages/testPage/testPage";
 /** Nav Bar */
 import NavBar from "components/appNavBar/appNavBar";
 /** User profile views */
+import Chat from "pages/messages/chat"
 import UserProfile from "pages/userProfile/userProfile";
 import FavoritesView from "pages/userProfile/views/favorites";
 import NotificationsVeiw from "pages/userProfile/views/notifications";
@@ -92,6 +93,7 @@ function App() {
         <Box>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/chat" element={<Chat />} />
             <Route path="/post/:slug" element={<SingleAdPage />} />
             <Route path="/new-post" element={<PostAd />} />
             <Route path="/profile" element={<UserProfile />}>
