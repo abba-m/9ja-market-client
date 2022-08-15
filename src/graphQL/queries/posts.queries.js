@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const getAllPostsThumbnail = gql`
-    query {
+  query {
     posts {
       data {
         id

@@ -1,4 +1,11 @@
-import { Box, Container, Heading, Spinner, useMediaQuery, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Heading,
+  Spinner,
+  useMediaQuery,
+  useToast,
+} from "@chakra-ui/react";
 
 import { Suspense, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -20,66 +27,90 @@ export default function SingleAdPage() {
 
   const getPost = async () => {
     //TODO: use react query
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts/${slug}`);
+      const res = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/posts/${slug}`
+      );
       const data = await res.json();
 
       if (data && data?.error) {
         setIsLoading(false);
-        console.log("[GetPostError]:", data.error)
+        console.log("[GetPostError]:", data.error);
       }
 
-      setPostToDisplay(data)
+      setPostToDisplay(data);
       setIsLoading(false);
     } catch (err) {
       toast({
         position: "top",
-        title: `Failed to load post`,
+        title: "Failed to load post",
         status: "error",
         isClosable: true,
       });
-      setIsLoading(false)
-      console.log(err)
+      setIsLoading(false);
+      console.log(err);
     }
-
-  }
+  };
 
   useEffect(() => {
-    getPost()
-  }, [])
+    getPost();
+  }, []);
 
   useEffect(() => {
     if (postToDisplay.images) {
-      const imagesUrls = postToDisplay.images.split(",").map(url => ({ image: url }));
+      const imagesUrls = postToDisplay.images
+        .split(",")
+        .map((url) => ({ image: url }));
       setPostImages(imagesUrls);
     }
-  }, [postToDisplay])
+  }, [postToDisplay]);
 
   if (isLoading) {
     return (
-      <Box h="100vh" w="100vw" display="flex" alignItems="center" justifyContent="center">
-        <Spinner color="primary" thickness="5px" size='xl' />
+      <Box
+        h="100vh"
+        w="100vw"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Spinner color="primary" thickness="5px" size="xl" />
       </Box>
-    )
+    );
   }
 
   return (
     <Suspense fallback={<Spinner />}>
-      <Container maxWidth={["100%", "90vw"]}
+      <Container
+        maxWidth={["100%", "90vw"]}
         h="calc(100vh - 80px)"
-        justifyContent="center">
-        <Heading my={3} > {postToDisplay ? postToDisplay?.title : "Loading title..."}</Heading>
+        justifyContent="center"
+      >
+        <Heading my={3}>
+          {" "}
+          {postToDisplay ? postToDisplay?.title : "Loading title..."}
+        </Heading>
         {/* <Heading>Hello iPhone 13</Heading> */}
-        <Box display="flex" mx="auto" flexDirection={isLargeScreen ? "row" : "column"} gap={4} flexWrap="wrap">
+        <Box
+          display="flex"
+          mx="auto"
+          flexDirection={isLargeScreen ? "row" : "column"}
+          gap={4}
+          flexWrap="wrap"
+        >
+          <Box>{postImages.length && <ImagesCarousel data={postImages} />}</Box>
           <Box>
-            {postImages.length && <ImagesCarousel data={postImages} />}
-          </Box>
-          <Box>
-            {postToDisplay.title && <AdContactCard price={postToDisplay.price} fullName={postToDisplay?.User.fullName} dateJoined={formatDateJoined(postToDisplay?.User?.createdAt)} />}
+            {postToDisplay.title && (
+              <AdContactCard
+                price={postToDisplay.price}
+                fullName={postToDisplay?.User.fullName}
+                dateJoined={formatDateJoined(postToDisplay?.User?.createdAt)}
+              />
+            )}
           </Box>
         </Box>
-      </Container >
+      </Container>
     </Suspense>
   );
 }

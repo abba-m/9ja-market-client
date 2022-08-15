@@ -8,7 +8,9 @@ export default function AdContactCard(props) {
     "(max-width: 480px)",
   ]);
 
-  return (
-    isLargeScreen ? <AdContactCardBig {...props} /> : <AdContactCardSmall {...props} />
-  )
+  return isLargeScreen ? (
+    <AdContactCardBig {...props} />
+  ) : (
+    <AdContactCardSmall {...props} />
+  );
 }

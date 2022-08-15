@@ -6,4 +6,4 @@ export {
   logoutSuccess,
   userLoaded,
   userLoading,
-} from "./authActions"
+} from "./authActions";

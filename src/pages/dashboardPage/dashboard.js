@@ -14,17 +14,21 @@ import { Link } from "react-router-dom";
 import ShortUniqueId from "short-unique-id";
 import CategoriesGrid from "components/categoriesGrid/categoriesGrid";
 import AdThumbnail from "components/adThumbnail/adThumbnail";
-import { sendRequest } from "utils/connection";
-import defaultImage from "assets/images/defaultImage.jpeg"
+import { getRequest } from "services/request";
+import defaultImage from "assets/images/defaultImage.jpeg";
+import { useQuery } from "@tanstack/react-query";
 
 function Dashboard({ showLogin }) {
   const uid = new ShortUniqueId({ length: 5 });
-  const [postsToDisplay, setPostsToDisplay] = useState([]);
-  const [isLoading, setIsLoading] = useState(false)
-  //TODO: get All posts 
-  //const [allPosts,  setAllPosts] = useState([]);
+
   const { state } = useLocation();
-  const { displayLoginForm } = useSelector((state) => ({ displayLoginForm: state.auth.displayLoginForm }));
+  const { displayLoginForm } = useSelector((state) => ({
+    displayLoginForm: state.auth.displayLoginForm,
+  }));
+
+  // React query fetch All posts { NOTE: Remember to paginate }
+  const getLatestPosts = async () => getRequest("api/posts");
+  const { isLoading, isError, data } = useQuery(["ALL_POSTS"], getLatestPosts);
 
   useEffect(() => {
     if (state && state?.openLogin) {
@@ -34,45 +38,45 @@ function Dashboard({ showLogin }) {
     }
   }, []);
 
-  const getLatestPosts = async () => {
-    setIsLoading(true);
-    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts`));
-
-    if (error) {
-      console.log("[getPostsError]:", error);
-      setIsLoading(false);
-      return
-    }
-
-    const data = await res.json()
-    if (data) {
-      setPostsToDisplay(data);
-    }
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    getLatestPosts();
-  }, []);
-
   if (isLoading) {
     return (
-      <Box h="100vh" w="100vw" display="flex" alignItems="center" justifyContent="center">
-        <Spinner color="primary" thickness="5px" size='xl' />
+      <Box
+        h="100vh"
+        w="100vw"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Spinner color="primary" thickness="5px" size="xl" />
       </Box>
-    )
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box
+        h="100vh"
+        w="100vw"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Heading>Somthing went wrong...</Heading>
+      </Box>
+    );
   }
 
   return (
     <Container
       maxWidth={["100%", "90vw"]}
       h="calc(100vh - 80px)"
-      justifyContent="center">
+      justifyContent="center"
+    >
       <CategoriesGrid />
       <Heading my={3}>Latest Ads</Heading>
       <SimpleGrid columns={[2, 3, 4, 5]} spacing={4}>
-        {
-          postsToDisplay.length !== 0 && postsToDisplay.map(({ postId, images, title, price, location, slug }) => {
+        {data?.data.length ? (
+          data?.data.map(({ postId, images, title, price, location, slug }) => {
             //TODO: optimize images
             const imagesUrl = images.split(",");
 
@@ -87,10 +91,11 @@ function Dashboard({ showLogin }) {
                   adLocation={location}
                 />
               </Link>
-            )
+            );
           })
-        }
-        {!postsToDisplay.length && <Text my={4} >No ads yet.</Text>}
+        ) : (
+          <Text my={4}>No ads yet.</Text>
+        )}
       </SimpleGrid>
       <Heading my={4}>All Ads</Heading>
       <SimpleGrid columns={[2, 3, 4, 5]} spacing={4}>
@@ -151,12 +156,6 @@ function Dashboard({ showLogin }) {
           key={uid()}
         />
       </SimpleGrid>
-      {/* <Text>Hello from Dashboard</Text>
-      <Link to="/test">
-        <Button mt={4} variant="primary">
-          Goto Test
-        </Button>
-      </Link> */}
     </Container>
   );
 }

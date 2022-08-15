@@ -1,10 +1,15 @@
-import { ApolloClient, ApolloLink, from, HttpLink, InMemoryCache, } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloLink,
+  from,
+  HttpLink,
+  InMemoryCache,
+} from "@apollo/client";
 import { createUploadLink } from "apollo-upload-client";
 import { onError } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
 
 //import { useDispatch } from "react-redux";
-
 
 export default function CreateClient() {
   // const dispatch = useDispatch();
@@ -34,7 +39,6 @@ export default function CreateClient() {
       //TODO: handle errors properly
       //dispatch(setError("[networkError]", networkError))
       console.log("[Network error]: ", networkError);
-
     }
   });
 
@@ -57,12 +61,13 @@ export default function CreateClient() {
     //retryLink,
     //afterwareLink,
     createUploadLink({
-      uri: `${process.env.REACT_APP_SERVER_URL}/graphql`, headers: token
+      uri: `${process.env.REACT_APP_SERVER_URL}/graphql`,
+      headers: token
         ? {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         }
-        : {}
-    })
+        : {},
+    }),
   ]);
 
   return new ApolloClient({

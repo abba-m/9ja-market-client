@@ -18,9 +18,9 @@ import ReviewsView from "pages/userProfile/views/reviews";
 import SettingsView from "pages/userProfile/views/settings";
 import NotFound from "components/404notFound";
 import PostAd from "pages/postAd/postAd";
-import ResetPassword from "pages/resetPasswordPage/resetPassword"
+import ResetPassword from "pages/resetPasswordPage/resetPassword";
 import UpdatePassword from "pages/resetPasswordPage/updatePassword";
-import ProfilePage from "pages/ProfilePage"
+import ProfilePage from "pages/ProfilePage";
 
 /** Actions */
 import { userLoaded, authError } from "store/actions";
@@ -32,19 +32,21 @@ import SingleAdPage from "pages/singleAdPage/singleAdPage";
 function App() {
   const dispatch = useDispatch();
   const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false)
-  const token = localStorage.getItem('token');
+  const [isLoading, setIsLoading] = useState(false);
+  const token = localStorage.getItem("token");
 
   const getLoggedInUser = async () => {
     setIsLoading(true);
-    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-    }));
+    const [res, error] = await sendRequest(
+      fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    );
 
     if (error) {
-      console.log(error)
+      console.log(error);
       return toast({
         position: "top",
         title: "Something is wrong! Please try again.",
@@ -53,13 +55,13 @@ function App() {
       });
     }
 
-    const data = await res.json()
+    const data = await res.json();
 
     if (data && (data?.Error || data.error)) {
       const error = data.Error ? data.Error : data.error;
-      dispatch(authError(error.message ?? "something went wrong"))
+      dispatch(authError(error.message ?? "something went wrong"));
       console.log(error);
-      return
+      return;
       //TODO: find a better approach
       // return toast({
       //   position: "top",
@@ -72,19 +74,18 @@ function App() {
     if (data) {
       dispatch(userLoaded(data));
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     getLoggedInUser();
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (isLoading) {
-      return <Spinner />
+      return <Spinner />;
     }
-  }, [isLoading])
-
+  }, [isLoading]);
 
   return (
     <Router>
@@ -106,7 +107,10 @@ function App() {
               <Route path="reviews" element={<ReviewsView />} />
               <Route path="notifications" element={<SettingsView />} />
             </Route>
-            <Route path="/connect/google/callback" element={<GoogleAuthRedirect />} />
+            <Route
+              path="/connect/google/callback"
+              element={<GoogleAuthRedirect />}
+            />
             <Route path="/test" element={<TestPage />} />
             <Route path="/profilePage" element={<ProfilePage />} />
             <Route path="/reset-password" element={<ResetPassword />} />
@@ -116,7 +120,6 @@ function App() {
         </Box>
       </Box>
     </Router>
-
   );
 }
 

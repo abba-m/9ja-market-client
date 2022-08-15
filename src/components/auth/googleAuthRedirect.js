@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import { useToast } from '@chakra-ui/react';
-import { useDispatch } from 'react-redux';
-import { loginSuccess } from 'store/actions';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect } from "react";
+import { useToast } from "@chakra-ui/react";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "store/actions";
+import { useNavigate, useLocation } from "react-router-dom";
 import { sendRequest } from "utils/connection";
 
 export default function GoogleAuthRedirect(props) {
@@ -11,9 +11,12 @@ export default function GoogleAuthRedirect(props) {
   const toast = useToast();
   const dispatch = useDispatch();
 
-
   const processRequest = async () => {
-    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/auth/google/callback/${location.search}`))
+    const [res, error] = await sendRequest(
+      fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/auth/google/callback/${location.search}`
+      )
+    );
 
     if (error) {
       toast({
@@ -22,27 +25,25 @@ export default function GoogleAuthRedirect(props) {
         status: "error",
         isClosable: true,
       });
-      navigate("/")
+      navigate("/");
     }
 
     const data = await res.json();
     if (data) {
-      dispatch(loginSuccess(data))
+      dispatch(loginSuccess(data));
       toast({
         position: "top",
         title: "Login successful!.",
         status: "info",
         isClosable: true,
-      })
-      navigate("/")
+      });
+      navigate("/");
     }
-  }
+  };
 
   useEffect(() => {
     processRequest();
-  }, [])
+  }, []);
 
-  return (
-    <div>Please wait...</div>
-  )
+  return <div>Please wait...</div>;
 }

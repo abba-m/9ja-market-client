@@ -11,7 +11,12 @@ import ShortUniqueId from "short-unique-id";
 import { setSubmitPostFunction } from "store/actions";
 
 function PreviewAd() {
-  const { handleForm: { getValues, reset }, imagesPreviewState: [images, setImages], currentImagesState: [currentImages, setCurrentImages], selectedCategoryState: [selectedCategory, setSelectedCategory] } = useContext(PostAdContext);
+  const {
+    handleForm: { getValues, reset },
+    imagesPreviewState: [images, setImages],
+    currentImagesState: [currentImages, setCurrentImages],
+    selectedCategoryState: [selectedCategory, setSelectedCategory],
+  } = useContext(PostAdContext);
   const dispatch = useDispatch();
   const toast = useToast();
   const values = getValues();
@@ -24,55 +29,56 @@ function PreviewAd() {
     const errors = [];
     console.log("Validating inputs...");
 
-
     if (!selectedCategory) {
       errors.push("Please select a catogery and add details");
-      return errors
+      return errors;
     }
 
     if (Object.values(values).some((val) => !val)) {
-      errors.push("All Post details are required")
+      errors.push("All Post details are required");
     }
 
     if (!images.length || images.length < 3) {
-      errors.push("Please add at least 3 image")
+      errors.push("Please add at least 3 image");
     }
 
     //TODO: Add more validations...
 
-    return errors
-  }
+    return errors;
+  };
 
   const handleSubmit = async (callback, step) => {
-    if (isLoading) return
+    if (isLoading) return;
 
-    setIsloading(true)
+    setIsloading(true);
 
-    const errors = validateInputs()
+    const errors = validateInputs();
     if (errors.length) {
-      errors.forEach(err => toast({
-        position: "top",
-        title: err,
-        status: "error",
-        isClosable: true,
-      }))
-      setIsloading(false)
-      return
-    };
+      errors.forEach((err) =>
+        toast({
+          position: "top",
+          title: err,
+          status: "error",
+          isClosable: true,
+        })
+      );
+      setIsloading(false);
+      return;
+    }
     console.log("Submitting form....");
 
     //values.userId = currentUserId;
     values.category = selectedCategory;
-    values.price = Number(values.price)
+    values.price = Number(values.price);
 
-    const postFormData = new FormData()
+    const postFormData = new FormData();
 
     for (const i in imagesToBeUploaded) {
-      const current = imagesToBeUploaded[i]
-      postFormData.append(`images`, current, current?.name)
+      const current = imagesToBeUploaded[i];
+      postFormData.append("images", current, current?.name);
     }
 
-    postFormData.append("data", JSON.stringify(values))
+    postFormData.append("data", JSON.stringify(values));
 
     try {
       const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts`, {
@@ -80,13 +86,13 @@ function PreviewAd() {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        body: postFormData
-      })
+        body: postFormData,
+      });
 
-      const data = await res.json()
+      const data = await res.json();
 
       if (data.error) {
-        throw new Error(data)
+        throw new Error(data);
       }
 
       //console.log("[datum]:", data)
@@ -97,7 +103,6 @@ function PreviewAd() {
         isClosable: true,
       });
 
-
       //reset all fields
       reset();
       setImages([]);
@@ -105,16 +110,15 @@ function PreviewAd() {
       setSelectedCategory("");
       callback(step);
       setIsloading(false);
-
     } catch (err) {
       //TODO: display error properly
-      alert(`${err?.status || "Something went wrong."} Please try again.`)
-      console.log("[createPostError]:", err || "Something went wrong.")
+      alert(`${err?.status || "Something went wrong."} Please try again.`);
+      console.log("[createPostError]:", err || "Something went wrong.");
     }
-  }
+  };
 
   useEffect(() => {
-    dispatch(setSubmitPostFunction(handleSubmit))
+    dispatch(setSubmitPostFunction(handleSubmit));
 
     currentImages.forEach((current) => {
       for (const i in current) {
@@ -124,24 +128,45 @@ function PreviewAd() {
         }
       }
     });
-  }, [])
+  }, []);
 
   return (
     <Box w="50" h="85%" overflowY="auto" px={4}>
-      {Object.entries(values).map(value => (
+      {Object.entries(values).map((value) => (
         <Box my={3}>
-          <Text fontSize="sm" fontWeight="bold" casing="capitalize" color="primary">{value[0]}</Text>
-          <Text fontSize="sm">{value[0] === "price" ? formatAmount(value[1]) : value[1]}</Text>
+          <Text
+            fontSize="sm"
+            fontWeight="bold"
+            casing="capitalize"
+            color="primary"
+          >
+            {value[0]}
+          </Text>
+          <Text fontSize="sm">
+            {value[0] === "price" ? formatAmount(value[1]) : value[1]}
+          </Text>
         </Box>
       ))}
       <Divider />
       <Box mt={3}>
-        <Text fontSize="md" mb={2} fontWeight="bold" casing="capitalize" color="primary">Images</Text>
-        {images.length === 0 ? <Text color="gray.400">No images selected</Text> :
+        <Text
+          fontSize="md"
+          mb={2}
+          fontWeight="bold"
+          casing="capitalize"
+          color="primary"
+        >
+          Images
+        </Text>
+        {images.length === 0 ? (
+          <Text color="gray.400">No images selected</Text>
+        ) : (
           <Box display="flex" gap={3} flexWrap="wrap">
-            {images.map((value) => <Image key={uid()} src={value} h={150} w={150} />)}
+            {images.map((value) => (
+              <Image key={uid()} src={value} h={150} w={150} />
+            ))}
           </Box>
-        }
+        )}
       </Box>
     </Box>
   );

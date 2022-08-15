@@ -10,29 +10,28 @@ import {
 import { useState, useEffect } from "react";
 import FormView from "./postAd.formView";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from 'react-redux'
+import { useSelector } from "react-redux";
 
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import { PostAdProvider } from "providers/postAdProvider";
-
 
 export default function PostAd() {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
 
-  const { submitPost } = useSelector((state) => ({ submitPost: state.posts.createPost }))
+  const { submitPost } = useSelector((state) => ({
+    submitPost: state.posts.createPost,
+  }));
 
   useEffect(() => {
     if (!localStorage.getItem("token")) {
       navigate("/", {
         state: {
           openLogin: true,
-        }
-      })
+        },
+      });
     }
-  }, [])
-
-
+  }, []);
 
   const pageTitles = {
     1: "Category",
@@ -41,14 +40,13 @@ export default function PostAd() {
     4: "Preview Ad",
   };
 
-
   const handleNext = () => {
     if (step >= 4) {
-      if (typeof submitPost === 'function') {
+      if (typeof submitPost === "function") {
         submitPost(setStep, 1);
       }
-      return
-    };
+      return;
+    }
     setStep(step + 1);
   };
   const handlePrevious = () => {
@@ -61,13 +59,15 @@ export default function PostAd() {
       <Container
         maxWidth={["100%", "90vw"]}
         h="calc(100vh - 80px)"
-        justifyContent="center">
+        justifyContent="center"
+      >
         <HStack justifyContent="space-between" spacing={6} my={2}>
           <Button
             variant="primaryOutline"
             disabled={step === 1}
             size="sm"
-            onClick={handlePrevious}>
+            onClick={handlePrevious}
+          >
             <AiOutlineArrowLeft style={{ marginRight: ".5rem" }} /> Back
           </Button>
           {/* <Center> */}

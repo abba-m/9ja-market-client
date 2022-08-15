@@ -17,7 +17,6 @@ export function InputComponent({
   register,
   errors,
 }) {
-
   return (
     <FormControl mb={6} isInvalid={errors[name]}>
       <FormLabel htmlFor={name}>{label}</FormLabel>
@@ -52,7 +51,8 @@ export function SelectComponent({
         id={name}
         name={name}
         placeholder={placeholder}
-        {...register(name)}>
+        {...register(name)}
+      >
         {options.map((value) => (
           <option key={uid()}>{value}</option>
         ))}

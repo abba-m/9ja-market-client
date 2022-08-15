@@ -33,7 +33,8 @@ export default function SearchBox() {
       bg="whiteAlpha.900"
       p="4"
       width={["100%", "80%"]}
-      shadow="md">
+      shadow="md"
+    >
       <Box display="flex" alignItems="center" gap="0.5rem">
         <BsList color="primary" size="1.5rem" display={hideOnMobile} />
         <Select placeholder="Select categories" variant="unstyled">

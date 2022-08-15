@@ -6,7 +6,7 @@ import {
   Input,
   Center,
   Text,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ import { sendRequest } from "utils/connection";
 
 function UpdatePassword() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const toast = useToast()
+  const toast = useToast();
   const navigate = useNavigate();
   const newPasswordRef = useRef();
   const resetCodeRef = useRef();
@@ -28,9 +28,9 @@ function UpdatePassword() {
     e.preventDefault();
 
     setIsSubmitting(true);
-    const resetCode = resetCodeRef.current.value
-    const newPassword = newPasswordRef.current.value
-    const confirmNewPassword = confirmNewPasswordRef.current.value
+    const resetCode = resetCodeRef.current.value;
+    const newPassword = newPasswordRef.current.value;
+    const confirmNewPassword = confirmNewPasswordRef.current.value;
 
     if (!resetCode || !newPassword || !confirmNewPassword) {
       setIsSubmitting(false);
@@ -39,7 +39,7 @@ function UpdatePassword() {
         title: "All fields are required.",
         status: "error",
         isClosable: true,
-      })
+      });
     }
 
     if (newPassword !== confirmNewPassword) {
@@ -49,22 +49,24 @@ function UpdatePassword() {
         title: "Passwords do not match",
         status: "error",
         isClosable: true,
-      })
+      });
     }
 
     const reqData = {
       resetCode,
       password: newPassword,
-    }
+    };
 
-    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/auth/update-password`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(reqData),
-    }))
+    const [res, error] = await sendRequest(
+      fetch(`${process.env.REACT_APP_SERVER_URL}/auth/update-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(reqData),
+      })
+    );
 
     if (error) {
       setIsSubmitting(false);
@@ -74,7 +76,7 @@ function UpdatePassword() {
         status: "error",
         isClosable: true,
       });
-      return
+      return;
     }
 
     const data = await res.json();
@@ -94,7 +96,7 @@ function UpdatePassword() {
       title: data.message ?? "Request successful.",
       status: "success",
       isClosable: true,
-    })
+    });
     setIsSubmitting(false);
     resetCodeRef.current.value = "";
     newPasswordRef.current.value = "";
@@ -102,15 +104,18 @@ function UpdatePassword() {
     navigate("/", {
       state: {
         openLogin: true,
-      }
-    })
-
-  }
+      },
+    });
+  };
 
   return (
     <>
       <Box w="100%" display="flex" justifyContent="flex-start">
-        <Button onClick={() => navigate("/reset-password")} leftIcon={<ArrowBackIcon />} variant='primaryOutline'>
+        <Button
+          onClick={() => navigate("/reset-password")}
+          leftIcon={<ArrowBackIcon />}
+          variant="primaryOutline"
+        >
           Prev page
         </Button>
       </Box>
@@ -119,13 +124,15 @@ function UpdatePassword() {
         m="70px auto"
         p={4}
         borderRadius="6px"
-        border="1px solid gray">
+        border="1px solid gray"
+      >
         <Text
           textAlign="center"
           pb="2"
           mb="6"
           fontSize="1.5rem"
-          color="green.500">
+          color="green.500"
+        >
           Change password
         </Text>
 
@@ -150,7 +157,6 @@ function UpdatePassword() {
               placeholder="Enter new password"
               bg="#FAF3F391"
             />
-
           </FormControl>
           <FormControl mb="6" isRequired>
             <Input
@@ -169,16 +175,14 @@ function UpdatePassword() {
               isLoading={isSubmitting}
               mb="o"
               variant="primary"
-            >submit
+            >
+              submit
             </Button>
           </Center>
         </form>
       </Box>
     </>
-
-  )
-};
+  );
+}
 
 export default UpdatePassword;
-
-

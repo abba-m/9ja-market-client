@@ -7,15 +7,15 @@ import PreviewAd from "./postAd.preview";
 
 export default function FormView({ step }) {
   switch (step) {
-    case 1:
-      return <CategoryForm />;
-    case 2:
-      return <AdDetailsForm />;
-    case 3:
-      return <AdImagesForm />;
-    case 4:
-      return <PreviewAd />;
-    default:
-      return <CategoryForm />;
+  case 1:
+    return <CategoryForm />;
+  case 2:
+    return <AdDetailsForm />;
+  case 3:
+    return <AdImagesForm />;
+  case 4:
+    return <PreviewAd />;
+  default:
+    return <CategoryForm />;
   }
 }

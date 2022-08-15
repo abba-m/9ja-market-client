@@ -32,7 +32,8 @@ export default function HeroesAdGrid() {
           mt: "3",
         },
       }}
-      h="25rem">
+      h="25rem"
+    >
       <Image
         src={isSmallScreen ? smallHeroesMain : heroesMain}
         alt="Ad 1"
@@ -47,7 +48,8 @@ export default function HeroesAdGrid() {
           "@media only screen and (max-width: 480px)": {
             display: "none",
           },
-        }}>
+        }}
+      >
         <Image src={heroesTR} alt="Ad 2" maxH="calc(24.5rem / 2)" />
         <Image src={heroesBR} alt="Ad 3" maxH="calc(24.5rem / 2)" />
       </Box>

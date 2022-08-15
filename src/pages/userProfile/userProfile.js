@@ -2,7 +2,6 @@ import { Box, Container } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-
 import UserProfileNav from "./navBar.userProfile";
 
 function UserProfile() {
@@ -12,7 +11,7 @@ function UserProfile() {
     navigate("/", {
       state: {
         openLogin: true,
-      }
+      },
     });
   }
   return (
@@ -20,7 +19,8 @@ function UserProfile() {
       maxWidth={["100%", "90vw"]}
       h="calc(100vh - 80px)"
       display="flex"
-      justifyContent="flex-start">
+      justifyContent="flex-start"
+    >
       <UserProfileNav />
       <Box p={4}>
         <Outlet />

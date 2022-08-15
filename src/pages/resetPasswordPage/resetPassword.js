@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useRef, useState } from "react";
 import {
   Button,
   Box,
@@ -6,7 +6,7 @@ import {
   Input,
   Text,
   Center,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { sendRequest } from "utils/connection";
@@ -26,7 +26,7 @@ function ResetPassword() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const value = email.current.value
+    const value = email.current.value;
     const reqData = { email: value };
 
     if (!value) {
@@ -40,13 +40,15 @@ function ResetPassword() {
       return;
     }
 
-    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/auth/reset-password`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(reqData),
-    }));
+    const [res, error] = await sendRequest(
+      fetch(`${process.env.REACT_APP_SERVER_URL}/auth/reset-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reqData),
+      })
+    );
 
     if (error) {
       setIsSubmitting(false);
@@ -55,7 +57,7 @@ function ResetPassword() {
         title: "Something is wrong! Please try again.",
         status: "error",
         isClosable: true,
-      })
+      });
     }
 
     const data = await res.json();
@@ -66,7 +68,7 @@ function ResetPassword() {
         title: "Reset code has been sent to your email",
         status: "info",
         isClosable: true,
-      })
+      });
       setIsSubmitting(false);
 
       return navigate("/update-password");
@@ -77,14 +79,18 @@ function ResetPassword() {
       title: data.error.message,
       status: "error",
       isClosable: true,
-    })
+    });
     setIsSubmitting(false);
-  }
+  };
 
   return (
     <>
       <Box w="100%" display="flex" justifyContent="flex-end">
-        <Button onClick={() => navigate("/update-password")} rightIcon={<ArrowForwardIcon />} variant='primaryOutline'>
+        <Button
+          onClick={() => navigate("/update-password")}
+          rightIcon={<ArrowForwardIcon />}
+          variant="primaryOutline"
+        >
           Next page
         </Button>
       </Box>
@@ -93,15 +99,14 @@ function ResetPassword() {
         m="100px auto"
         borderRadius="6px"
         p={4}
-        border="1px solid gray">
-
-
-
+        border="1px solid gray"
+      >
         <Text
           textAlign="center"
           borderBottom="2px solid green.300"
           mb="6"
-          fontSize="1.3rem">
+          fontSize="1.3rem"
+        >
           Enter email to get reset code
         </Text>
         <form onSubmit={handleProceed}>
@@ -122,16 +127,15 @@ function ResetPassword() {
               w="50%"
               isLoading={isSubmitting}
               bg="green.300"
-              type="submit">
+              type="submit"
+            >
               Send
             </Button>
           </Center>
         </form>
       </Box>
     </>
-  )
-};
+  );
+}
 
 export default ResetPassword;
-
-

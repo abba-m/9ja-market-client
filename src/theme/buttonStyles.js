@@ -27,7 +27,7 @@ export const ButtonStyles = {
       color: "white",
       outline: "none",
       _hover: {
-        opacity: "0.9"
+        opacity: "0.9",
       },
     },
     secondaryOutline: {
