@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Box, Heading, SimpleGrid, useToast } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { sendRequest } from "utils/connection";
+import { sendRequest } from "utils/connection.utils";
 
 import AdThumbnail from "components/adThumbnail/adThumbnail";
 import ShortUniqueId from "short-unique-id";

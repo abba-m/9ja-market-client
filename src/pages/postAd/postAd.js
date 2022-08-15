@@ -43,7 +43,7 @@ export default function PostAd() {
   const handleNext = () => {
     if (step >= 4) {
       if (typeof submitPost === "function") {
-        submitPost(setStep, 1);
+        submitPost();
       }
       return;
     }

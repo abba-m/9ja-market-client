@@ -25,7 +25,7 @@ import ProfilePage from "pages/ProfilePage";
 /** Actions */
 import { userLoaded, authError } from "store/actions";
 /** Queries */
-import { sendRequest } from "utils/connection";
+import { sendRequest } from "utils/connection.utils";
 import GoogleAuthRedirect from "components/auth/googleAuthRedirect";
 import SingleAdPage from "pages/singleAdPage/singleAdPage";
 

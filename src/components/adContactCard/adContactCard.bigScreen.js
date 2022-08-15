@@ -10,8 +10,8 @@ import {
 import { PhoneIcon } from "@chakra-ui/icons";
 import { BsFillChatRightTextFill } from "react-icons/bs";
 
-import { WHITE_COLOR } from "utils/constants";
-import { formatAmount } from "utils/format";
+import { WHITE_COLOR } from "utils/constants.utils";
+import { formatAmount } from "utils/format.utils";
 
 export default function AdContactCardBig({ price, fullName, dateJoined }) {
   return (

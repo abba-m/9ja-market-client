@@ -11,7 +11,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ImagesCarousel from "components/adImagesCarousel/imagesCarousel";
 import AdContactCard from "components/adContactCard/adContactCard";
-import { formatDateJoined } from "utils/format";
+import { formatDateJoined } from "utils/format.utils";
 
 export default function SingleAdPage() {
   const { slug } = useParams();

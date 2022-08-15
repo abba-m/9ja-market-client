@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { sendRequest } from "utils/connection";
+import { sendRequest } from "utils/connection.utils";
 
 function UpdatePassword() {
   const [isSubmitting, setIsSubmitting] = useState(false);

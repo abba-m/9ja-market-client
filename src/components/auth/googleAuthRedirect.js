@@ -3,7 +3,7 @@ import { useToast } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "store/actions";
 import { useNavigate, useLocation } from "react-router-dom";
-import { sendRequest } from "utils/connection";
+import { sendRequest } from "utils/connection.utils";
 
 export default function GoogleAuthRedirect(props) {
   const navigate = useNavigate();

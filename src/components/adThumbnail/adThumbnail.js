@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box, Image, Text } from "@chakra-ui/react";
-import { formatAmount } from "utils/format";
+import { formatAmount } from "utils/format.utils";
 import { BsBookmarkHeartFill, BsBookmarkHeart } from "react-icons/bs";
 
 function AdThumbnail({

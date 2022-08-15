@@ -7,7 +7,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { BsList, BsSearch } from "react-icons/bs";
-import { CATEGORIES } from "utils/constants";
+import { CATEGORIES } from "utils/constants.utils";
 import ShortUniqueId from "short-unique-id";
 
 export default function SearchBox() {

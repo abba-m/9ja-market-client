@@ -1,6 +1,6 @@
 import { Box, Divider, Image, Text, useToast } from "@chakra-ui/react";
 import { PostAdContext } from "providers/postAdProvider";
-import { formatAmount } from "utils/format";
+import { formatAmount } from "utils/format.utils";
 
 import { useContext, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -9,6 +9,10 @@ import ShortUniqueId from "short-unique-id";
 
 /** Actions & Mutations */
 import { setSubmitPostFunction } from "store/actions";
+import { postRequest } from "services/request";
+import { useMutation } from "@tanstack/react-query";
+import { validateInputs } from "utils/utils";
+import { useNavigate } from "react-router-dom";
 
 function PreviewAd() {
   const {
@@ -22,37 +26,46 @@ function PreviewAd() {
   const values = getValues();
   const uid = new ShortUniqueId({ length: 5 });
   const [imagesToBeUploaded, setImagesToBeUploaded] = useState([]);
-  const [isLoading, setIsloading] = useState(false);
-  const token = localStorage.getItem("token");
+  const navigate  = useNavigate();
 
-  const validateInputs = () => {
-    const errors = [];
-    console.log("Validating inputs...");
+  const { mutate, isLoading, error, data } = useMutation((data) => {
+    return postRequest("api/posts", data);
+  });
 
-    if (!selectedCategory) {
-      errors.push("Please select a catogery and add details");
-      return errors;
+  useEffect(() => {
+    if (error) {
+      toast({
+        position: "top",
+        title: error,
+        status: "error",
+        isClosable: true,
+      });
     }
+  }, [error]);
 
-    if (Object.values(values).some((val) => !val)) {
-      errors.push("All Post details are required");
+  useEffect(() => {
+    if (data) {
+      toast({
+        position: "top",
+        title: `Post with ticket no. (${uid()}) has been submitted succesfully`,
+        status: "info",
+        isClosable: true,
+      });
+
+      //reset all fields
+      reset();
+      setImages([]);
+      setCurrentImages([]);
+      setSelectedCategory("");
+
+      navigate("/");
     }
+  }, [data]);
 
-    if (!images.length || images.length < 3) {
-      errors.push("Please add at least 3 image");
-    }
-
-    //TODO: Add more validations...
-
-    return errors;
-  };
-
-  const handleSubmit = async (callback, step) => {
+  const handleSubmit = async () => {
     if (isLoading) return;
 
-    setIsloading(true);
-
-    const errors = validateInputs();
+    const errors = validateInputs({ selectedCategory, formValues: values, images });
     if (errors.length) {
       errors.forEach((err) =>
         toast({
@@ -62,7 +75,6 @@ function PreviewAd() {
           isClosable: true,
         })
       );
-      setIsloading(false);
       return;
     }
     console.log("Submitting form....");
@@ -81,35 +93,10 @@ function PreviewAd() {
     postFormData.append("data", JSON.stringify(values));
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: postFormData,
-      });
 
-      const data = await res.json();
+      mutate(postFormData);
 
-      if (data.error) {
-        throw new Error(data);
-      }
-
-      //console.log("[datum]:", data)
-      toast({
-        position: "top",
-        title: `Post with ticket no. (${uid()}) has been submitted succesfully`,
-        status: "info",
-        isClosable: true,
-      });
-
-      //reset all fields
-      reset();
-      setImages([]);
-      setCurrentImages([]);
-      setSelectedCategory("");
-      callback(step);
-      setIsloading(false);
+     
     } catch (err) {
       //TODO: display error properly
       alert(`${err?.status || "Something went wrong."} Please try again.`);

@@ -3,7 +3,7 @@ import {
   DELETE_POST,
   SET_SUBMIT_POST_FUNCTION,
 } from "store/types";
-import { generateId } from "utils/connection";
+import { generateId } from "utils/connection.utils";
 
 const postsInitialState = {
   Posts: [],

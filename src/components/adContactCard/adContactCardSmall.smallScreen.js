@@ -10,7 +10,7 @@ import {
 import { PhoneIcon } from "@chakra-ui/icons";
 import { BsFillChatRightTextFill } from "react-icons/bs";
 
-import { formatAmount } from "utils/format";
+import { formatAmount } from "utils/format.utils";
 
 export default function AdContactCardSmall({ price, fullName, dateJoined }) {
   return (

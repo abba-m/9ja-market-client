@@ -2,7 +2,7 @@ import { Box, Checkbox, Heading, HStack, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 
 import { FaRegEdit } from "react-icons/fa";
-import { formatDateJoined } from "utils/format";
+import { formatDateJoined } from "utils/format.utils";
 
 function ProfileView() {
   const { currentUser } = useSelector((state) => ({

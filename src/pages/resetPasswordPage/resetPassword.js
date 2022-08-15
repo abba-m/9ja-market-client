@@ -9,7 +9,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { sendRequest } from "utils/connection";
+import { sendRequest } from "utils/connection.utils";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 
 function ResetPassword() {
