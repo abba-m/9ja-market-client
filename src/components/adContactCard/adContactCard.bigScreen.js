@@ -13,11 +13,10 @@ import { BsFillChatRightTextFill } from "react-icons/bs";
 import { WHITE_COLOR } from "utils/constants.utils";
 import { formatAmount } from "utils/format.utils";
 
-export default function AdContactCardBig({ price, fullName, dateJoined }) {
+export default function AdContactCardBig({ price, fullName, dateJoined, isPostOwner }) {
   return (
     <Box
       minWidth={["80vw", "40vw"]}
-      // minWidth={["100%", "50%"]}
       height={["20rem"]}
       borderRadius="md"
       overflow="hidden"
@@ -35,6 +34,7 @@ export default function AdContactCardBig({ price, fullName, dateJoined }) {
             bg="white"
             leftIcon={<PhoneIcon />}
             variant="solid"
+            isDisabled={isPostOwner}
           >
             Place a call
           </Button>
@@ -76,6 +76,7 @@ export default function AdContactCardBig({ price, fullName, dateJoined }) {
           bg="white"
           leftIcon={<BsFillChatRightTextFill />}
           variant="solid"
+          isDisabled={isPostOwner}
         >
           Start chat
         </Button>

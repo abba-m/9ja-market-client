@@ -1,33 +1,34 @@
 import { useEffect, useState } from "react";
-import { Box, Heading, SimpleGrid, useToast } from "@chakra-ui/react";
+import { Box, Heading, SimpleGrid, Spinner, useToast } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { sendRequest } from "utils/connection.utils";
 
 import AdThumbnail from "components/adThumbnail/adThumbnail";
 import ShortUniqueId from "short-unique-id";
 import defaultImage from "assets/images/defaultImage.jpeg";
+import { getRequest } from "services/request";
+import { useQuery } from "@tanstack/react-query";
 
 function PostsView() {
   const uid = new ShortUniqueId({ length: 5 });
   const [userPosts, setUserPosts] = useState([]);
   const toast = useToast();
-  const token = localStorage.getItem("token");
 
   const { currentUser } = useSelector((state) => ({
     currentUser: state.auth.user,
   }));
 
-  const getUserPosts = async () => {
-    const [result, error] = await sendRequest(
-      fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-    );
+  const getUserPosts = () => getRequest("api/posts/me");
+  const { isLoading, error, data } = useQuery(["ALL_USER_POSTS"], getUserPosts);
 
-    if (null !== error) {
+  useEffect(() => {
+    if (data) {
+      setUserPosts(data.data);
+    };
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
       toast({
         position: "top",
         title: "Error fetching posts",
@@ -35,18 +36,14 @@ function PostsView() {
         isClosable: true,
       });
     }
+  }, [error]);
 
-    const data = await result.json();
-    if (data) {
-      setUserPosts(data);
-    }
-  };
-
-  useEffect(() => {
-    getUserPosts();
-  }, [currentUser]);
 
   const firstName = (currentUser.fullName || "9jaMarket User").split(" ")[1];
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <Box>

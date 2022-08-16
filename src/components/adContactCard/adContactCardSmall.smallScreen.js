@@ -1,18 +1,16 @@
 import {
   Avatar,
-  AvatarBadge,
   Box,
   Button,
   Center,
   Text,
-  VStack,
 } from "@chakra-ui/react";
 import { PhoneIcon } from "@chakra-ui/icons";
 import { BsFillChatRightTextFill } from "react-icons/bs";
 
 import { formatAmount } from "utils/format.utils";
 
-export default function AdContactCardSmall({ price, fullName, dateJoined }) {
+export default function AdContactCardSmall({ price, fullName, dateJoined, isPostOwner }) {
   return (
     <Box
       w="100%"
@@ -31,6 +29,7 @@ export default function AdContactCardSmall({ price, fullName, dateJoined }) {
             bg="white"
             leftIcon={<PhoneIcon />}
             variant="solid"
+            isDisabled={isPostOwner}
           >
             Place a call
           </Button>
@@ -41,6 +40,7 @@ export default function AdContactCardSmall({ price, fullName, dateJoined }) {
             bg="white"
             leftIcon={<BsFillChatRightTextFill />}
             variant="solid"
+            isDisabled={isPostOwner}
           >
             Start chat
           </Button>
