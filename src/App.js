@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Box, Spinner } from "@chakra-ui/react";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Dashboard from "pages/dashboardPage/dashboard";
 import TestPage from "pages/testPage/testPage";
@@ -29,26 +29,27 @@ import GoogleAuthRedirect from "components/auth/googleAuthRedirect";
 import SingleAdPage from "pages/singleAdPage/singleAdPage";
 import { getRequest } from "services/request";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 function App() {
   const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.auth.isLoading);
 
-  const getCurrentUser = () => getRequest("api/users/me");
-  const { isLoading, error, data } = useQuery(["GET_CURRENT_USER"], getCurrentUser);
+  const getCurrentUser = () => {
+    if (isLoading) return;
+
+    getRequest("api/users/me")
+      .then(data => dispatch(userLoaded(data?.data)))
+      .catch(err => {
+        dispatch(authError());
+        console.log("[AUTH_ERROR]:", err);
+      });
+
+  };
 
   useEffect(() => {
-    if (error) {
-      console.log("[AUTH_ERROR]:", error);
-      dispatch(authError(error));
-    }
-  }, [error]);
-
-  useEffect(() => {
-    if (data) {
-      dispatch(userLoaded(data?.data));
-    }
-  }, [data]);
-
+    getCurrentUser();
+  }, []);
 
   if (isLoading) {
     return <Spinner />;

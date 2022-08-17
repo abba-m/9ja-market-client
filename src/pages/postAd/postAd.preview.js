@@ -1,4 +1,4 @@
-import { Box, Divider, Image, Text, useToast } from "@chakra-ui/react";
+import { Box, Divider, Image, Text, useToast, Portal, ModalOverlay, Modal, ModalContent, Spinner, HStack } from "@chakra-ui/react";
 import { PostAdContext } from "providers/postAdProvider";
 import { formatAmount } from "utils/format.utils";
 
@@ -135,6 +135,15 @@ function PreviewAd() {
         </Box>
       ))}
       <Divider />
+      {/**post is submitting indicator */}
+      { isLoading && <Portal>
+        <Modal isOpen={true}>
+          <ModalOverlay />
+          <ModalContent>
+            <HStack><Spinner /><Text>Submitting...</Text></HStack>
+          </ModalContent>
+        </Modal>
+      </Portal>}
       <Box mt={3}>
         <Text
           fontSize="md"
