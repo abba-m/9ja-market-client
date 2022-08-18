@@ -4,14 +4,17 @@ import {
   Container,
   Flex,
   Heading,
+  Portal,
   Spinner,
   Text,
+  useDisclosure,
   useMediaQuery,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 
-import { Suspense, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "components/adImagesCarousel/imagesCarousel";
 import AdContactCard from "components/adContactCard/adContactCard";
 import { formatDateJoined } from "utils/format.utils";
@@ -19,15 +22,20 @@ import { getRequest } from "services/request";
 import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 
+import DeletePostModal from "components/modals/deletePostModal";
+
 export default function SingleAdPage() {
   const { slug } = useParams();
   const toast = useToast();
   const [postToDisplay, setPostToDisplay] = useState({});
+  const [postErrorStatus, setPostErrorStatus] = useState("");
   const [postImages, setPostImages] = useState([]);
   const currentUser = useSelector((state) => (state.auth.user));
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
 
   const getDetailedPost = () => getRequest(`api/posts/${slug}`);
-  const { isLoading, error, data } = useQuery(["DETAILED_POST"], getDetailedPost);
+  const { isLoading, error, data } = useQuery([`DETAILED_POST_${slug}`], getDetailedPost, );
   const isPostOwner = postToDisplay?.User?.userId === currentUser?.userId;
 
   const [isLargeScreen] = useMediaQuery([
@@ -36,7 +44,19 @@ export default function SingleAdPage() {
   ]);
 
   useEffect(() => {
+   
+  });
+
+  useMemo(() => {
+    if (data?.data) {
+      setPostToDisplay(data?.data);
+      setPostErrorStatus("");
+    } else {
+      setPostErrorStatus("not_found");
+    }
+
     if (error) {
+      setPostErrorStatus("error");
       toast({
         position: "top",
         title: error || "Failed to load post",
@@ -45,16 +65,10 @@ export default function SingleAdPage() {
       });
       console.log("[GetPostError]:", error);
     }
-  });
+  }, [data, error]);
 
-  useEffect(() => {
-    if (data) {
-      setPostToDisplay(data.data);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (postToDisplay.images) {
+  useMemo(() => {
+    if (postToDisplay?.images) {
       const imagesUrls = postToDisplay.images
         .split(",")
         .map((url) => ({ image: url }));
@@ -72,6 +86,24 @@ export default function SingleAdPage() {
         justifyContent="center"
       >
         <Spinner color="primary" thickness="5px" size="xl" />
+      </Box>
+    );
+  }
+
+  if (postErrorStatus !== "") {
+    return (
+      <Box
+        h="50vh"
+        w="100vw"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <VStack>
+          {postErrorStatus === "not_found" && <Heading>Uh oh! No post found...</Heading>}
+          {postErrorStatus === "error" && <Heading>Something went wrong, Check network connection...</Heading>}
+          <Button onClick={() => navigate("/")} variant="primary">Go to home</Button>
+        </VStack>
       </Box>
     );
   }
@@ -98,7 +130,7 @@ export default function SingleAdPage() {
           <Box w="100%">{postImages.length && <ImagesCarousel data={postImages} />}</Box>
 
           <Box w="100%">
-            {postToDisplay.title && (
+            {postToDisplay?.title && (
               <AdContactCard
                 price={postToDisplay.price}
                 fullName={postToDisplay?.User.fullName}
@@ -120,9 +152,12 @@ export default function SingleAdPage() {
           isPostOwner &&
               <Flex gap="4rem" p={2} mb={6} w="100%" justifyContent="space-between">
                 <Button w="100%" variant="primary">Edit Post</Button>
-                <Button w="100%" colorScheme="red">Delete Post</Button>
+                <Button w="100%" onClick={onOpen} colorScheme="red">Delete Post</Button>
               </Flex>
         }
+        <Portal>
+          <DeletePostModal isOpen={isOpen} onClose={onClose} postTitle={postToDisplay?.title} postId={postToDisplay?.postId} />
+        </Portal>
       </Container>
     </Suspense>
   );

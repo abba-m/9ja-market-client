@@ -22,3 +22,7 @@ export const getRequest = async (uri) => {
 export const putRequest = async (uri, payload) => {
   return http.put(uri, payload);
 };
+
+export const deleteRequest = async (uri) => {
+  return http.delete(uri);
+};

@@ -39,7 +39,7 @@ function PostsView() {
   }, [error]);
 
 
-  const firstName = (currentUser.fullName || "9jaMarket User").split(" ")[1];
+  const firstName = (currentUser?.fullName || "9jaMarket User").split(" ")[1];
 
   if (isLoading) {
     return <Spinner />;

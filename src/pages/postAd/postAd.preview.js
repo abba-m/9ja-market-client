@@ -2,7 +2,7 @@ import { Box, Divider, Image, Text, useToast, Portal, ModalOverlay, Modal, Modal
 import { PostAdContext } from "providers/postAdProvider";
 import { formatAmount } from "utils/format.utils";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import ShortUniqueId from "short-unique-id";
@@ -13,6 +13,7 @@ import { postRequest } from "services/request";
 import { useMutation } from "@tanstack/react-query";
 import { validateInputs } from "utils/utils";
 import { useNavigate } from "react-router-dom";
+import { CloseIcon } from "@chakra-ui/icons";
 
 function PreviewAd() {
   const {
@@ -104,10 +105,8 @@ function PreviewAd() {
     }
   };
 
-  useEffect(() => {
-    dispatch(setSubmitPostFunction(handleSubmit));
-
-    currentImages.forEach((current) => {
+  const getCurrentImages = (images) => {
+    images.forEach((current) => {
       for (const i in current) {
         if (!isNaN(i)) {
           imagesToBeUploaded.push(current[i]);
@@ -115,7 +114,21 @@ function PreviewAd() {
         }
       }
     });
+  };
+
+  const handleRemoveImage = (_id) => {
+    setImages(images.filter(img => img.imgId !== _id));
+  };
+  
+  useMemo(() => {
+    getCurrentImages(currentImages);
+  }, [images]);
+
+  useEffect(() => {
+    dispatch(setSubmitPostFunction(handleSubmit));    
   }, []);
+
+  
 
   return (
     <Box w="50" h="85%" overflowY="auto" px={4}>
@@ -158,8 +171,16 @@ function PreviewAd() {
           <Text color="gray.400">No images selected</Text>
         ) : (
           <Box display="flex" gap={3} flexWrap="wrap">
-            {images.map((value) => (
-              <Image key={uid()} src={value} h={150} w={150} />
+            {images.map(({ imgSrc, imgId}) => (
+              <Box h={150} w={150} position="relative">
+                <Image key={uid()} src={imgSrc} alt="product_image" h="100%" w="100%" />
+                <Box h="100%" w="100%" position="absolute" top="0" left="0" right="0" bottom="0" >
+                  <Box backgroundColor="whiteAlpha.900" h="fit-content" p={1} display="flex" borderRadius="50%" position="absolute" right="-5%" top="-5%" w="fit-content">
+                    <CloseIcon
+                      color="red" onClick={() => handleRemoveImage(imgId)} overflow="hidden" _hover={{ cursor: "pointer" }} />
+                  </Box>
+                </Box>
+              </Box>
             ))}
           </Box>
         )}

@@ -1,6 +1,7 @@
 import React from "react";
 import { formStructure } from "components/postAdForms/adDetailsForm/adDetailsForm.utils";
 import { useForm } from "react-hook-form";
+import ShortUniqueId from "short-unique-id";
 
 const PostAdContext = React.createContext();
 
@@ -10,6 +11,7 @@ function PostAdProvider(props) {
   const currentImagesState = React.useState([]);
   const imagesPreviewState = React.useState([]);
   const dynamicFormState = React.useState([]);
+  const uid = new ShortUniqueId({ length: 5 });
 
   //destructured state objects
   const [images] = currentImagesState;
@@ -24,7 +26,7 @@ function PostAdProvider(props) {
       for (const i in current) {
         if (!isNaN(i)) {
           const imgSrc = URL.createObjectURL(current[i]);
-          temporaryStore.push(imgSrc);
+          temporaryStore.push({ imgSrc: imgSrc, imgId: uid()});
         }
       }
       setPreviews([...temporaryStore]);
@@ -39,11 +41,10 @@ function PostAdProvider(props) {
   };
 
   const {
-    handleSubmit,
     getValues,
     register,
     reset,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors },
   } = useForm();
 
   // const val = getValues();

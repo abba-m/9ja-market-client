@@ -52,7 +52,17 @@ function App() {
   }, []);
 
   if (isLoading) {
-    return <Spinner />;
+    return (
+      <Box
+        h="100vh"
+        w="100vw"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Spinner color="primary" thickness="5px" size="xl" />
+      </Box>
+    );
   }
 
 

@@ -1,11 +1,9 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext } from "react";
 import {
   Avatar,
   Box,
   Center,
-  Heading,
   Image,
-  SimpleGrid,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -66,9 +64,8 @@ function AdImagesForm() {
       </Center>
       <Box display="flex" gap={3} flexWrap="wrap">
         {previews.length !== 0 &&
-          // TODO: Add a delete image logic
-          previews.map((value) => (
-            <Image key={uid()} src={value} h={200} w={200} />
+          previews.map(({ imgSrc }) => (
+            <Image key={uid()} src={imgSrc} alt="product_image" h={150} w={150} />
           ))}
       </Box>
     </Box>
