@@ -11,7 +11,7 @@ import { useState, useContext } from "react";
 import ShortUniqueId from "short-unique-id";
 import { RadioPill } from "components/myButtons/radioPills";
 
-import { CATEGORIES } from "utils/constants";
+import { CATEGORIES } from "utils/constants.utils";
 import { PostAdContext } from "providers/postAdProvider";
 
 function CategoryForm() {

@@ -82,50 +82,52 @@ export const formStructure = {
 };
 
 export function DynamicForm({ fieldsArray }) {
-  const { handleForm: { register, errors } } = useContext(PostAdContext)
+  const {
+    handleForm: { register, errors },
+  } = useContext(PostAdContext);
   const uid = new ShortUniqueId({ length: 5 });
 
   const renderFields = (fields) => {
     return fields.map(({ component, ...restOfParams }) => {
       const { name, type, label, placeholder } = restOfParams;
       switch (component) {
-        case "input":
-          return (
-            <InputComponent
-              name={name}
-              type={type}
-              label={label}
-              key={uid()}
-              placeholder={placeholder}
-              register={register}
-              errors={errors}
-            />
-          );
-        case "select":
-          const { options } = restOfParams;
-          return (
-            <SelectComponent
-              name={name}
-              label={label}
-              key={uid()}
-              placeholder={placeholder}
-              options={options}
-              register={register}
-            />
-          );
-        case "textArea":
-          return (
-            <TextareaComponent
-              name={name}
-              label={label}
-              key={uid()}
-              placeholder={placeholder}
-              register={register}
-              errors={errors}
-            />
-          );
-        default:
-          return <Text>Invalid Component</Text>;
+      case "input":
+        return (
+          <InputComponent
+            name={name}
+            type={type}
+            label={label}
+            key={uid()}
+            placeholder={placeholder}
+            register={register}
+            errors={errors}
+          />
+        );
+      case "select":
+        const { options } = restOfParams;
+        return (
+          <SelectComponent
+            name={name}
+            label={label}
+            key={uid()}
+            placeholder={placeholder}
+            options={options}
+            register={register}
+          />
+        );
+      case "textArea":
+        return (
+          <TextareaComponent
+            name={name}
+            label={label}
+            key={uid()}
+            placeholder={placeholder}
+            register={register}
+            errors={errors}
+          />
+        );
+      default:
+        return <Text>Invalid Component</Text>;
       }
     });
   };

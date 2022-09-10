@@ -22,9 +22,8 @@ import Register from "components/auth/register";
 function TestPage() {
   const navigate = useNavigate();
   const { username } = useSelector((state) => ({
-    username: state?.auth?.user?.username
+    username: state?.auth?.user?.username,
   }));
-
 
   const [nums, setNums] = useState([]);
 
@@ -32,7 +31,7 @@ function TestPage() {
     nums.push(2);
     setNums([...nums]);
     console.log("[nums]:", nums);
-  }
+  };
 
   const {
     isOpen: isLoginOpen,
@@ -50,12 +49,15 @@ function TestPage() {
       //style={{ border: "1px solid red" }}
       maxWidth={["100%", "90vw"]}
       h="calc(100vh - 80px)"
-      justifyContent="center">
+      justifyContent="center"
+    >
       {/* <SearchBox /> */}
       {/* <CategoriesGrid /> */}
       <HeroesAdGrid />
 
-      <Button onClick={addToNumbers} variant="primary">Hello world</Button>
+      <Button onClick={addToNumbers} variant="primary">
+        Hello world
+      </Button>
 
       <HStack mt="12">
         <Button mt={4} variant="primary" onClick={onLoginOpen}>
@@ -79,9 +81,7 @@ function TestPage() {
         onClose={onRegisterClose}
         openLogin={onLoginOpen}
       />
-      <Heading size="2xl">
-        {username || "User Not available"}
-      </Heading>
+      <Heading size="2xl">{username || "User Not available"}</Heading>
     </Container>
   );
 }

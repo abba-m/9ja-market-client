@@ -1,18 +1,16 @@
 import {
   Avatar,
-  AvatarBadge,
   Box,
   Button,
   Center,
   Text,
-  VStack,
 } from "@chakra-ui/react";
 import { PhoneIcon } from "@chakra-ui/icons";
-import { BsFillChatRightTextFill } from "react-icons/bs"
+import { BsFillChatRightTextFill } from "react-icons/bs";
 
-import { formatAmount } from "utils/format";
+import { formatAmount } from "utils/format.utils";
 
-export default function AdContactCardSmall({ price, fullName, dateJoined }) {
+export default function AdContactCardSmall({ price, fullName, dateJoined, isPostOwner }) {
   return (
     <Box
       w="100%"
@@ -20,7 +18,8 @@ export default function AdContactCardSmall({ price, fullName, dateJoined }) {
       height="fit-content"
       borderRadius="md"
       bg="primary"
-      overflow="hidden">
+      overflow="hidden"
+    >
       {/* Call & Message Buttons */}
       <Box display="flex" h="16rem" flexDirection="column">
         <Box display="flex" gap={2} px={2} py={4}>
@@ -29,7 +28,9 @@ export default function AdContactCardSmall({ price, fullName, dateJoined }) {
             textColor="primary"
             bg="white"
             leftIcon={<PhoneIcon />}
-            variant="solid">
+            variant="solid"
+            isDisabled={isPostOwner}
+          >
             Place a call
           </Button>
 
@@ -38,7 +39,9 @@ export default function AdContactCardSmall({ price, fullName, dateJoined }) {
             textColor="primary"
             bg="white"
             leftIcon={<BsFillChatRightTextFill />}
-            variant="solid">
+            variant="solid"
+            isDisabled={isPostOwner}
+          >
             Start chat
           </Button>
         </Box>
@@ -57,13 +60,9 @@ export default function AdContactCardSmall({ price, fullName, dateJoined }) {
             display="flex"
             flexDirection="column"
             justifyContent="center"
-            alignItems="flex-start">
-            <Text
-              fontSize="xl"
-              color="#fff"
-              mb="1"
-              mt="1"
-              casing="capitalize">
+            alignItems="flex-start"
+          >
+            <Text fontSize="xl" color="#fff" mb="1" mt="1" casing="capitalize">
               <b>{fullName || "9jaMarket User"}</b>
             </Text>
             <Text fontSize="xs" color="secondary">
@@ -72,11 +71,7 @@ export default function AdContactCardSmall({ price, fullName, dateJoined }) {
           </Box>
           {/* TODO: Add online badge to Avatar */}
           <Box display="flex" alignItems="center" flexGrow="1">
-            <Avatar
-              size="xl"
-              name={fullName}
-              src="https://picsum.phtos/200"
-            />
+            <Avatar size="xl" name={fullName} src="https://picsum.phtos/200" />
           </Box>
         </Box>
       </Box>

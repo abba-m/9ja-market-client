@@ -9,17 +9,28 @@ import { theme } from "./theme";
 import { Provider } from "react-redux";
 import configureStore from "store/root";
 import CreateClient from "graphQL/clientConfig";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const store = configureStore();
-const client = CreateClient()
+const client = CreateClient();
+
+// React query client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider resetCSS theme={theme}>
       <Provider store={store}>
         <ApolloProvider client={client}>
-          <App />
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
         </ApolloProvider>
       </Provider>
     </ChakraProvider>

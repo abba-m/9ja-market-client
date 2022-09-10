@@ -11,7 +11,8 @@ export default function FacebookButton({ onClick }) {
       mb={4}
       variant="solid"
       onClick={onClick}
-      colorScheme="facebook">
+      colorScheme="facebook"
+    >
       <RiFacebookFill size="1.8rem" style={{ marginRight: "1.5rem" }} />
       With Facebook
     </Button>

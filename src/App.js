@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Box, Spinner, useToast } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { Box, Spinner } from "@chakra-ui/react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import Dashboard from "pages/dashboardPage/dashboard";
 import TestPage from "pages/testPage/testPage";
@@ -18,69 +18,52 @@ import ReviewsView from "pages/userProfile/views/reviews";
 import SettingsView from "pages/userProfile/views/settings";
 import NotFound from "components/404notFound";
 import PostAd from "pages/postAd/postAd";
+import ResetPassword from "pages/resetPasswordPage/resetPassword";
+import UpdatePassword from "pages/resetPasswordPage/updatePassword";
+import ProfilePage from "pages/ProfilePage";
 
 /** Actions */
 import { userLoaded, authError } from "store/actions";
 /** Queries */
-import { sendRequest } from "utils/connection";
 import GoogleAuthRedirect from "components/auth/googleAuthRedirect";
 import SingleAdPage from "pages/singleAdPage/singleAdPage";
+import { getRequest } from "services/request";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 function App() {
   const dispatch = useDispatch();
-  const toast = useToast();
-  const [isLoading, setIsLoading] = useState(false)
-  const token = localStorage.getItem('token');
+  const isLoading = useSelector((state) => state.auth.isLoading);
 
-  const getLoggedInUser = async () => {
-    setIsLoading(true);
-    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-    }));
+  const getCurrentUser = () => {
+    if (isLoading) return;
 
-    if (error) {
-      console.log(error)
-      return toast({
-        position: "top",
-        title: "Something is wrong! Please try again.",
-        status: "error",
-        isClosable: true,
+    getRequest("api/users/me")
+      .then(data => dispatch(userLoaded(data?.data)))
+      .catch(err => {
+        dispatch(authError());
+        console.log("[AUTH_ERROR]:", err);
       });
-    }
 
-    const data = await res.json()
+  };
 
-    if (data && (data?.Error || data.error)) {
-      const error = data.Error ? data.Error : data.error;
-      dispatch(authError(error.message ?? "something went wrong"))
-      console.log(error);
-      return
-      //TODO: find a better approach
-      // return toast({
-      //   position: "top",
-      //   title: `You are not logged in. Sign in or create account to enjoy 9jaMarket`,
-      //   status: "info",
-      //   isClosable: true,
-      // });
-    }
+  useEffect(() => {
+    getCurrentUser();
+  }, []);
 
-    if (data) {
-      dispatch(userLoaded(data));
-    }
-    setIsLoading(false)
+  if (isLoading) {
+    return (
+      <Box
+        h="100vh"
+        w="100vw"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Spinner color="primary" thickness="5px" size="xl" />
+      </Box>
+    );
   }
-
-  useEffect(() => {
-    getLoggedInUser();
-  }, [])
-
-  useEffect(() => {
-    if (isLoading) {
-      return <Spinner />
-    }
-  }, [isLoading])
 
 
   return (
@@ -101,16 +84,21 @@ function App() {
               <Route path="orders" element={<OrdersView />} />
               <Route path="posts" element={<PostsView />} />
               <Route path="reviews" element={<ReviewsView />} />
-              <Route path="settings" element={<SettingsView />} />
+              <Route path="notifications" element={<SettingsView />} />
             </Route>
-            <Route path="/connect/google/callback" element={<GoogleAuthRedirect />} />
+            <Route
+              path="/connect/google/callback"
+              element={<GoogleAuthRedirect />}
+            />
             <Route path="/test" element={<TestPage />} />
+            <Route path="/profilePage" element={<ProfilePage />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Box>
       </Box>
     </Router>
-
   );
 }
 

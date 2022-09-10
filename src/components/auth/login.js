@@ -19,14 +19,14 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
-
 /** Api request methods */
 import { loginSuccess } from "store/actions";
-import { sendRequest } from "utils/connection";
+import { postRequest } from "services/request";
+import { useMutation } from "@tanstack/react-query";
 
 /** components */
 import GoogleButton from "components/myButtons/googleButton";
@@ -49,7 +49,7 @@ export default function Login({ isOpen, onClose, openRegister }) {
     handleSubmit,
     register,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm();
 
   const handleRegisterClick = () => {
@@ -66,47 +66,42 @@ export default function Login({ isOpen, onClose, openRegister }) {
   const gotoResetPasswordPage = () => {
     onClose();
     navigate("/reset-password");
-  }
+  };
+
+  const { mutate, isLoading, error, data } = useMutation((data) => {
+    return postRequest("auth/login", data);
+  });
 
   const handleLogin = async (data) => {
-    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    }));
+    return mutate(data);
+  };
 
+  useEffect(() => {
     if (error) {
-      return toast({
+      toast({
         position: "top",
-        title: `[Error]: Login failed. Please try again.`,
+        title: `[Error]: ${
+          error?.response?.data?.error?.message ||
+          "Login failed. Please try again."
+        }`,
         status: "error",
         isClosable: true,
       });
     }
+  }, [error]);
 
-    const value = await res.json();
-    if (value && value?.error) {
-      return toast({
-        position: "top",
-        title: `${value?.error?.message || "Login failed"}.`,
-        status: "error",
-        isClosable: true,
-      });
-    }
-
-    if (value && value?.user) {
-      handleClose();
+  useEffect(() => {
+    if (data) {
       toast({
         position: "top",
         title: "Login succesful.",
         status: "info",
         isClosable: true,
       });
-      dispatch(loginSuccess(value))
+      dispatch(loginSuccess(data?.data));
+      handleClose();
     }
-  };
+  }, [data]);
 
   return (
     <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={handleClose}>
@@ -134,8 +129,6 @@ export default function Login({ isOpen, onClose, openRegister }) {
               </FormErrorMessage>
             </FormControl>
 
-
-
             <FormControl mb={8} isInvalid={errors.password}>
               <InputGroup>
                 <Input
@@ -148,7 +141,16 @@ export default function Login({ isOpen, onClose, openRegister }) {
                   bg="#FAF3F391"
                   placeholder="Password"
                 />
-                <InputRightElement onClick={toggleShowPassword} children={showPassword ? <ViewOffIcon color="gray.500" /> : <ViewIcon color="gray.500" />} />
+                <InputRightElement
+                  onClick={toggleShowPassword}
+                  children={
+                    showPassword ? (
+                      <ViewOffIcon color="gray.500" />
+                    ) : (
+                      <ViewIcon color="gray.500" />
+                    )
+                  }
+                />
               </InputGroup>
 
               <FormErrorMessage>
@@ -158,10 +160,11 @@ export default function Login({ isOpen, onClose, openRegister }) {
 
             <Button
               w="100%"
-              isLoading={isSubmitting}
+              isLoading={isLoading}
               mb={4}
               type="submit"
-              variant="primary">
+              variant="primary"
+            >
               Sign in
             </Button>
           </form>
@@ -176,7 +179,8 @@ export default function Login({ isOpen, onClose, openRegister }) {
                     color: "primary",
                     textDecoration: "underline",
                     marginLeft: ".5rem",
-                  }}>
+                  }}
+                >
                   Reset password
                 </span>
               </Link>
@@ -201,7 +205,8 @@ export default function Login({ isOpen, onClose, openRegister }) {
                   color: "primary",
                   textDecoration: "underline",
                   marginLeft: ".5rem",
-                }}>
+                }}
+              >
                 Register
               </span>
             </Link>

@@ -7,7 +7,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { BsList, BsSearch } from "react-icons/bs";
-import { CATEGORIES } from "utils/constants";
+import { CATEGORIES } from "utils/constants.utils";
 import ShortUniqueId from "short-unique-id";
 
 export default function SearchBox() {
@@ -33,7 +33,8 @@ export default function SearchBox() {
       bg="whiteAlpha.900"
       p="4"
       width={["100%", "80%"]}
-      shadow="md">
+      shadow="md"
+    >
       <Box display="flex" alignItems="center" gap="0.5rem">
         <BsList color="primary" size="1.5rem" display={hideOnMobile} />
         <Select placeholder="Select categories" variant="unstyled">

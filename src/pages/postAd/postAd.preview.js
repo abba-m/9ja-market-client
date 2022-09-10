@@ -1,95 +1,51 @@
-import { Box, Divider, Image, Text, useToast } from "@chakra-ui/react";
+import { Box, Divider, Image, Text, useToast, Portal, ModalOverlay, Modal, ModalContent, Spinner, HStack } from "@chakra-ui/react";
 import { PostAdContext } from "providers/postAdProvider";
-import { formatAmount } from "utils/format";
+import { formatAmount } from "utils/format.utils";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import ShortUniqueId from "short-unique-id";
 
 /** Actions & Mutations */
 import { setSubmitPostFunction } from "store/actions";
+import { postRequest } from "services/request";
+import { useMutation } from "@tanstack/react-query";
+import { validateInputs } from "utils/utils";
+import { useNavigate } from "react-router-dom";
+import { CloseIcon } from "@chakra-ui/icons";
 
 function PreviewAd() {
-  const { handleForm: { getValues, reset }, imagesPreviewState: [images, setImages], currentImagesState: [currentImages, setCurrentImages], selectedCategoryState: [selectedCategory, setSelectedCategory] } = useContext(PostAdContext);
+  const {
+    handleForm: { getValues, reset },
+    imagesPreviewState: [images, setImages],
+    currentImagesState: [currentImages, setCurrentImages],
+    selectedCategoryState: [selectedCategory, setSelectedCategory],
+  } = useContext(PostAdContext);
   const dispatch = useDispatch();
   const toast = useToast();
   const values = getValues();
   const uid = new ShortUniqueId({ length: 5 });
   const [imagesToBeUploaded, setImagesToBeUploaded] = useState([]);
-  const [isLoading, setIsloading] = useState(false);
-  const token = localStorage.getItem("token");
+  const navigate  = useNavigate();
 
-  const validateInputs = () => {
-    const errors = [];
-    console.log("Validating inputs...");
+  const { mutate, isLoading, error, data } = useMutation((data) => {
+    return postRequest("api/posts", data);
+  });
 
-
-    if (!selectedCategory) {
-      errors.push("Please select a catogery and add details");
-      return errors
-    }
-
-    if (Object.values(values).some((val) => !val)) {
-      errors.push("All Post details are required")
-    }
-
-    if (!images.length || images.length < 3) {
-      errors.push("Please add at least 3 image")
-    }
-
-    //TODO: Add more validations...
-
-    return errors
-  }
-
-  const handleSubmit = async (callback, step) => {
-    if (isLoading) return
-
-    setIsloading(true)
-
-    const errors = validateInputs()
-    if (errors.length) {
-      errors.forEach(err => toast({
+  useEffect(() => {
+    if (error) {
+      toast({
         position: "top",
-        title: err,
+        title: error,
         status: "error",
         isClosable: true,
-      }))
-      setIsloading(false)
-      return
-    };
-    console.log("Submitting form....");
-
-    //values.userId = currentUserId;
-    values.category = selectedCategory;
-    values.price = Number(values.price)
-
-    const postFormData = new FormData()
-
-    for (const i in imagesToBeUploaded) {
-      const current = imagesToBeUploaded[i]
-      postFormData.append(`images`, current, current?.name)
+      });
     }
+  }, [error]);
 
-    postFormData.append("data", JSON.stringify(values))
-
-    try {
-      const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: postFormData
-      })
-
-      const data = await res.json()
-
-      if (data.error) {
-        throw new Error(data)
-      }
-
-      //console.log("[datum]:", data)
+  useEffect(() => {
+    if (data) {
       toast({
         position: "top",
         title: `Post with ticket no. (${uid()}) has been submitted succesfully`,
@@ -97,26 +53,60 @@ function PreviewAd() {
         isClosable: true,
       });
 
-
       //reset all fields
       reset();
       setImages([]);
       setCurrentImages([]);
       setSelectedCategory("");
-      callback(step);
-      setIsloading(false);
 
+      navigate("/");
+    }
+  }, [data]);
+
+  const handleSubmit = async () => {
+    if (isLoading) return;
+
+    const errors = validateInputs({ selectedCategory, formValues: values, images });
+    if (errors.length) {
+      errors.forEach((err) =>
+        toast({
+          position: "top",
+          title: err,
+          status: "error",
+          isClosable: true,
+        })
+      );
+      return;
+    }
+    console.log("Submitting form....");
+
+    //values.userId = currentUserId;
+    values.category = selectedCategory;
+    values.price = Number(values.price);
+
+    const postFormData = new FormData();
+
+    for (const i in imagesToBeUploaded) {
+      const current = imagesToBeUploaded[i];
+      postFormData.append("images", current, current?.name);
+    }
+
+    postFormData.append("data", JSON.stringify(values));
+
+    try {
+
+      mutate(postFormData);
+
+     
     } catch (err) {
       //TODO: display error properly
-      alert(`${err?.status || "Something went wrong."} Please try again.`)
-      console.log("[createPostError]:", err || "Something went wrong.")
+      alert(`${err?.status || "Something went wrong."} Please try again.`);
+      console.log("[createPostError]:", err || "Something went wrong.");
     }
-  }
+  };
 
-  useEffect(() => {
-    dispatch(setSubmitPostFunction(handleSubmit))
-
-    currentImages.forEach((current) => {
+  const getCurrentImages = (images) => {
+    images.forEach((current) => {
       for (const i in current) {
         if (!isNaN(i)) {
           imagesToBeUploaded.push(current[i]);
@@ -124,24 +114,76 @@ function PreviewAd() {
         }
       }
     });
-  }, [])
+  };
+
+  const handleRemoveImage = (_id) => {
+    setImages(images.filter(img => img.imgId !== _id));
+  };
+  
+  useMemo(() => {
+    getCurrentImages(currentImages);
+  }, [images]);
+
+  useEffect(() => {
+    dispatch(setSubmitPostFunction(handleSubmit));    
+  }, []);
+
+  
 
   return (
     <Box w="50" h="85%" overflowY="auto" px={4}>
-      {Object.entries(values).map(value => (
+      {Object.entries(values).map((value) => (
         <Box my={3}>
-          <Text fontSize="sm" fontWeight="bold" casing="capitalize" color="primary">{value[0]}</Text>
-          <Text fontSize="sm">{value[0] === "price" ? formatAmount(value[1]) : value[1]}</Text>
+          <Text
+            fontSize="sm"
+            fontWeight="bold"
+            casing="capitalize"
+            color="primary"
+          >
+            {value[0]}
+          </Text>
+          <Text fontSize="sm">
+            {value[0] === "price" ? formatAmount(value[1]) : value[1]}
+          </Text>
         </Box>
       ))}
       <Divider />
+      {/**post is submitting indicator */}
+      { isLoading && <Portal>
+        <Modal isOpen={true}>
+          <ModalOverlay />
+          <ModalContent>
+            <HStack><Spinner /><Text>Submitting...</Text></HStack>
+          </ModalContent>
+        </Modal>
+      </Portal>}
       <Box mt={3}>
-        <Text fontSize="md" mb={2} fontWeight="bold" casing="capitalize" color="primary">Images</Text>
-        {images.length === 0 ? <Text color="gray.400">No images selected</Text> :
+        <Text
+          fontSize="md"
+          mb={2}
+          fontWeight="bold"
+          casing="capitalize"
+          color="primary"
+        >
+          Images
+        </Text>
+        {images.length === 0 ? (
+          <Text color="gray.400">No images selected</Text>
+        ) : (
           <Box display="flex" gap={3} flexWrap="wrap">
-            {images.map((value) => <Image key={uid()} src={value} h={150} w={150} />)}
+            {images.map(({ imgSrc, imgId}) => (
+              <Box h={150} w={150} position="relative">
+                <Image key={uid()} src={imgSrc} alt="product_image" h="100%" w="100%" />
+                <Box h="100%" w="100%" position="absolute" top="0" left="0" right="0" bottom="0" >
+                  <Box backgroundColor="whiteAlpha.900" h="fit-content" p={1} display="flex" borderRadius="50%" position="absolute" right="-5%" top="-5%" w="fit-content">
+                    <CloseIcon
+                      color="red" onClick={() => handleRemoveImage(imgId)} overflow="hidden" _hover={{ cursor: "pointer" }} />
+                  </Box>
+                </Box>
+              </Box>
+            ))}
           </Box>
-        }
+        )}
       </Box>
     </Box>
   );

@@ -24,7 +24,8 @@ export const RadioPill = (props) => {
         mx={1}
         my={1}
         px={2}
-        py={1}>
+        py={1}
+      >
         {props.children}
       </Box>
     </Box>

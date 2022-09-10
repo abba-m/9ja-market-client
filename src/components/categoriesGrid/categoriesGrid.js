@@ -30,7 +30,8 @@ export const CategoryPill = ({ category, isLastChild, spacing, separator }) => (
     key={category.id}
     isLastChild={isLastChild}
     spacing={spacing}
-    separator={separator}>
+    separator={separator}
+  >
     <BreadcrumbLink href="#">{category.categoryName}</BreadcrumbLink>
   </BreadcrumbItem>
 );
@@ -55,7 +56,8 @@ export default function CategoriesGrid() {
       w="100%"
       maxW="100%"
       p="3"
-      h="4rem">
+      h="4rem"
+    >
       <Box display="flex" gap="0.5rem">
         <Menu color="#000">
           <MenuButton
@@ -66,7 +68,8 @@ export default function CategoriesGrid() {
             borderRadius="md"
             // borderWidth="1px"
             _expanded={{ boxShadow: "gray.200" }}
-            _focus={{ boxShadow: "none" }}>
+            _focus={{ boxShadow: "none" }}
+          >
             <HStack>
               <BsList color="white" size="1.5rem" />
               <Text>{selectCategoryText}</Text>

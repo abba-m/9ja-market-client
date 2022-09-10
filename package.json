@@ -8,10 +8,13 @@
     "@chakra-ui/react": "^1.7.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@tanstack/react-query": "^4.0.10",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "apollo-upload-client": "^17.0.0",
+    "axios": "^0.27.2",
+    "concurrently": "^7.3.0",
     "framer-motion": "^4",
     "graphql": "^16.3.0",
     "react": "^17.0.2",
@@ -20,7 +23,6 @@
     "react-hook-form": "^7.25.3",
     "react-icons": "^4.3.1",
     "react-notification-badge": "^1.5.1",
-    "react-query": "^3.39.1",
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.0.2",
     "react-scripts": "^5.0.0",
@@ -33,6 +35,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "server:start": "yarn --cwd ./../9ja-market-server dev",
+    "run:app": "concurrently \"yarn server:start\" --kill-others-on-fail true \"yarn start\" ",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -56,6 +60,8 @@
     ]
   },
   "devDependencies": {
+    "eslint": "^8.0.0",
+    "eslint-config-react-app": "^7.0.1",
     "webpack": "^5.65.0"
   }
 }

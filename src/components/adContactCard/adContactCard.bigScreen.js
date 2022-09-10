@@ -8,19 +8,19 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { PhoneIcon } from "@chakra-ui/icons";
-import { BsFillChatRightTextFill } from "react-icons/bs"
+import { BsFillChatRightTextFill } from "react-icons/bs";
 
-import { WHITE_COLOR } from "utils/constants";
-import { formatAmount } from "utils/format";
+import { WHITE_COLOR } from "utils/constants.utils";
+import { formatAmount } from "utils/format.utils";
 
-export default function AdContactCardBig({ price, fullName, dateJoined }) {
+export default function AdContactCardBig({ price, fullName, dateJoined, isPostOwner }) {
   return (
     <Box
       minWidth={["80vw", "40vw"]}
-      // minWidth={["100%", "50%"]}
       height={["20rem"]}
       borderRadius="md"
-      overflow="hidden">
+      overflow="hidden"
+    >
       <Box display="flex" h="16rem" flexDirection="column">
         <VStack p="4" bg="primary">
           <Center>
@@ -33,7 +33,9 @@ export default function AdContactCardBig({ price, fullName, dateJoined }) {
             textColor="primary"
             bg="white"
             leftIcon={<PhoneIcon />}
-            variant="solid">
+            variant="solid"
+            isDisabled={isPostOwner}
+          >
             Place a call
           </Button>
         </VStack>
@@ -43,13 +45,15 @@ export default function AdContactCardBig({ price, fullName, dateJoined }) {
             display="flex"
             flexDirection="column"
             justifyContent="center"
-            alignItems="flex-start">
+            alignItems="flex-start"
+          >
             <Text
               fontSize="xl"
               color="primary"
               mb="1"
               mt="1"
-              casing="capitalize">
+              casing="capitalize"
+            >
               <b>{fullName || "9jaMarket User"}</b>
             </Text>
             <Text fontSize="xs" color="gray.400">
@@ -71,8 +75,9 @@ export default function AdContactCardBig({ price, fullName, dateJoined }) {
           textColor="primary"
           bg="white"
           leftIcon={<BsFillChatRightTextFill />}
-          variant="solid">
-
+          variant="solid"
+          isDisabled={isPostOwner}
+        >
           Start chat
         </Button>
       </Box>

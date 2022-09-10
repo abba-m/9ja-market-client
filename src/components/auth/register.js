@@ -22,11 +22,12 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "store/actions"
-
+import { loginSuccess } from "store/actions";
+import { postRequest } from "services/request";
+import { useMutation } from "@tanstack/react-query";
 
 /** components */
 import GoogleButton from "components/myButtons/googleButton";
@@ -34,7 +35,6 @@ import FacebookButton from "components/myButtons/facebookButton";
 
 /** Icons and assets */
 import loginDivider from "assets/images/loginOrWithDivider.svg";
-import { sendRequest } from "utils/connection";
 
 export default function Register({ isOpen, onClose, openLogin }) {
   const initialRef = useRef();
@@ -42,12 +42,11 @@ export default function Register({ isOpen, onClose, openLogin }) {
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
 
-
   const {
     handleSubmit,
     register,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm();
 
   const handleLoginClick = () => {
@@ -61,7 +60,7 @@ export default function Register({ isOpen, onClose, openLogin }) {
     onClose();
   };
 
-  const showAlert = () => {
+  const _showAlert = () => {
     return (
       <Alert status="error">
         <AlertIcon />
@@ -73,38 +72,30 @@ export default function Register({ isOpen, onClose, openLogin }) {
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
+  const { mutate, isLoading, error, data } = useMutation((data) => {
+    return postRequest("auth/register", data);
+  });
+
   const handleRegister = async (data) => {
-    const [res, error] = await sendRequest(fetch(`${process.env.REACT_APP_SERVER_URL}/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    }))
+    return mutate(data);
+  };
 
+  useEffect(() => {
     if (error) {
-      return toast({
+      toast({
         position: "top",
-        title: `[Error]: Sign up failed. Please try again.`,
+        title: `[Error]: ${
+          error?.response?.data?.error?.message ||
+          "Signup failed. Please try again."
+        }`,
         status: "error",
         isClosable: true,
       });
     }
+  }, [error]);
 
-    const value = await res.json();
-    if (value && value?.error) {
-      return toast({
-        position: "top",
-        title: `${value?.message || "Register failed"}.`,
-        status: "error",
-        isClosable: true,
-      });
-    }
-
-
-    if (value && value?.user) {
-      dispatch(loginSuccess(value))
-      handleClose();
+  useEffect(() => {
+    if (data) {
       toast({
         position: "top",
         title: "Account created.",
@@ -113,9 +104,10 @@ export default function Register({ isOpen, onClose, openLogin }) {
         duration: 9000,
         isClosable: true,
       });
+      dispatch(loginSuccess(data?.data));
+      handleClose();
     }
-  };
-
+  }, [data]);
 
   return (
     <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={handleClose}>
@@ -193,7 +185,16 @@ export default function Register({ isOpen, onClose, openLogin }) {
                   bg="#FAF3F391"
                   placeholder="Password"
                 />
-                <InputRightElement onClick={toggleShowPassword} children={showPassword ? <ViewOffIcon color="gray.500" /> : <ViewIcon color="gray.500" />} />
+                <InputRightElement
+                  onClick={toggleShowPassword}
+                  children={
+                    showPassword ? (
+                      <ViewOffIcon color="gray.500" />
+                    ) : (
+                      <ViewIcon color="gray.500" />
+                    )
+                  }
+                />
               </InputGroup>
 
               <FormErrorMessage>
@@ -203,10 +204,11 @@ export default function Register({ isOpen, onClose, openLogin }) {
 
             <Button
               w="100%"
-              isLoading={isSubmitting}
+              isLoading={isLoading}
               mb={4}
               variant="primary"
-              type="submit">
+              type="submit"
+            >
               Register
             </Button>
           </form>
@@ -229,7 +231,8 @@ export default function Register({ isOpen, onClose, openLogin }) {
                   color: "primary",
                   textDecoration: "underline",
                   marginLeft: ".5rem",
-                }}>
+                }}
+              >
                 Sign in
               </span>
             </Link>

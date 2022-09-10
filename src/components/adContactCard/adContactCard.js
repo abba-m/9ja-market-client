@@ -3,12 +3,14 @@ import AdContactCardBig from "./adContactCard.bigScreen";
 import AdContactCardSmall from "./adContactCardSmall.smallScreen";
 
 export default function AdContactCard(props) {
-  const [isLargeScreen, isSmallScreen] = useMediaQuery([
+  const [isLargeScreen] = useMediaQuery([
     "(min-width: 768px)",
     "(max-width: 480px)",
   ]);
 
-  return (
-    isLargeScreen ? <AdContactCardBig {...props} /> : <AdContactCardSmall {...props} />
-  )
+  return isLargeScreen ? (
+    <AdContactCardBig {...props} />
+  ) : (
+    <AdContactCardSmall {...props} />
+  );
 }

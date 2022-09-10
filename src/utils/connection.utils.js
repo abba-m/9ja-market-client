@@ -7,4 +7,4 @@ export const sendRequest = async (promise) => {
   } catch (error) {
     return [null, error];
   }
-}
+};

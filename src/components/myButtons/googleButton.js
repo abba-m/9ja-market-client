@@ -9,7 +9,8 @@ export default function GoogleButton({ onClick }) {
       mb={4}
       onClick={onClick}
       variant="outline"
-      color="blackAlpha.900">
+      color="blackAlpha.900"
+    >
       <FcGoogle size="1.8rem" style={{ marginRight: "1.5rem" }} />
       With Google
     </Button>

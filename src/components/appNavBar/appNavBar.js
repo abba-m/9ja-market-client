@@ -20,9 +20,13 @@ import {
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import NotificationBadge from "react-notification-badge";
-import { AiOutlinePlus, AiOutlineUser, AiOutlinePoweroff } from "react-icons/ai";
+import {
+  AiOutlinePlus,
+  AiOutlineUser,
+  AiOutlinePoweroff,
+} from "react-icons/ai";
 import { IoMdNotifications } from "react-icons/io";
-import { FiSettings } from "react-icons/fi"
+import { FiSettings } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -37,7 +41,10 @@ function NavBar() {
   const toast = useToast();
   const { pathname } = useLocation();
 
-  const { isAuthenticated, currentUser } = useSelector((state) => ({ isAuthenticated: state.auth.isAuthenticated, currentUser: state.auth.user }));
+  const { isAuthenticated, currentUser } = useSelector((state) => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    currentUser: state.auth.user,
+  }));
   const navItemsSpacing = useBreakpointValue({ baseline: 3, md: 6 });
   const {
     isOpen: isLoginOpen,
@@ -56,7 +63,6 @@ function NavBar() {
     "(max-width: 480px)",
   ]);
 
-
   const handleLogOut = () => {
     //TODO: show chakra alert dialogue
     if (!window.confirm("Are you sure you want to logout?")) return;
@@ -69,14 +75,13 @@ function NavBar() {
       status: "info",
       isClosable: true,
     });
-  }
-
+  };
 
   useEffect(() => {
-    dispatch(setLoginFormOpenFunction(onLoginOpen))
+    dispatch(setLoginFormOpenFunction(onLoginOpen));
 
     //eslint-disable-next-line
-  }, [])
+  }, []);
 
   return (
     <Box bg="primary" h="fit-content" w="100%" py="4" px="6" mb={3}>
@@ -92,58 +97,86 @@ function NavBar() {
         </HStack>
 
         <HStack spacing={navItemsSpacing}>
-          {isAuthenticated && <HStack spacing={3} mr={3}>
-            <Link href="#">
-              <FaHeart color="#fff" size="1.4rem" />
-            </Link>
-            <Link href="#">
-              <HStack>
-                <Link href="/profile/notifications">
-                  <Box w={7} h={7}>
-                    <NotificationBadge
-                      count={4}
-                      style={{ top: "-5px", right: "-5px", zIndex: "1" }}
-                    />
-                    <Icon
-                      as={IoMdNotifications}
-                      color="whiteAlpha.900"
-                      sx={{
-                        position: "absolute",
-                        top: "1.8rem",
-                      }}
-                      h={6}
-                      w={6}
-                    />
-                  </Box>
-                </Link>
-
-              </HStack>
-            </Link>
-          </HStack>}
+          {isAuthenticated && (
+            <HStack spacing={3} mr={3}>
+              <Link href="#">
+                <FaHeart color="#fff" size="1.4rem" />
+              </Link>
+              <Link href="#">
+                <HStack>
+                  <Link href="/profile/notifications">
+                    <Box w={7} h={7}>
+                      <NotificationBadge
+                        count={4}
+                        style={{ top: "-5px", right: "-5px", zIndex: "1" }}
+                      />
+                      <Icon
+                        as={IoMdNotifications}
+                        color="whiteAlpha.900"
+                        sx={{
+                          position: "absolute",
+                          top: "1.8rem",
+                        }}
+                        h={6}
+                        w={6}
+                      />
+                    </Box>
+                  </Link>
+                </HStack>
+              </Link>
+            </HStack>
+          )}
 
           {isAuthenticated ? (
             <Menu>
               <MenuButton>
-                <Avatar name={currentUser?.fullName || "New User"} src={currentUser.avatarUrl} />
+                <Avatar
+                  name={currentUser?.fullName || "New User"}
+                  src={currentUser.avatarUrl}
+                />
               </MenuButton>
               <MenuList>
                 <NavLink to="new-post">
-                  <MenuItem><AiOutlinePlus style={{ marginRight: ".7rem" }} /> Post new ad</MenuItem>
+                  <MenuItem>
+                    <AiOutlinePlus style={{ marginRight: ".7rem" }} /> Post new
+                    ad
+                  </MenuItem>
                 </NavLink>
                 <MenuDivider />
                 <NavLink to="profile">
-                  <MenuItem><AiOutlineUser style={{ marginRight: ".7rem" }} /> Your profile</MenuItem>
+                  <MenuItem>
+                    <AiOutlineUser style={{ marginRight: ".7rem" }} /> Your
+                    profile
+                  </MenuItem>
                 </NavLink>
-                <MenuItem><FiSettings style={{ marginRight: ".7rem" }} /> Settings</MenuItem>
+                <MenuItem>
+                  <FiSettings style={{ marginRight: ".7rem" }} /> Settings
+                </MenuItem>
                 <MenuDivider />
-                <MenuItem color="red.500" onClick={handleLogOut} ><AiOutlinePoweroff style={{ marginRight: ".7rem" }} /> Log out</MenuItem>
+                <MenuItem color="red.500" onClick={handleLogOut}>
+                  <AiOutlinePoweroff style={{ marginRight: ".7rem" }} /> Log out
+                </MenuItem>
               </MenuList>
             </Menu>
           ) : (
             <HStack mr={3}>
-              <Button size="sm" variant="secondaryOutline" borderRadius="40px" onClick={onLoginOpen}>Sign In</Button>
+              <Button
+                size="sm"
+                variant="secondaryOutline"
+                borderRadius="40px"
+                onClick={onLoginOpen}
+              >
+                Sign In
+              </Button>
               {isLargeScreen && (
-                <Button size="sm" variant="secondary" borderRadius="40px" onClick={onRegisterOpen}>Register</Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  borderRadius="40px"
+                  onClick={onRegisterOpen}
+                >
+                  Register
+                </Button>
               )}
             </HStack>
           )}
@@ -160,7 +193,6 @@ function NavBar() {
             </NavLink>
           )}
         </HStack>
-
       </HStack>
       {isHomePage && (
         <Center>
