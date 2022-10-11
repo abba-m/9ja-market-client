@@ -109,7 +109,7 @@ function UpdatePassword() {
   };
 
   return (
-    <>
+    <Box maxW="760px" w="90vw" marginInline="auto">
       <Box w="100%" display="flex" justifyContent="flex-start">
         <Button
           onClick={() => navigate("/reset-password")}
@@ -181,7 +181,7 @@ function UpdatePassword() {
           </Center>
         </form>
       </Box>
-    </>
+    </Box>
   );
 }
 
