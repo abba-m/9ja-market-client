@@ -1,13 +1,14 @@
 import axios from "axios";
+import { serverUrl } from "./baseUrl";
 
-const token = localStorage.getItem("token");
+//const token = localStorage.getItem("token");
 
 const http = axios.create({
-  baseURL: "http://localhost:1335/",
+  baseURL: serverUrl,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
-    Authorization: token ? `Bearer ${token}` : "",
+    Authorization: localStorage.getItem("token") ? `Bearer ${localStorage.getItem("token")}` : "",
   },
 });
 

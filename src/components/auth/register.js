@@ -20,6 +20,7 @@ import {
   FormControl,
   FormErrorMessage,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useEffect, useRef, useState } from "react";
@@ -118,22 +119,41 @@ export default function Register({ isOpen, onClose, openLogin }) {
 
         <ModalBody>
           <form onSubmit={handleSubmit(handleRegister)}>
-            <FormControl mb={6} isInvalid={errors.fullName}>
-              <Input
-                type="text"
-                w="100%"
-                name="fullName"
-                {...register("fullName", {
-                  required: "Full name is required for sign up",
-                })}
-                bg="#FAF3F391"
-                placeholder="Full Name"
-              />
+            <Flex gap={3} mb={6}>
+              <FormControl isInvalid={errors.firstName}>
+                <Input
+                  type="text"
+                  w="100%"
+                  name="firstName"
+                  {...register("firstName", {
+                    required: "First name is required for sign up",
+                  })}
+                  bg="#FAF3F391"
+                  placeholder="First Name"
+                />
 
-              <FormErrorMessage>
-                {errors.fullName && errors.fullName.message}
-              </FormErrorMessage>
-            </FormControl>
+                <FormErrorMessage>
+                  {errors.firstName && errors.firstName.message}
+                </FormErrorMessage>
+              </FormControl>
+
+              <FormControl isInvalid={errors.lastName}>
+                <Input
+                  type="text"
+                  w="100%"
+                  name="lastName"
+                  {...register("lastName", {
+                    required: "Last name is required for sign up",
+                  })}
+                  bg="#FAF3F391"
+                  placeholder="Last Name"
+                />
+
+                <FormErrorMessage>
+                  {errors.lastName && errors.lastName.message}
+                </FormErrorMessage>
+              </FormControl>
+            </Flex>
 
             <FormControl mb={8} isInvalid={errors.email}>
               <Input

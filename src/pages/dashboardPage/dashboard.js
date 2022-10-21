@@ -18,7 +18,7 @@ import { getRequest } from "services/request";
 import defaultImage from "assets/images/defaultImage.jpeg";
 import { useQuery } from "@tanstack/react-query";
 
-function Dashboard({ showLogin }) {
+function Dashboard() {
   const uid = new ShortUniqueId({ length: 5 });
 
   const { state } = useLocation();

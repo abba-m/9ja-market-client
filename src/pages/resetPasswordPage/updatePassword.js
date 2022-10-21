@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { sendRequest } from "utils/connection.utils";
+import { rpcClient } from "services/rpcClient";
 
 function UpdatePassword() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,7 +19,8 @@ function UpdatePassword() {
   const newPasswordRef = useRef();
   const resetCodeRef = useRef();
   const confirmNewPasswordRef = useRef();
-  const token = localStorage.getItem("token");
+  const toggleIsSubmitting = () => setIsSubmitting((val) => !val);
+
 
   const handleSubmit = async (e) => {
     if (isSubmitting) {
@@ -27,13 +28,13 @@ function UpdatePassword() {
     }
     e.preventDefault();
 
-    setIsSubmitting(true);
+    toggleIsSubmitting();
     const resetCode = resetCodeRef.current.value;
     const newPassword = newPasswordRef.current.value;
     const confirmNewPassword = confirmNewPasswordRef.current.value;
 
     if (!resetCode || !newPassword || !confirmNewPassword) {
-      setIsSubmitting(false);
+      toggleIsSubmitting();
       return toast({
         position: "top",
         title: "All fields are required.",
@@ -43,7 +44,7 @@ function UpdatePassword() {
     }
 
     if (newPassword !== confirmNewPassword) {
-      setIsSubmitting(false);
+      toggleIsSubmitting();
       return toast({
         position: "top",
         title: "Passwords do not match",
@@ -57,59 +58,30 @@ function UpdatePassword() {
       password: newPassword,
     };
 
-    const [res, error] = await sendRequest(
-      fetch(`${process.env.REACT_APP_SERVER_URL}/auth/update-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(reqData),
-      })
-    );
+    try {
+      const resp = await rpcClient.request("resetPassword", reqData);
+      
+      if (!resp.success) throw new Error("Something went wrong");
 
-    if (error) {
-      setIsSubmitting(false);
+      toggleIsSubmitting();
+      navigate("/", {
+        state: {
+          openLogin: true,
+        },
+      });
+    } catch (err) {
+      toggleIsSubmitting();
       toast({
         position: "top",
-        title: error.title ?? "Something is wrong! Please try again.",
-        status: "error",
-        isClosable: true,
-      });
-      return;
-    }
-
-    const data = await res.json();
-
-    if (data.error) {
-      setIsSubmitting(false);
-      return toast({
-        position: "top",
-        title: data.error.message ?? "Something is wrong! Please try again.",
+        title: "Something is wrong! Please try again.",
         status: "error",
         isClosable: true,
       });
     }
-
-    toast({
-      position: "top",
-      title: data.message ?? "Request successful.",
-      status: "success",
-      isClosable: true,
-    });
-    setIsSubmitting(false);
-    resetCodeRef.current.value = "";
-    newPasswordRef.current.value = "";
-    confirmNewPasswordRef.current.value = "";
-    navigate("/", {
-      state: {
-        openLogin: true,
-      },
-    });
   };
 
   return (
-    <>
+    <Box maxW="760px" w="90vw" marginInline="auto">
       <Box w="100%" display="flex" justifyContent="flex-start">
         <Button
           onClick={() => navigate("/reset-password")}
@@ -173,7 +145,6 @@ function UpdatePassword() {
               w="50%"
               type="submit"
               isLoading={isSubmitting}
-              mb="o"
               variant="primary"
             >
               submit
@@ -181,7 +152,7 @@ function UpdatePassword() {
           </Center>
         </form>
       </Box>
-    </>
+    </Box>
   );
 }
 
