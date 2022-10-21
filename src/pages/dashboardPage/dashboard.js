@@ -17,9 +17,8 @@ import AdThumbnail from "components/adThumbnail/adThumbnail";
 import { getRequest } from "services/request";
 import defaultImage from "assets/images/defaultImage.jpeg";
 import { useQuery } from "@tanstack/react-query";
-import { rpcClient } from "services/rpcClient";
 
-function Dashboard({ showLogin }) {
+function Dashboard() {
   const uid = new ShortUniqueId({ length: 5 });
 
   const { state } = useLocation();
@@ -31,15 +30,7 @@ function Dashboard({ showLogin }) {
   const getLatestPosts = async () => getRequest("api/posts");
   const { isLoading, isError, data } = useQuery(["ALL_POSTS"], getLatestPosts);
 
-  const getTest = async () => {
-    const res = await rpcClient.request("test", { text: "sent from client" });
-    console.log({ res });
-  };
-
   useEffect(() => {
-
-    getTest();
-
     if (state && state?.openLogin) {
       if (typeof displayLoginForm == "function") {
         displayLoginForm();

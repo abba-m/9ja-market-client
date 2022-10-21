@@ -51,7 +51,7 @@ function PostsView() {
         Posts by {firstName}
       </Heading>
       <SimpleGrid columns={[2, 3, 4, 5]} spacing={4}>
-        {userPosts.length ? (
+        {userPosts?.length ? (
           userPosts.map(({ postId, images, title, price, location, slug }) => {
             //TODO: optimize images
             const imagesUrl = images.split(",");

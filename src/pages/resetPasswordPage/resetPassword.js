@@ -42,7 +42,14 @@ function ResetPassword() {
 
     try {
       await rpcClient.request("getPasswordResetCode", { email });
-      //TODO: show toast
+      
+      toast({
+        position: "bottom",
+        title: "Reset code has been sent to your email",
+        status: "info",
+        isClosable: true,
+      });
+
       return navigate("/update-password");
     } catch (error) {
       toggleIsSubmitting();
