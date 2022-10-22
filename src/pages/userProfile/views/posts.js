@@ -19,7 +19,9 @@ function PostsView() {
   }));
 
   const getUserPosts = () => getRequest("api/posts/me");
-  const { isLoading, error, data } = useQuery(["ALL_USER_POSTS"], getUserPosts);
+  const { isLoading, error, data } = useQuery(["ALL_USER_POSTS"], getUserPosts, {
+    enabled: !!localStorage.token
+  });
 
   useEffect(() => {
     if (data) {
@@ -48,9 +50,9 @@ function PostsView() {
   return (
     <Box>
       <Heading mb={4} color="secondary" size="lg">
-        Posts by {firstName}
+       Your posts
       </Heading>
-      <SimpleGrid columns={[2, 3, 4, 5]} spacing={4}>
+      <SimpleGrid columns={[2, 3, 4]} spacing={4}>
         {userPosts?.length ? (
           userPosts.map(({ postId, images, title, price, location, slug }) => {
             //TODO: optimize images
