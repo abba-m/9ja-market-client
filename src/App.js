@@ -28,8 +28,13 @@ import { userLoaded, authError } from "store/actions";
 import GoogleAuthRedirect from "components/auth/googleAuthRedirect";
 import SingleAdPage from "pages/singleAdPage/singleAdPage";
 import { getRequest } from "services/request";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+// import { useQuery } from "@tanstack/react-query";
+// import { useState } from "react";
+import Chat from "components/Chat/Chat";
+import ChatPage from "components/Chat/ChatPage";
+import socketIO from "socket.io-client";
+
+const socket = socketIO.connect("http://localhost:1335/");
 
 function App() {
   const dispatch = useDispatch();
@@ -39,12 +44,11 @@ function App() {
     if (isLoading) return;
 
     getRequest("api/users/me")
-      .then(data => dispatch(userLoaded(data?.data)))
-      .catch(err => {
+      .then((data) => dispatch(userLoaded(data?.data)))
+      .catch((err) => {
         dispatch(authError());
         console.log("[AUTH_ERROR]:", err);
       });
-
   };
 
   useEffect(() => {
@@ -64,7 +68,6 @@ function App() {
       </Box>
     );
   }
-
 
   return (
     <Router>
@@ -95,6 +98,8 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="*" element={<NotFound />} />
+            <Route path="/chats" element={<Chat socket={socket} />} />
+            <Route path="/chatpage" element={<ChatPage socket={socket} />} />
           </Routes>
         </Box>
       </Box>
