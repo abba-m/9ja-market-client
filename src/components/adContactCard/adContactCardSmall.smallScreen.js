@@ -10,7 +10,7 @@ import { BsFillChatRightTextFill } from "react-icons/bs";
 
 import { formatAmount } from "utils/format.utils";
 
-export default function AdContactCardSmall({ price, fullName, dateJoined, isPostOwner }) {
+export default function AdContactCardSmall({ price, fullName, dateJoined, isPostOwner, avatar, phone }) {
   return (
     <Box
       w="100%"
@@ -23,7 +23,7 @@ export default function AdContactCardSmall({ price, fullName, dateJoined, isPost
       {/* Call & Message Buttons */}
       <Box display="flex" h="16rem" flexDirection="column">
         <Box display="flex" gap={2} px={2} py={4}>
-          <Button
+          <a href={`tel:${phone}`}><Button
             isFullWidth
             textColor="primary"
             bg="white"
@@ -32,7 +32,7 @@ export default function AdContactCardSmall({ price, fullName, dateJoined, isPost
             isDisabled={isPostOwner}
           >
             Place a call
-          </Button>
+          </Button></a>
 
           <Button
             isFullWidth
@@ -71,7 +71,7 @@ export default function AdContactCardSmall({ price, fullName, dateJoined, isPost
           </Box>
           {/* TODO: Add online badge to Avatar */}
           <Box display="flex" alignItems="center" flexGrow="1">
-            <Avatar size="xl" name={fullName} src="https://picsum.phtos/200" />
+            <Avatar size="xl" name={fullName} src={avatar} />
           </Box>
         </Box>
       </Box>

@@ -178,7 +178,7 @@ export default function Register({ isOpen, onClose, openLogin }) {
                 w="100%"
                 name="phone"
                 {...register("phone", {
-                  required: "phone number is required for sign up",
+                  required: false,
                 })}
                 bg="#FAF3F391"
                 placeholder="Phone"
