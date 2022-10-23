@@ -37,7 +37,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "server:start": "yarn --cwd ./../9ja-market-server dev",
+    "server:start": "yarn --cwd ./../backend dev",
     "run:app": "concurrently \"yarn server:start\" --kill-others-on-fail true \"yarn start\" ",
     "build": "react-scripts build",
     "test": "react-scripts test",

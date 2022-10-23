@@ -23,6 +23,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 
 import DeletePostModal from "components/modals/deletePostModal";
+import EditPostModal from "components/modals/editPostModal";
+import { getEditPostData } from "utils/format.utils";
 
 export default function SingleAdPage() {
   const { slug } = useParams();
@@ -31,11 +33,21 @@ export default function SingleAdPage() {
   const [postErrorStatus, setPostErrorStatus] = useState("");
   const [postImages, setPostImages] = useState([]);
   const currentUser = useSelector((state) => (state.auth.user));
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [editPostData, setEditPostData] = useState({});
+  const { 
+    isOpen: isDeleteModalOpen, 
+    onOpen: onDeleteModalOpen, 
+    onClose: onDeleteModalClose 
+  } = useDisclosure();
+  const { 
+    isOpen: isEditModalOpen, 
+    onOpen: onEditModalOpen, 
+    onClose: onEditModalClose 
+  } = useDisclosure();
   const navigate = useNavigate();
 
   const getDetailedPost = () => getRequest(`api/posts/${slug}`);
-  const { isLoading, error, data } = useQuery([`DETAILED_POST_${slug}`], getDetailedPost, );
+  const { isLoading, error, data, refetch } = useQuery([`DETAILED_POST_${slug}`], getDetailedPost, );
   const isPostOwner = postToDisplay?.User?.userId === currentUser?.userId;
 
   const [isLargeScreen] = useMediaQuery([
@@ -43,14 +55,11 @@ export default function SingleAdPage() {
     "(max-width: 480px)",
   ]);
 
-  useEffect(() => {
-   
-  });
-
   useMemo(() => {
     if (data?.data) {
       setPostToDisplay(data?.data);
       setPostErrorStatus("");
+      setEditPostData(getEditPostData(data?.data));
     } else {
       setPostErrorStatus("not_found");
     }
@@ -135,6 +144,8 @@ export default function SingleAdPage() {
                 price={postToDisplay.price}
                 fullName={postToDisplay?.User.fullName}
                 dateJoined={formatDateJoined(postToDisplay?.User?.createdAt)}
+                avatar={postToDisplay?.User?.avatarUrl}
+                phone={postToDisplay?.User?.phone}
                 isPostOwner={isPostOwner}
               />
             )}
@@ -150,14 +161,29 @@ export default function SingleAdPage() {
 
         {
           isPostOwner &&
-              <Flex gap="4rem" p={2} mb={6} w="100%" justifyContent="space-between">
-                <Button w="100%" variant="primary">Edit Post</Button>
-                <Button w="100%" onClick={onOpen} colorScheme="red">Delete Post</Button>
-              </Flex>
+          <>
+            <Flex gap="4rem" p={2} mb={6} w="100%" justifyContent="space-between">
+              <Button w="100%" onClick={onEditModalOpen} variant="primary">Edit Post</Button>
+              <Button w="100%" onClick={onDeleteModalOpen} colorScheme="red">Delete Post</Button>
+            </Flex>
+            <Portal>
+              <DeletePostModal 
+                isOpen={isDeleteModalOpen} 
+                onClose={onDeleteModalClose} 
+                postTitle={postToDisplay?.title} 
+                postId={postToDisplay?.postId} 
+              />
+
+              <EditPostModal 
+                isOpen={isEditModalOpen}
+                onClose={onEditModalClose}
+                data={editPostData}
+                postId={postToDisplay?.postId}
+                refetch={refetch}
+              />
+            </Portal>
+          </>
         }
-        <Portal>
-          <DeletePostModal isOpen={isOpen} onClose={onClose} postTitle={postToDisplay?.title} postId={postToDisplay?.postId} />
-        </Portal>
       </Container>
     </Suspense>
   );

@@ -10,7 +10,7 @@ function DeletePostModal ({ isOpen, onClose, postTitle, postId }) {
   const navigate = useNavigate();
 
   const { mutate, isLoading, error, data } = useMutation((postId) => {
-    return deleteRequest(`api/posts/d/${postId}`);
+    return deleteRequest(`api/posts/${postId}`);
   });
 
   useEffect(() => {

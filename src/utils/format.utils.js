@@ -29,3 +29,12 @@ export const truncateString = (str, num) => {
 
   return result + "...";
 };
+
+export const getEditPostData = (data = {}) => {
+  return { 
+    title: data.title,
+    price: data.price,
+    description: data.description,
+    location: data.location,
+  };
+};
