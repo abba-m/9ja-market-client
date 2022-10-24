@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Box, Spinner } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Dashboard from "pages/dashboardPage/dashboard";
@@ -32,13 +32,22 @@ import { getRequest } from "services/request";
 // import { useState } from "react";
 import Chat from "components/Chat/Chat";
 import ChatPage from "components/Chat/ChatPage";
-import socketIO from "socket.io-client";
+import { SocketClient } from "services/socket";
 
-const socket = socketIO.connect("http://localhost:1335/");
+
+// const socket = socketIO.connect("http://localhost:1335/", {
+//   query: {
+//     token: localStorage.token,
+//   }
+// });
 
 function App() {
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.auth.isLoading);
+
+  const { currentUser } = useSelector((state) => ({
+    currentUser: state.auth.user,
+  }));
 
   const getCurrentUser = () => {
     if (isLoading) return;
@@ -53,6 +62,17 @@ function App() {
 
   useEffect(() => {
     getCurrentUser();
+
+    
+  }, []);
+
+  useEffect(() => {
+    SocketClient.init().emit("user:connect");
+    // .then(socket => (
+    //   console.log("[emitting:user-join]", socket) && (
+    //     socket.io.emit("user:connect")
+    //   ) 
+    // )); 
   }, []);
 
   if (isLoading) {
@@ -98,8 +118,8 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="*" element={<NotFound />} />
-            <Route path="/chats" element={<Chat socket={socket} />} />
-            <Route path="/chatpage" element={<ChatPage socket={socket} />} />
+            <Route path="/chats" element={<Chat />} />
+            <Route path="/chatpage" element={<ChatPage />} />
           </Routes>
         </Box>
       </Box>
