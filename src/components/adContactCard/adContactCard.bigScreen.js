@@ -20,6 +20,8 @@ export default function AdContactCardBig({
   dateJoined,
   isPostOwner,
   userId,
+  avatar,
+  phone,
 }) {
   const navigate = useNavigate();
 
@@ -44,16 +46,18 @@ export default function AdContactCardBig({
               {formatAmount(price || 0)}
             </Text>
           </Center>
-          <Button
-            isFullWidth
-            textColor="primary"
-            bg="white"
-            leftIcon={<PhoneIcon />}
-            variant="solid"
-            isDisabled={isPostOwner}
-          >
-            Place a call
-          </Button>
+          <a href={`tel:${phone}`}>
+            <Button
+              isFullWidth
+              textColor="primary"
+              bg="white"
+              leftIcon={<PhoneIcon />}
+              variant="solid"
+              isDisabled={isPostOwner}
+            >
+              Place a call
+            </Button>
+          </a>
         </VStack>
         <Box height="50%" p="4" pl="1" gap="1rem" display="flex">
           <Box
@@ -84,7 +88,7 @@ export default function AdContactCardBig({
               cursor="pointer"
               size="xl"
               name={fullName || "New User"}
-              src="https://picsum.photos/200"
+              src={avatar}
             />
           </Box>
         </Box>

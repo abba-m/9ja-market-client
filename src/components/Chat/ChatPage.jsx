@@ -1,32 +1,30 @@
 import { useEffect, useRef, useState } from "react";
-import ChatBar from "./ChatBar";
+import { SocketClient } from "services/socket";
+import ChatSideBar from "./ChatSideBar";
 import ChatBody from "./ChatBody";
 import ChatFooter from "./ChatFooter.jsx";
 
-const ChatPage = ({ socket }) => {
+const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [menuToggle, setMenuToggle] = useState(false);
   const lastMessageRef = useRef(null);
   const [typingStatus, setTypingStatus] = useState("");
 
   useEffect(() => {
-    socket?.on("messageResponse", (data) => setMessages([...messages, data]));
-  }, [socket, messages]);
-
-  useEffect(() => {
+    SocketClient.client?.on("messageResponse", (data) => setMessages([...messages, data]));
     lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
-    socket?.on("typingResponse", (data) => setTypingStatus(data));
-  }, [socket]);
+    SocketClient.client?.on("typingResponse", (data) => setTypingStatus(data));
+  }, []);
 
   return (
     <div className="chat">
-      <ChatBar
+      <ChatSideBar
         setMenuToggle={setMenuToggle}
         menuToggle={menuToggle}
-        socket={socket}
+        socket={SocketClient}
       />
       <div className="chat__main">
         <ChatBody
@@ -36,7 +34,7 @@ const ChatPage = ({ socket }) => {
           messages={messages}
           lastMessageRef={lastMessageRef}
         />
-        <ChatFooter setTypingStatus={setTypingStatus} socket={socket} />
+        <ChatFooter setTypingStatus={setTypingStatus} socket={SocketClient} />
       </div>
     </div>
   );

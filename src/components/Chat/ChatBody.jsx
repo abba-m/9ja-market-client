@@ -14,7 +14,6 @@ const ChatBody = ({
   const handleLeaveChat = () => {
     localStorage.removeItem("userName");
     navigate("/chats");
-    window.location.reload();
   };
 
   const handleMenuClick = () => {

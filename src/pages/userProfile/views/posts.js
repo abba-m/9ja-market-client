@@ -4,41 +4,51 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 import AdThumbnail from "components/adThumbnail/adThumbnail";
-import ShortUniqueId from "short-unique-id";
 import defaultImage from "assets/images/defaultImage.jpeg";
 import { getRequest } from "services/request";
-import { useQuery } from "@tanstack/react-query";
+import { rpcClient } from "services/rpcClient";
 
 function PostsView() {
-  const uid = new ShortUniqueId({ length: 5 });
+  const [isLoading, setIsLoading] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
+  const [totalPostsCount, setTotalPostsCount] = useState(0);
   const toast = useToast();
+  const toggleIsLoading = () => setIsLoading((val) => !val);
 
-  const { currentUser } = useSelector((state) => ({
+  const { _currentUser } = useSelector((state) => ({
     currentUser: state.auth.user,
   }));
 
-  const getUserPosts = () => getRequest("api/posts/me");
-  const { isLoading, error, data } = useQuery(["ALL_USER_POSTS"], getUserPosts);
+  const getUserPosts = async () => {
+    toggleIsLoading();
 
-  useEffect(() => {
-    if (data) {
-      setUserPosts(data.data);
-    }
-  }, [data]);
+    if (isLoading) return;
 
-  useEffect(() => {
-    if (error) {
+    try {
+      const resp = await getRequest("api/posts/me");
+      setUserPosts(resp.data);
+      toggleIsLoading();
+    } catch (err) {
+      // TODO: handle error properly
       toast({
         position: "top",
-        title: "Error fetching posts",
+        title: "Something is wrong! Please try again.",
         status: "error",
         isClosable: true,
       });
+      console.log("[getUserPostERR]:", err);
+      toggleIsLoading();
     }
-  }, [error]);
+  };
 
-  const firstName = (currentUser?.fullName || "9jaMarket User").split(" ")[1];
+  useEffect(() => {
+    getUserPosts();
+
+    (async () =>
+      setTotalPostsCount(
+        (await rpcClient.request("getUserPostsCount"))?.count || 0
+      ))();
+  }, []);
 
   if (isLoading) {
     return <Spinner />;
@@ -46,19 +56,19 @@ function PostsView() {
 
   return (
     <Box>
-      <Heading ml={6} mb={4} color="secondary" size="lg">
-        Posts by {firstName}
+      <Heading mb={4} color="secondary" size="lg">
+        Your posts ({totalPostsCount})
       </Heading>
-      <SimpleGrid width="fit-content" columns={[2, 3, 4, 5]} spacing={4}>
+      <SimpleGrid columns={[2, 3, 4]} spacing={4}>
         {userPosts?.length ? (
           userPosts.map(({ postId, images, title, price, location, slug }) => {
             //TODO: optimize images
             const imagesUrl = images.split(",");
 
             return (
-              <Link key={uid()} to={`/post/${slug}`}>
+              <Link key={postId} to={`/post/${slug}`}>
                 <AdThumbnail
-                  key={uid()}
+                  key={postId}
                   postId={postId}
                   imageSrc={imagesUrl.length ? imagesUrl[0] : defaultImage}
                   adTitle={title}

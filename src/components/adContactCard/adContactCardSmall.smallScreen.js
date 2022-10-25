@@ -1,10 +1,4 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  Center,
-  Text,
-} from "@chakra-ui/react";
+import { Avatar, Box, Button, Center, Text } from "@chakra-ui/react";
 import { PhoneIcon } from "@chakra-ui/icons";
 import { BsFillChatRightTextFill } from "react-icons/bs";
 
@@ -17,6 +11,8 @@ export default function AdContactCardSmall({
   dateJoined,
   isPostOwner,
   userId,
+  avatar,
+  phone,
 }) {
   const navigate = useNavigate();
 
@@ -40,16 +36,18 @@ export default function AdContactCardSmall({
       {/* Call & Message Buttons */}
       <Box display="flex" h="16rem" flexDirection="column">
         <Box display="flex" gap={2} px={2} py={4}>
-          <Button
-            isFullWidth
-            textColor="primary"
-            bg="white"
-            leftIcon={<PhoneIcon />}
-            variant="solid"
-            isDisabled={isPostOwner}
-          >
-            Place a call
-          </Button>
+          <a href={`tel:${phone}`}>
+            <Button
+              isFullWidth
+              textColor="primary"
+              bg="white"
+              leftIcon={<PhoneIcon />}
+              variant="solid"
+              isDisabled={isPostOwner}
+            >
+              Place a call
+            </Button>
+          </a>
 
           <Button
             isFullWidth
@@ -107,7 +105,7 @@ export default function AdContactCardSmall({
               cursor="pointer"
               size={"xl"}
               name={fullName}
-              src="https://picsum.phtos/201"
+              src={avatar}
             />
           </Box>
         </Box>

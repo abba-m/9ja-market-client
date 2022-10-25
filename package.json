@@ -16,6 +16,7 @@
     "apollo-upload-client": "^17.0.0",
     "axios": "^0.27.2",
     "concurrently": "^7.3.0",
+    "date-diff": "^1.0.2",
     "framer-motion": "^4",
     "graphql": "^16.3.0",
     "json-rpc-2.0": "^1.4.1",
@@ -38,7 +39,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "server:start": "yarn --cwd ./../9ja-market-server dev",
+    "server:start": "yarn --cwd ./../backend dev",
     "run:app": "concurrently \"yarn server:start\" --kill-others-on-fail true \"yarn start\" ",
     "build": "react-scripts build",
     "test": "react-scripts test",

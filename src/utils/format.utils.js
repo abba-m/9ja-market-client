@@ -1,3 +1,5 @@
+import DateDiff from "date-diff";
+
 export const formatAmount = (amount) => {
   const value = Number(amount);
   if (isNaN(value)) return;
@@ -28,4 +30,45 @@ export const truncateString = (str, num) => {
   let result = newStr.substring(0, lastSpace);
 
   return result + "...";
+};
+
+export const getEditPostData = (data = {}) => {
+  return { 
+    title: data.title,
+    price: data.price,
+    description: data.description,
+    location: data.location,
+  };
+};
+
+export const splitDateAndTime = (date) => {
+  date = new Date(date);
+  const padTo2Digits = num => String(num).padStart(2, "0");
+
+  const time = `${
+    padTo2Digits(date.getHours())
+  }:${
+    padTo2Digits(date.getMinutes())
+  }${(Number(date.getHours()) < 12) ? "am" : "pm"}`;
+
+  return {
+    time,
+    date: date.toISOString().split("T")[0].replace(/-/gi, "/"),
+  };
+};
+
+export const formatChatTime = (chatTime) => {
+  const { time, date } = splitDateAndTime(chatTime);
+
+  const diff = new DateDiff(new Date(), new Date(chatTime));
+
+  if (diff.days() < 1) {
+    return String(time);
+  } 
+
+  if (diff.days() < 2) {
+    return "Yesterday";
+  }
+
+  return String(date);
 };

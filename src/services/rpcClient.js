@@ -2,7 +2,7 @@ import axios from "axios";
 import { JSONRPCClient } from "json-rpc-2.0";
 import { serverUrl } from "./baseUrl";
 
-const token = localStorage.getItem("token");
+// const token = localStorage.getItem("token");
 
 // JSONRPCClient needs to know how to send a JSON-RPC request.
 // Tell it by passing a function to its constructor. The function must take a JSON-RPC request and send it.
@@ -12,7 +12,7 @@ export const rpcClient = new JSONRPCClient((jsonRPCRequest) =>
     url: `${serverUrl}json-rpc`,
     headers: {
       "content-type": "application/json",
-      "Authorization": token ? `Bearer ${token}` : "",
+      "Authorization": `Bearer ${localStorage.token}`,
     },
     data: JSON.stringify(jsonRPCRequest),
   }).then((response) => {

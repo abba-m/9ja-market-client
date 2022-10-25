@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Chat.css";
 
-const Chat = ({ socket }) => {
+const Chat = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
 
@@ -10,7 +10,7 @@ const Chat = ({ socket }) => {
     e.preventDefault();
     if (userName === "") return;
     localStorage.setItem("userName", userName);
-    socket?.emit("newUser", { userName, socketID: socket.id });
+    // socket?.emit("newUser", { userName, socketID: socket.id });
     navigate("/chatpage");
   };
   return (
