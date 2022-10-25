@@ -3,7 +3,7 @@ import React from "react";
 
 function ReviewsView() {
   return (
-    <Box>
+    <Box ml={6}>
       <Text>No reviews yet.</Text>
     </Box>
   );

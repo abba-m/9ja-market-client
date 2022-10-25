@@ -11,7 +11,7 @@ function ProfileView() {
 
   return (
     <Box>
-      <HStack>
+      <HStack ml={6}>
         <Heading size="lg" color="secondary">
           {currentUser?.fullName || "9jaMarket User"}
         </Heading>

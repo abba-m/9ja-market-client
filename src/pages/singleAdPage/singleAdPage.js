@@ -110,11 +110,7 @@ export default function SingleAdPage() {
 
   return (
     <Suspense fallback={<Spinner />}>
-      <Container
-        maxWidth="90vw"
-        h="calc(100vh - 80px)"
-        centerContent
-      >
+      <Container maxWidth="90vw" h="calc(100vh - 80px)" centerContent>
         <Heading my={3} textAlign="left">
           {postToDisplay?.title}
         </Heading>
@@ -122,12 +118,14 @@ export default function SingleAdPage() {
         <Flex
           //border="2px solid red"
           w="100%"
-          direction={ isLargeScreen ? "row" : "column" }
+          direction={isLargeScreen ? "row" : "column"}
           justifyContent="space-between"
           gap="5%"
           p={2}
         >
-          <Box w="100%">{postImages.length && <ImagesCarousel data={postImages} />}</Box>
+          <Box w="100%">
+            {postImages.length && <ImagesCarousel data={postImages} />}
+          </Box>
 
           <Box w="100%">
             {postToDisplay?.title && (
@@ -136,6 +134,7 @@ export default function SingleAdPage() {
                 fullName={postToDisplay?.User.fullName}
                 dateJoined={formatDateJoined(postToDisplay?.User?.createdAt)}
                 isPostOwner={isPostOwner}
+                userId={postToDisplay?.User?.userId}
               />
             )}
           </Box>
@@ -143,20 +142,29 @@ export default function SingleAdPage() {
         <Box p={4}>
           <Heading size="md">Description</Heading>
           <Text>{postToDisplay?.description}</Text>
-          <Heading mt={3} size="md">Location</Heading>
+          <Heading mt={3} size="md">
+            Location
+          </Heading>
           <Text casing="capitalize">{postToDisplay?.location}</Text>
-          
         </Box>
 
-        {
-          isPostOwner &&
-              <Flex gap="4rem" p={2} mb={6} w="100%" justifyContent="space-between">
-                <Button w="100%" variant="primary">Edit Post</Button>
-                <Button w="100%" onClick={onOpen} colorScheme="red">Delete Post</Button>
-              </Flex>
-        }
+        {isPostOwner && (
+          <Flex gap="4rem" p={2} mb={6} w="100%" justifyContent="space-between">
+            <Button w="100%" variant="primary">
+              Edit Post
+            </Button>
+            <Button w="100%" onClick={onOpen} colorScheme="red">
+              Delete Post
+            </Button>
+          </Flex>
+        )}
         <Portal>
-          <DeletePostModal isOpen={isOpen} onClose={onClose} postTitle={postToDisplay?.title} postId={postToDisplay?.postId} />
+          <DeletePostModal
+            isOpen={isOpen}
+            onClose={onClose}
+            postTitle={postToDisplay?.title}
+            postId={postToDisplay?.postId}
+          />
         </Portal>
       </Container>
     </Suspense>

@@ -12,8 +12,24 @@ import { BsFillChatRightTextFill } from "react-icons/bs";
 
 import { WHITE_COLOR } from "utils/constants.utils";
 import { formatAmount } from "utils/format.utils";
+import { useNavigate } from "react-router-dom";
 
-export default function AdContactCardBig({ price, fullName, dateJoined, isPostOwner }) {
+export default function AdContactCardBig({
+  price,
+  fullName,
+  dateJoined,
+  isPostOwner,
+  userId,
+}) {
+  const navigate = useNavigate();
+
+  const handleProfilePageNav = (userId) => {
+    if (isPostOwner) {
+      navigate("/profile");
+    } else {
+      navigate(`/profilePage/${userId}`);
+    }
+  };
   return (
     <Box
       minWidth={["80vw", "40vw"]}
@@ -48,6 +64,8 @@ export default function AdContactCardBig({ price, fullName, dateJoined, isPostOw
             alignItems="flex-start"
           >
             <Text
+              onClick={() => handleProfilePageNav(userId)}
+              cursor="pointer"
               fontSize="xl"
               color="primary"
               mb="1"
@@ -62,6 +80,8 @@ export default function AdContactCardBig({ price, fullName, dateJoined, isPostOw
           </Box>
           <Box display="flex" alignItems="center" flexGrow="1">
             <Avatar
+              onClick={() => handleProfilePageNav(userId)}
+              cursor="pointer"
               size="xl"
               name={fullName || "New User"}
               src="https://picsum.photos/200"

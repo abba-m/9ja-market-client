@@ -3,7 +3,7 @@ import React from "react";
 
 function FavoritesView() {
   return (
-    <Box>
+    <Box ml={6}>
       <Text>Hello my favorited ads view</Text>
     </Box>
   );

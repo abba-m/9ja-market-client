@@ -21,6 +21,7 @@ import PostAd from "pages/postAd/postAd";
 import ResetPassword from "pages/resetPasswordPage/resetPassword";
 import UpdatePassword from "pages/resetPasswordPage/updatePassword";
 import ProfilePage from "pages/ProfilePage";
+import Footer from "components/footer/footer";
 
 /** Actions */
 import { userLoaded, authError } from "store/actions";
@@ -94,13 +95,14 @@ function App() {
               element={<GoogleAuthRedirect />}
             />
             <Route path="/test" element={<TestPage />} />
-            <Route path="/profilePage" element={<ProfilePage />} />
+            <Route path="/profilePage/:userId" element={<ProfilePage />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/chats" element={<Chat socket={socket} />} />
             <Route path="/chatpage" element={<ChatPage socket={socket} />} />
           </Routes>
+          <Box w="100%">{/* <Footer /> */}</Box>
         </Box>
       </Box>
     </Router>

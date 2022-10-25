@@ -33,7 +33,7 @@ function SettingsView() {
   }, []);
 
   return (
-    <Box>
+    <Box ml={6}>
       <Text>Hello profile settings view</Text>
       <Text my={8}>
         Hello <b>{currentUser.fullName || "User"}!</b> Remember you signed up

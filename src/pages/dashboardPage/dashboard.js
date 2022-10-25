@@ -74,14 +74,19 @@ function Dashboard() {
     >
       <CategoriesGrid />
       <Heading my={3}>Latest Ads</Heading>
-      <SimpleGrid columns={[2, 3, 4, 5]} spacing={4}>
+      <SimpleGrid
+        marginInline="auto"
+        maxW="1200px"
+        columns={[2, 2, 4]}
+        spacing={4}
+      >
         {data?.data.length ? (
           data?.data.map(({ postId, images, title, price, location, slug }) => {
             //TODO: optimize images
             const imagesUrl = images.split(",");
 
             return (
-              <Link to={`/post/${slug}`}>
+              <Link key={uid()} to={`/post/${slug}`}>
                 <AdThumbnail
                   key={uid()}
                   postId={postId}
@@ -98,7 +103,7 @@ function Dashboard() {
         )}
       </SimpleGrid>
       <Heading my={4}>All Ads</Heading>
-      <SimpleGrid columns={[2, 3, 4, 5]} spacing={4}>
+      <SimpleGrid columns={{ base: "2", md: "3", lg: "4" }} spacing={4}>
         <AdThumbnail
           imageSrc="https://source.unsplash.com/random"
           adTitle="Lorem ipsom"

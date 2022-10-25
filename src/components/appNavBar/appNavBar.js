@@ -102,7 +102,7 @@ function NavBar() {
               <Link href="#">
                 <FaHeart color="#fff" size="1.4rem" />
               </Link>
-              <Link href="#">
+              <Box href="#">
                 <HStack>
                   <Link href="/profile/notifications">
                     <Box w={7} h={7}>
@@ -123,7 +123,7 @@ function NavBar() {
                     </Box>
                   </Link>
                 </HStack>
-              </Link>
+              </Box>
             </HStack>
           )}
 

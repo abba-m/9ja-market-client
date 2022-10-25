@@ -24,7 +24,7 @@ function PostsView() {
   useEffect(() => {
     if (data) {
       setUserPosts(data.data);
-    };
+    }
   }, [data]);
 
   useEffect(() => {
@@ -38,7 +38,6 @@ function PostsView() {
     }
   }, [error]);
 
-
   const firstName = (currentUser?.fullName || "9jaMarket User").split(" ")[1];
 
   if (isLoading) {
@@ -47,17 +46,17 @@ function PostsView() {
 
   return (
     <Box>
-      <Heading mb={4} color="secondary" size="lg">
+      <Heading ml={6} mb={4} color="secondary" size="lg">
         Posts by {firstName}
       </Heading>
-      <SimpleGrid columns={[2, 3, 4, 5]} spacing={4}>
+      <SimpleGrid width="fit-content" columns={[2, 3, 4, 5]} spacing={4}>
         {userPosts?.length ? (
           userPosts.map(({ postId, images, title, price, location, slug }) => {
             //TODO: optimize images
             const imagesUrl = images.split(",");
 
             return (
-              <Link to={`/post/${slug}`}>
+              <Link key={uid()} to={`/post/${slug}`}>
                 <AdThumbnail
                   key={uid()}
                   postId={postId}

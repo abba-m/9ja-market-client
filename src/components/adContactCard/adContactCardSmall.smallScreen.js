@@ -9,8 +9,25 @@ import { PhoneIcon } from "@chakra-ui/icons";
 import { BsFillChatRightTextFill } from "react-icons/bs";
 
 import { formatAmount } from "utils/format.utils";
+import { useNavigate } from "react-router-dom";
 
-export default function AdContactCardSmall({ price, fullName, dateJoined, isPostOwner }) {
+export default function AdContactCardSmall({
+  price,
+  fullName,
+  dateJoined,
+  isPostOwner,
+  userId,
+}) {
+  const navigate = useNavigate();
+
+  const handleProfilePageNav = (userId) => {
+    if (isPostOwner) {
+      navigate("/profile");
+    } else {
+      navigate(`/profilePage/${userId}`);
+    }
+  };
+
   return (
     <Box
       w="100%"
@@ -48,7 +65,12 @@ export default function AdContactCardSmall({ price, fullName, dateJoined, isPost
 
         {/* Price */}
         <Center bg="whiteAlpha.900">
-          <Text fontSize="36px" fontWeight="bold" p={2} color="primary">
+          <Text
+            fontSize={{ base: "26px", md: "36px" }}
+            fontWeight="bold"
+            p={2}
+            color="primary"
+          >
             {formatAmount(price || 0)}
           </Text>
         </Center>
@@ -61,8 +83,17 @@ export default function AdContactCardSmall({ price, fullName, dateJoined, isPost
             flexDirection="column"
             justifyContent="center"
             alignItems="flex-start"
+            minHeight={"calc(fit-content + 100px)"}
           >
-            <Text fontSize="xl" color="#fff" mb="1" mt="1" casing="capitalize">
+            <Text
+              onClick={() => handleProfilePageNav(userId)}
+              cursor="pointer"
+              fontSize="xl"
+              color="#fff"
+              mb="1"
+              mt="1"
+              casing="capitalize"
+            >
               <b>{fullName || "9jaMarket User"}</b>
             </Text>
             <Text fontSize="xs" color="secondary">
@@ -71,7 +102,13 @@ export default function AdContactCardSmall({ price, fullName, dateJoined, isPost
           </Box>
           {/* TODO: Add online badge to Avatar */}
           <Box display="flex" alignItems="center" flexGrow="1">
-            <Avatar size="xl" name={fullName} src="https://picsum.phtos/200" />
+            <Avatar
+              onClick={() => handleProfilePageNav(userId)}
+              cursor="pointer"
+              size={"xl"}
+              name={fullName}
+              src="https://picsum.phtos/201"
+            />
           </Box>
         </Box>
       </Box>
