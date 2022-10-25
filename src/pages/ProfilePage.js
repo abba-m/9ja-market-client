@@ -57,6 +57,7 @@ const ProfilePage = () => {
         display="flex"
         gap={"2rem"}
         mt={10}
+        px={5}
       >
         {isLoading ? (
           <Spinner />
@@ -77,6 +78,8 @@ const ProfilePage = () => {
               position="relative"
               borderTopRadius="15px"
               bgImage={userData?.avatarUrl}
+              bgRepeat="no-repeat"
+              bgSize="cover"
               width="100%"
               h="9rem"
               bgColor="blue"

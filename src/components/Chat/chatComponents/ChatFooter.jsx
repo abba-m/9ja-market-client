@@ -1,28 +1,26 @@
 import { Button, Icon, useMediaQuery } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { GrSend } from "react-icons/gr";
+import { SocketClient } from "services/socket";
 
-const ChatFooter = ({ socket }) => {
+const ChatFooter = ({ recipientId }) => {
   const [message, setMessage] = useState("");
   const [_isLargeScreen, isSmallScreen] = useMediaQuery([
     "(min-width: 768px)",
     "(max-width: 480px)",
   ]);
 
-
-  const handleTyping = () =>
-    socket?.emit("typing", `${localStorage.getItem("userName")} is typing`);
+  // const handleTyping = () =>
+  //   socket?.emit("typing", `${localStorage.getItem("userName")} is typing`);
 
   const handleSendMessage = (e) => {
+    console.log(recipientId);
     e.preventDefault();
-    if (message.trim() && localStorage.getItem("userName")) {
-      socket?.emit("message", {
-        text: message,
-        name: localStorage.getItem("userName"),
-        id: `${socket.id}${Math.random()}`,
-        socketID: socket.id,
+    if (message.trim()) {
+      SocketClient.client?.emit("message:send-message", {
+        message,
+        recipientId,
       });
-      socket?.emit("typing", "");
     }
     setMessage("");
   };
@@ -35,10 +33,14 @@ const ChatFooter = ({ socket }) => {
           className="message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleTyping}
+          // onKeyDown={handleTyping}
         />
-        <Button rightIcon={<Icon color="red.500" as={GrSend} />} variant="primary" type="submit">
-          { !isSmallScreen && "SEND" }
+        <Button
+          rightIcon={<Icon color="red.500" as={GrSend} />}
+          variant="primary"
+          type="submit"
+        >
+          {!isSmallScreen && "SEND"}
         </Button>
       </form>
     </div>

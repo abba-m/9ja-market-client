@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Box, Spinner } from "@chakra-ui/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Dashboard from "pages/dashboardPage/dashboard";
@@ -31,10 +31,10 @@ import SingleAdPage from "pages/singleAdPage/singleAdPage";
 import { getRequest } from "services/request";
 // import { useQuery } from "@tanstack/react-query";
 // import { useState } from "react";
-import Chat from "components/Chat/Chat";
 import ChatPage from "components/Chat/ChatPage";
 import { SocketClient } from "services/socket";
-
+import ChatMainArea from "components/Chat/ChatMainArea";
+import BgImage from "components/Chat/BaackgroundImg";
 
 // const socket = socketIO.connect("http://localhost:1335/", {
 //   query: {
@@ -63,17 +63,15 @@ function App() {
 
   useEffect(() => {
     getCurrentUser();
-
-    
   }, []);
 
   useEffect(() => {
     SocketClient.init().emit("user:connect");
-    // .then(socket => (
-    //   console.log("[emitting:user-join]", socket) && (
+    // .then(
+    //   (socket) =>
+    //     console.log("[emitting:user-join]", socket) &&
     //     socket.io.emit("user:connect")
-    //   ) 
-    // )); 
+    // );
   }, []);
 
   if (isLoading) {
@@ -119,8 +117,10 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="*" element={<NotFound />} />
-            <Route path="/chats" element={<Chat />} />
-            <Route path="/chatpage" element={<ChatPage />} />
+            <Route path="/chats" element={<ChatPage />}>
+              <Route index element={<BgImage />} />
+              <Route path="message/:userId" element={<ChatMainArea />} />
+            </Route>
           </Routes>
           <Box w="100%">{/* <Footer /> */}</Box>
         </Box>
