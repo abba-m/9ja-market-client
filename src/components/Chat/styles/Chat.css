@@ -47,6 +47,7 @@
   flex: 0.2;
   padding: 0 5px 0 10px;
   min-width: 15rem;
+  max-width: 100vw;
   border-right: 1px solid #fdfdfd;
   overflow-y: scroll;
 }
@@ -239,10 +240,6 @@
 @media screen and (max-width:  480px) {
   .message__container{
     height: 70vh;
-  }
-
-  .chat__sidebar{
-    display: none;
   }
 
   .chat__mainHeader{

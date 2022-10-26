@@ -1,14 +1,13 @@
 import { Avatar, AvatarBadge, Box, Flex, HStack, Icon, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { MdCancel } from "react-icons/md";
 import { SocketClient } from "services/socket";
 import { formatChatTime } from "utils/format.utils";
 import { TiMessages } from "react-icons/ti";
 import { useSelector } from "react-redux";
 import { rpcClient } from "services/rpcClient";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
-const ChatSideBar = ({ menuToggle, setMenuToggle }) => {
+const ChatSideBar = () => {
   const [chats, setChats] = useState([]);
 
   useEffect(() => {
@@ -18,10 +17,6 @@ const ChatSideBar = ({ menuToggle, setMenuToggle }) => {
   const { currentUser } = useSelector((state) => ({
     currentUser: state.auth.user,
   }));
-
-  const handleXMenuClick = () => {
-    setMenuToggle(false);
-  };
 
   const getUserChats = async () => {
     const userChats = await rpcClient.request("getUserChats");
@@ -46,12 +41,17 @@ const ChatSideBar = ({ menuToggle, setMenuToggle }) => {
     isActive ? activeClassName : notActiveClass;
 
   return (
-    <div className={menuToggle ? "chat__sidebar-mobile" : "chat__sidebar"}>
+    <Box
+      css={{
+        "&::-webkit-scrollbar": {
+          display: "none",
+        },
+      }}
+      w="100vw"
+      className="chat__sidebar"
+    >
       <div>
         <div className="chatbar__header">
-          {menuToggle && (
-            <Icon as={MdCancel} color="red.100" onClick={handleXMenuClick} />
-          )}
           <h4 className="chat__header">CHATS</h4>
         </div>
         <div className="chat__users">
@@ -79,12 +79,11 @@ const ChatSideBar = ({ menuToggle, setMenuToggle }) => {
           )}
         </div>
       </div>
-    </div>
+    </Box>
   );
 };
 
 function ChatListItem({ recipientId, lastMessage }) {
-  const navigate = useNavigate();
   const [user, setUser] = useState({
     isOnline: false,
     avatarUrl: null,

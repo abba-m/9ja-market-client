@@ -1,11 +1,4 @@
-import {
-  Avatar,
-  AvatarBadge,
-  Box,
-  Flex,
-  Spinner,
-  Text,
-} from "@chakra-ui/react";
+import { Avatar, AvatarBadge, Box, Flex, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { rpcClient } from "services/rpcClient";
 
@@ -17,8 +10,6 @@ const ChatHeader = ({ recipientId }) => {
     const response = await rpcClient.request("getUserOnline", {
       recipientId,
     });
-    console.log(recipientId);
-    console.log(response.user);
 
     if (response === null) throw new Error("Something went wrong");
 
@@ -33,7 +24,12 @@ const ChatHeader = ({ recipientId }) => {
     <>
       <Box display="flex" gap="1rem">
         <Box>
-          <Avatar name={userData?.fullName} size="md" src={userData?.avatarUrl}>
+          <Avatar
+            position="static"
+            name={userData?.fullName}
+            size="md"
+            src={userData?.avatarUrl}
+          >
             {isOnline && <AvatarBadge boxSize="1.25em" bg="green.500" />}
           </Avatar>
         </Box>

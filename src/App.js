@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Box, Spinner } from "@chakra-ui/react";
+import { Box, Spinner, useMediaQuery } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -46,9 +46,14 @@ function App() {
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.auth.isLoading);
 
-  const { currentUser } = useSelector((state) => ({
-    currentUser: state.auth.user,
-  }));
+  // const { currentUser } = useSelector((state) => ({
+  //   currentUser: state.auth.user,
+  // }));
+
+  const [isLargeScreen] = useMediaQuery([
+    "(min-width: 768px)",
+    "(max-width: 480px)",
+  ]);
 
   const getCurrentUser = () => {
     if (isLoading) return;
@@ -117,10 +122,20 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="*" element={<NotFound />} />
-            <Route path="/chats" element={<ChatPage />}>
-              <Route index element={<BgImage />} />
-              <Route path="message/:userId" element={<ChatMainArea />} />
-            </Route>
+            {isLargeScreen ? (
+              <Route path="/chats" element={<ChatPage />}>
+                <Route index element={<BgImage />} />
+                <Route path="message/:userId" element={<ChatMainArea />} />
+              </Route>
+            ) : (
+              <>
+                <Route path="/chats" element={<ChatPage />} />
+                <Route
+                  path="/chats/message/:userId"
+                  element={<ChatMainArea />}
+                />
+              </>
+            )}
           </Routes>
           <Box w="100%">{/* <Footer /> */}</Box>
         </Box>

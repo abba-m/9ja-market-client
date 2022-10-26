@@ -12,7 +12,6 @@ const ChatBody = ({ recipientId }) => {
     const response = await rpcClient.request("getChatMessages", {
       recipientId,
     });
-    console.log(response);
     setIsLoading(false);
 
     if (response === null) throw new Error("Something went wrong");
@@ -55,11 +54,6 @@ const ChatBody = ({ recipientId }) => {
         ) : (
           <Spinner />
         )}
-
-        {/* This is triggered when a user is typing */}
-        <div className="message__status">
-          <p>Typing...</p>
-        </div>
       </div>
     </>
   );

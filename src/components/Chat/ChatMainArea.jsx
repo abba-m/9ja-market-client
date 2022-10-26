@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Divider } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ChatBody from "./chatComponents/ChatBody";
@@ -16,6 +16,7 @@ const ChatMainArea = () => {
   return (
     <Box>
       <ChatHeader recipientId={recipientId} />
+      <Divider bgColor="primary" mt="10px" />
       <ChatBody recipientId={recipientId} />
       <ChatFooter recipientId={recipientId} />
     </Box>
