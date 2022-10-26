@@ -24,7 +24,7 @@ const ChatHeader = ({ recipientId }) => {
   }, [recipientId]);
   return (
     <>
-      <Box display="flex" gap="1rem">
+      <Box display="flex" px={4} gap="1rem">
         <Box>
           <Avatar
             position="static"
