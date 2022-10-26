@@ -11,7 +11,9 @@ const ChatHeader = ({ recipientId }) => {
       recipientId,
     });
 
-    if (response === null) throw new Error("Something went wrong");
+    if (response === null) {
+      console.log("[getUserInfo][ERR]: failed to get user info");
+    };
 
     setUserData(response.user);
     setIsOnline(response.isOnline);

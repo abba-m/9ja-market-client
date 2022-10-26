@@ -1,7 +1,9 @@
-import ChatSideBar from "./ChatSideBar";
+import ChatSideBar from "./chatSideBar";
 import { Outlet } from "react-router-dom";
-import "./styles/Chat.css";
 import { useMediaQuery } from "@chakra-ui/react";
+
+import "./styles/Chat.css";
+import "./styles/chat.style.css";
 
 const ChatPage = () => {
   const [isLargeScreen] = useMediaQuery(["(min-width: 768px)"]);

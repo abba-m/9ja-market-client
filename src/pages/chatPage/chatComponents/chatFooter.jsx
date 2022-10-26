@@ -1,10 +1,10 @@
-import { Button, Icon, useMediaQuery } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { Button, Icon, Input, useMediaQuery } from "@chakra-ui/react";
+import { useState, useRef } from "react";
 import { GrSend } from "react-icons/gr";
 import { SocketClient } from "services/socket";
 
-const ChatFooter = ({ recipientId }) => {
-  const [message, setMessage] = useState("");
+const ChatFooter = ({ recipientId, messages, setMessages }) => {
+  const inputRef = useRef();
   const [_isLargeScreen, isSmallScreen] = useMediaQuery([
     "(min-width: 768px)",
     "(max-width: 480px)",
@@ -14,25 +14,34 @@ const ChatFooter = ({ recipientId }) => {
   //   socket?.emit("typing", `${localStorage.getItem("userName")} is typing`);
 
   const handleSendMessage = (e) => {
-    console.log(recipientId);
     e.preventDefault();
-    if (message.trim()) {
-      SocketClient.client?.emit("message:send-message", {
-        message,
-        recipientId,
-      });
-    }
-    setMessage("");
+
+    // TODO: refactor
+    if (!inputRef.current.value) return;
+    if (!inputRef.current?.value?.trim()) return;
+
+    const data =  {
+      text: inputRef.current.value,
+      recipientId,
+      createdAt: new Date().toISOString(),
+    };
+
+    SocketClient.client?.emit("message:send-message", data);
+
+    setMessages([...messages, data]);
+    inputRef.current.value = "";
   };
+
   return (
     <div className="chat__footer">
       <form className="form" onSubmit={handleSendMessage}>
-        <input
+        <Input
           type="text"
-          placeholder="Write message"
+          placeholder="Hello there..."
           className="message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          ref={inputRef}
+          // value={message}
+          // onChange={(e) => setMessage(e.target.value)}
           // onKeyDown={handleTyping}
         />
         <Button
