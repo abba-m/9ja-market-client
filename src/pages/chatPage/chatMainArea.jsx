@@ -17,7 +17,11 @@ const ChatMainArea = () => {
   return (
     <Box>
       <ChatHeader recipientId={recipientId} />
-      <Divider bgColor="primary" mt="10px" />
+      <Divider 
+        border=".5px"
+        borderColor="secondary"
+        mt="10px" 
+      />
       <ChatBody
         recipientId={recipientId}
         messages={messages}

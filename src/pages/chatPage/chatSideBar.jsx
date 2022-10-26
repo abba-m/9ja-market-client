@@ -91,6 +91,7 @@ function ChatListItem({ recipientId, lastMessage }) {
   });
   const [isOnline, setIsOnline] = useState(false);
   const { avatarUrl, fullName } = user;
+  const [lastMsg, setLastMsg] = useState(lastMessage || {});
   const getUser = async () => {
     const resp = await rpcClient.request("getUserOnline", { recipientId });
     if (!resp) return;
@@ -117,6 +118,12 @@ function ChatListItem({ recipientId, lastMessage }) {
       if (userId !== recipientId) return;
 
       setIsOnline(false);
+    });
+    SocketClient.client?.on("message:receive-message", (msg) => {
+      debugger;
+      if (msg?.recipientId !== currentUser?.userId) return;
+
+      setLastMsg(msg);
     });
   }, [recipientId]);
 
@@ -155,17 +162,17 @@ function ChatListItem({ recipientId, lastMessage }) {
             {fullName}
           </Text>
           <Text margin={0} fontSize="10px">
-            {formatChatTime(lastMessage?.createdAt)}
+            {formatChatTime(lastMsg?.createdAt)}
           </Text>
         </Flex>
         <HStack>
           <Text fontSize="12px" noOfLines={1} className="last__message">
-            {lastMessage?.senderId === currentUser?.userId ? (
+            {lastMsg?.senderId === currentUser?.userId ? (
               "You"
             ) : (
               <Icon as={TiMessages} />
             )}
-            {": " + lastMessage?.text}
+            {": " + lastMsg?.text}
           </Text>
         </HStack>
       </Flex>

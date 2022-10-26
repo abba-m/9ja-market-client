@@ -4,7 +4,7 @@ import { useState } from "react";
 import { rpcClient } from "services/rpcClient";
 import { SocketClient } from "services/socket";
 import { formatChatTime } from "utils/format.utils";
-import { BallTriangle } from  "react-loader-spinner";
+import { BallTriangle } from "react-loader-spinner";
 
 import "../styles/chat.style.css";
 
@@ -69,6 +69,11 @@ const ChatBody = ({ recipientId, messages, setMessages }) => {
             />
           </Flex>
         )}
+
+        {/* This is triggered when a user is typing */}
+        {/* <div className="message__status">
+          <p>Typing...</p>
+        </div> */}
       </div>
     </>
   );
@@ -83,12 +88,12 @@ const ChatMessagePill = ({ message = {}, isSender = true }) => {
       alignItems={isSender ? "end" : "start"}
       h="fit-content"
     >
-      <Box 
-        bg={isSender ? "#c2f3c2" : "#f5ccc2" }
+      <Box
+        bg={isSender ? "#c2f3c2" : "#f5ccc2"}
         w="fit-content"
-        p={2} 
+        p={2}
         maxW={["60%", "40%"]}
-        style={{borderRadius: "0px 15px 15px 15px"}} 
+        style={{ borderRadius: "0px 15px 15px 15px" }}
       >
         <Text>{message.text}</Text>
       </Box>
