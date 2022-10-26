@@ -46,6 +46,7 @@ const ChatBody = ({ recipientId, messages, setMessages }) => {
               const isSender = message.recipientId === recipientId;
               return (
                 <ChatMessagePill 
+                  key={message.messageId}
                   isSender={isSender}
                   message={message}
                 />
