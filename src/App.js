@@ -29,26 +29,14 @@ import { userLoaded, authError } from "store/actions";
 import GoogleAuthRedirect from "components/auth/googleAuthRedirect";
 import SingleAdPage from "pages/singleAdPage/singleAdPage";
 import { getRequest } from "services/request";
-// import { useQuery } from "@tanstack/react-query";
-// import { useState } from "react";
 import ChatPage from "pages/chatPage/chatPage";
 import { SocketClient } from "services/socket";
 import ChatMainArea from "pages/chatPage/chatMainArea";
 import BgImage from "pages/chatPage/backgroundImg";
 
-// const socket = socketIO.connect("http://localhost:1335/", {
-//   query: {
-//     token: localStorage.token,
-//   }
-// });
-
 function App() {
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.auth.isLoading);
-
-  // const { currentUser } = useSelector((state) => ({
-  //   currentUser: state.auth.user,
-  // }));
 
   const [isLargeScreen] = useMediaQuery([
     "(min-width: 768px)",

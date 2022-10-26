@@ -42,25 +42,21 @@ const ChatBody = ({ recipientId, messages, setMessages }) => {
       <div className="message__container">
         {!isLoading ? (
           <div>
-            {messages.length && messages.map((message) => {
-              const isSender = message.recipientId === recipientId;
-              return (
-                <ChatMessagePill 
-                  key={message.messageId}
-                  isSender={isSender}
-                  message={message}
-                />
-              );
-            })}
+            {messages.length &&
+              messages.map((message) => {
+                const isSender = message.recipientId === recipientId;
+                return (
+                  <ChatMessagePill
+                    key={message.messageId}
+                    isSender={isSender}
+                    message={message}
+                  />
+                );
+              })}
             <div ref={lastMessageRef} />
           </div>
         ) : (
-          <Flex
-            w="100%"
-            h="100%"
-            alignItems="center"
-            justifyContent="center"
-          >
+          <Flex w="100%" h="100%" alignItems="center" justifyContent="center">
             <BallTriangle
               height={100}
               width={100}
@@ -73,11 +69,6 @@ const ChatBody = ({ recipientId, messages, setMessages }) => {
             />
           </Flex>
         )}
-
-        {/* This is triggered when a user is typing */}
-        <div className="message__status">
-          <p>Typing...</p>
-        </div>
       </div>
     </>
   );
