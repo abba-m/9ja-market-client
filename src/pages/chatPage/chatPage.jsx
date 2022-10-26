@@ -1,6 +1,6 @@
-import ChatSideBar from "./ChatSideBar";
+import ChatSideBar from "./chatSideBar";
 import { Outlet } from "react-router-dom";
-import "./styles/Chat.css";
+import "./styles/chat.style.css";
 
 const ChatPage = () => {
   return (

@@ -31,10 +31,10 @@ import SingleAdPage from "pages/singleAdPage/singleAdPage";
 import { getRequest } from "services/request";
 // import { useQuery } from "@tanstack/react-query";
 // import { useState } from "react";
-import ChatPage from "components/Chat/ChatPage";
+import ChatPage from "pages/chatPage/chatPage";
 import { SocketClient } from "services/socket";
-import ChatMainArea from "components/Chat/ChatMainArea";
-import BgImage from "components/Chat/BaackgroundImg";
+import ChatMainArea from "pages/chatPage/chatMainArea";
+import BgImage from "pages/chatPage/backgroundImg";
 
 // const socket = socketIO.connect("http://localhost:1335/", {
 //   query: {

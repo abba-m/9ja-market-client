@@ -1,5 +1,5 @@
-import { Box, Image } from "@chakra-ui/react";
-import chatBg from "../../assets/images/chatBg.jpg";
+import { Box } from "@chakra-ui/react";
+import chatBg from "assets/images/chatBg.jpg";
 
 const BgImage = () => {
   return (

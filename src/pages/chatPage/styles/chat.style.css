@@ -186,7 +186,7 @@
   font-size: 13px;
 }
 .sender__name {
-  text-align: right;
+  /*text-align: right;*/
 }
 .message__status {
   position: fixed;
