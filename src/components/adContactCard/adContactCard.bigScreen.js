@@ -25,6 +25,10 @@ export default function AdContactCardBig({
 }) {
   const navigate = useNavigate();
 
+  const handleChatNav = (id) => {
+    navigate(`/chats/message/${id}`);
+  };
+
   const handleProfilePageNav = (userId) => {
     if (isPostOwner) {
       navigate("/profile");
@@ -101,6 +105,7 @@ export default function AdContactCardBig({
           leftIcon={<BsFillChatRightTextFill />}
           variant="solid"
           isDisabled={isPostOwner}
+          onClick={() => handleChatNav(userId)}
         >
           Start chat
         </Button>

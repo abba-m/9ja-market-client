@@ -5,8 +5,8 @@ import {
   Center,
   Text,
   Avatar,
-  Spinner,
   SimpleGrid,
+  Flex,
 } from "@chakra-ui/react";
 import { rpcClient } from "services/rpcClient";
 import { Link, useParams } from "react-router-dom";
@@ -15,6 +15,7 @@ import { formatDateJoined } from "utils/format.utils";
 import AdThumbnail from "components/adThumbnail/adThumbnail";
 import defaultImage from "assets/images/defaultImage.jpeg";
 import ShortUniqueId from "short-unique-id";
+import { DotLoader } from "react-spinners";
 
 const ProfilePage = () => {
   const [userData, setUserData] = useState({});
@@ -52,7 +53,7 @@ const ProfilePage = () => {
     <>
       <Box
         width="100%"
-        height="100vh"
+        height="40vh"
         flexDirection={{ base: "column", md: "column", lg: "row" }}
         display="flex"
         gap={"2rem"}
@@ -60,8 +61,11 @@ const ProfilePage = () => {
         px={5}
       >
         {isLoading ? (
-          <Spinner />
+          ""
         ) : (
+          // <Flex w="100%" h="100%" alignItems="center" justifyContent="center">
+          //   <DotLoader color="#36d7b7" />
+          // </Flex>
           <Box
             display="flex"
             marginInline="auto"
@@ -159,7 +163,14 @@ const ProfilePage = () => {
                 }
               )
             ) : (
-              <p>You don't have any post yet</p>
+              <Flex
+                w="80vw"
+                h="60vh"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <DotLoader color="#36d7b7" />
+              </Flex>
             )}
           </SimpleGrid>
         </Box>

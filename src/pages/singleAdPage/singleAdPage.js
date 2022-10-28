@@ -5,7 +5,6 @@ import {
   Flex,
   Heading,
   Portal,
-  Spinner,
   Text,
   useDisclosure,
   useMediaQuery,
@@ -13,7 +12,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "components/adImagesCarousel/imagesCarousel";
 import AdContactCard from "components/adContactCard/adContactCard";
@@ -25,6 +24,7 @@ import { useSelector } from "react-redux";
 import DeletePostModal from "components/modals/deletePostModal";
 import EditPostModal from "components/modals/editPostModal";
 import { getEditPostData } from "utils/format.utils";
+import { DotLoader } from "react-spinners";
 
 export default function SingleAdPage() {
   const { slug } = useParams();
@@ -77,7 +77,7 @@ export default function SingleAdPage() {
       });
       console.log("[GetPostError]:", error);
     }
-  }, [data, error]);
+  }, [data, error, toast]);
 
   useMemo(() => {
     if (postToDisplay?.images) {
@@ -97,7 +97,7 @@ export default function SingleAdPage() {
         alignItems="center"
         justifyContent="center"
       >
-        <Spinner color="primary" thickness="5px" size="xl" />
+        <DotLoader color="#36d7b7" />
       </Box>
     );
   }
@@ -127,7 +127,7 @@ export default function SingleAdPage() {
   }
 
   return (
-    <Suspense fallback={<Spinner />}>
+    <Suspense fallback={<DotLoader color="#36d7b7" />}>
       <Container maxWidth="90vw" h="calc(100vh - 80px)" centerContent>
         <Heading my={3} textAlign="left">
           {postToDisplay?.title}

@@ -33,15 +33,11 @@ import ChatPage from "pages/chatPage/chatPage";
 import { SocketClient } from "services/socket";
 import ChatMainArea from "pages/chatPage/chatMainArea";
 import BgImage from "pages/chatPage/backgroundImg";
+import Address from "pages/userProfile/views/addresses";
 
 function App() {
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.auth.isLoading);
-
-  const [isLargeScreen] = useMediaQuery([
-    "(min-width: 768px)",
-    "(max-width: 480px)",
-  ]);
 
   const getCurrentUser = () => {
     if (isLoading) return;
@@ -54,17 +50,17 @@ function App() {
       });
   };
 
+  const [isLargeScreen] = useMediaQuery([
+    "(min-width: 768px)",
+    "(max-width: 480px)",
+  ]);
+
   useEffect(() => {
     getCurrentUser();
   }, []);
 
   useEffect(() => {
     SocketClient.init().emit("user:connect");
-    // .then(
-    //   (socket) =>
-    //     console.log("[emitting:user-join]", socket) &&
-    //     socket.io.emit("user:connect")
-    // );
   }, []);
 
   if (isLoading) {
@@ -83,7 +79,16 @@ function App() {
 
   return (
     <Router>
-      <Box className="App">
+      <Box
+        css={{
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        }}
+        marginInline="auto"
+        maxW="1800px"
+        className="App"
+      >
         <Box w="100%">
           <NavBar />
         </Box>
@@ -95,6 +100,7 @@ function App() {
             <Route path="/profile" element={<UserProfile />}>
               <Route index element={<ProfileView />} />
               <Route path="favorites" element={<FavoritesView />} />
+              <Route path="addresses" element={<Address />} />
               <Route path="notifications" element={<NotificationsVeiw />} />
               <Route path="orders" element={<OrdersView />} />
               <Route path="posts" element={<PostsView />} />

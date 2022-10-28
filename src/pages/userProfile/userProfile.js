@@ -1,5 +1,5 @@
 import { Box, Container, useMediaQuery } from "@chakra-ui/react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import UserProfileNav from "./navBar.userProfile";
@@ -17,6 +17,7 @@ function UserProfile() {
       },
     });
   }
+  const { pathname } = useLocation();
 
   const [isLargeScreen] = useMediaQuery([
     "(min-width: 768px)",
@@ -25,17 +26,19 @@ function UserProfile() {
 
   return (
     <Container
-      maxWidth={["100%", "90vw"]}
+      maxWidth={["100%", "100vw"]}
       marginLeft="-0.7rem"
       h="calc(100vh - 100px)"
       display="flex"
       justifyContent="flex-start"
+      alignItems="start"
     >
       {!isLargeScreen && (
         <GiHamburgerMenu
-          fontSize={"2rem"}
+          fontSize={pathname === "/profile/posts" ? "4rem" : "2rem"}
           onClick={() => setNavToggle(true)}
-          display="flex"
+          display="block"
+          color="blue"
         />
       )}
       <UserProfileNav
@@ -43,7 +46,7 @@ function UserProfile() {
         setNavToggle={setNavToggle}
         navToggle={navToggle}
       />
-      <Box ml={{ base: "-1rem", md: "3rem" }}>
+      <Box ml={{ base: "2rem", md: "3rem" }}>
         <Outlet />
       </Box>
     </Container>

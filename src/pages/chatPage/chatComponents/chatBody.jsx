@@ -4,7 +4,7 @@ import { useState } from "react";
 import { rpcClient } from "services/rpcClient";
 import { SocketClient } from "services/socket";
 import { formatChatTime } from "utils/format.utils";
-import { BallTriangle } from "react-loader-spinner";
+import { DotLoader } from "react-spinners";
 
 import "../styles/chat.style.css";
 
@@ -17,7 +17,6 @@ const ChatBody = ({ recipientId, messages, setMessages }) => {
     const response = await rpcClient.request("getChatMessages", {
       recipientId,
     });
-    console.log(response);
     setIsLoading(false);
 
     if (response === null) throw new Error("Something went wrong");
@@ -39,10 +38,18 @@ const ChatBody = ({ recipientId, messages, setMessages }) => {
   }, [recipientId]);
   return (
     <>
-      <div className="message__container">
+      <Box
+        css={{
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        }}
+        h="64vh"
+        className="message__container"
+      >
         {!isLoading ? (
           <div>
-            {messages.length &&
+            {messages.length !== 0 &&
               messages.map((message) => {
                 const isSender = message.recipientId === recipientId;
                 return (
@@ -57,24 +64,10 @@ const ChatBody = ({ recipientId, messages, setMessages }) => {
           </div>
         ) : (
           <Flex w="100%" h="100%" alignItems="center" justifyContent="center">
-            <BallTriangle
-              height={100}
-              width={100}
-              radius={5}
-              color="#4fa94d"
-              ariaLabel="ball-triangle-loading"
-              wrapperClass={{}}
-              wrapperStyle=""
-              visible={true}
-            />
+            <DotLoader color="#36d7b7" />
           </Flex>
         )}
-
-        {/* This is triggered when a user is typing */}
-        {/* <div className="message__status">
-          <p>Typing...</p>
-        </div> */}
-      </div>
+      </Box>
     </>
   );
 };
@@ -83,10 +76,11 @@ const ChatMessagePill = ({ message = {}, isSender = true }) => {
   return (
     <Flex
       color="blackAlpha.900"
-      w="100%"
+      w="98%"
       direction="column"
       alignItems={isSender ? "end" : "start"}
       h="fit-content"
+      key={message.messageId}
     >
       <Box
         bg={isSender ? "#c2f3c2" : "#f5ccc2"}
@@ -95,9 +89,9 @@ const ChatMessagePill = ({ message = {}, isSender = true }) => {
         maxW={["60%", "40%"]}
         style={{ borderRadius: "0px 15px 15px 15px" }}
       >
-        <Text>{message.text}</Text>
+        <Text fontSize="0.7rem">{message.text}</Text>
       </Box>
-      <Text>{formatChatTime(message.createdAt)}</Text>
+      <Text fontSize="0.5rem">{formatChatTime(message.createdAt)}</Text>
     </Flex>
   );
 };

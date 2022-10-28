@@ -15,8 +15,8 @@ const ChatHeader = ({ recipientId }) => {
       console.log("[getUserInfo][ERR]: failed to get user info");
     };
 
-    setUserData(response.user);
-    setIsOnline(response.isOnline);
+    setUserData(response?.user);
+    setIsOnline(response?.isOnline);
   };
 
   useEffect(() => {

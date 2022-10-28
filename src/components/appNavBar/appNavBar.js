@@ -35,6 +35,7 @@ import Login from "components/auth/login";
 import Register from "components/auth/register";
 
 import { logoutSuccess, setLoginFormOpenFunction } from "store/actions";
+import { TiMessages } from "react-icons/ti";
 
 function NavBar() {
   const dispatch = useDispatch();
@@ -147,6 +148,12 @@ function NavBar() {
                   <MenuItem>
                     <AiOutlineUser style={{ marginRight: ".7rem" }} /> Your
                     profile
+                  </MenuItem>
+                </NavLink>
+                <NavLink to="chats">
+                  <MenuItem>
+                    <TiMessages style={{ marginRight: ".7rem" }} />
+                    Messages
                   </MenuItem>
                 </NavLink>
                 <MenuItem>

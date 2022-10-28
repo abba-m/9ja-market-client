@@ -56,10 +56,15 @@ function PostsView() {
 
   return (
     <Box>
-      <Heading mb={4} color="secondary" size="lg">
+      <Heading pt="2.9rem" mt="-2rem" mb={4} color="secondary" size="lg">
         Your posts ({totalPostsCount})
       </Heading>
-      <SimpleGrid columns={[2, 3, 4]} spacing={4}>
+      <SimpleGrid
+        overflowY="scroll"
+        height="80vh"
+        columns={[2, 3, 4]}
+        spacing={4}
+      >
         {userPosts?.length ? (
           userPosts.map(({ postId, images, title, price, location, slug }) => {
             //TODO: optimize images
