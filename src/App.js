@@ -105,7 +105,7 @@ function App() {
               <Route path="orders" element={<OrdersView />} />
               <Route path="posts" element={<PostsView />} />
               <Route path="reviews" element={<ReviewsView />} />
-              <Route path="notifications" element={<SettingsView />} />
+              <Route path="settings" element={<SettingsView />} />
             </Route>
             <Route
               path="/connect/google/callback"

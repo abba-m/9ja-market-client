@@ -158,7 +158,7 @@ function UserProfileNav({ navToggle, setNavToggle }) {
             style={styleActiveLink}
             to="/profile/addresses"
           >
-            Addresses
+            Address
           </NavLink>
         </Text>
         <Text>

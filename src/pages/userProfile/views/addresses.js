@@ -2,6 +2,7 @@ import {
   Box,
   Center,
   FormControl,
+  Heading,
   Input,
   Select,
   Table,
@@ -105,7 +106,10 @@ const Address = () => {
   };
 
   return (
-    <Box w="80vw">
+    <Box w="80vw" pr={3}>
+      <Heading size="lg" color="secondary">
+        Address
+      </Heading>
       <form ref={formRef} onSubmit={(e) => handleFormSubmit(e)}>
         <FormControl>
           <Box my={2}>
@@ -172,12 +176,32 @@ const Address = () => {
             </Thead>
             <Tbody>
               {addresses?.length !== 0 && (
-                addresses.map(({ country, state, city, street }) => ( <Tr>
-                  <Td>{country}</Td>
-                  <Td>{state}</Td>
-                  <Td>{city}</Td>
-                  <Td>{street}</Td>
-                </Tr>
+                addresses.map(({ userAddressId, country, state, city, street }) => ( 
+                  <Tr 
+                    key={userAddressId}
+                    onDoubleClick={() => handleDeleteAddress(userAddressId)}
+                  >
+                    <Td>
+                      <Text casing="capitalize">
+                        {country}
+                      </Text>
+                    </Td>
+                    <Td>
+                      <Text casing="capitalize">
+                        {state}
+                      </Text>
+                    </Td>
+                    <Td>
+                      <Text casing="capitalize">
+                        {city}
+                      </Text>
+                    </Td>
+                    <Td>
+                      <Text casing="capitalize">
+                        {street}
+                      </Text>
+                    </Td>
+                  </Tr>
                 )))}
             </Tbody>
           </Table>
@@ -186,8 +210,11 @@ const Address = () => {
         <AddressCard handleDeleteAddress={handleDeleteAddress} addresses={addresses} />
       )}
       {addresses?.length !== 0 && (
-        <Center my={3}>
-          <Text color="teal.500" fontSize="sm">Double tap to delete address</Text>
+        <Center my={4}>
+          <Text color="teal.500" fontSize="xs">Double tap { 
+            isLargeScreen ?
+              "on a row" : "on a card"
+          } to delete address</Text>
         </Center>
       )}
     </Box>

@@ -179,7 +179,7 @@ function UserProfileNavMobile({ navToggle, setNavToggle }) {
             style={styleActiveLink}
             to="/profile/addresses"
           >
-            Addresses
+            Address
           </NavLink>
         </NavListItem>
         <NavListItem>

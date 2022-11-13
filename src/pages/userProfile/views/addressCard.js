@@ -6,6 +6,7 @@ const AddressCard = ({ addresses, handleDeleteAddress }) => {
     addresses?.length > 0 ? addresses?.map((address) => (
       <Box 
         mt="5" 
+        key={address.userAddressId}
         onDoubleClick={() => 
           handleDeleteAddress(address.userAddressId)
         } 
