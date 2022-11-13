@@ -1,8 +1,9 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Heading, Text } from "@chakra-ui/react";
 
 function OrdersView() {
   return (
-    <Box>
+    <Box w="80vw">
+      <Heading size="lg" color="secondary">Orders</Heading>
       <Text>Hello my orders view</Text>
     </Box>
   );

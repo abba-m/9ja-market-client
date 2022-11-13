@@ -60,9 +60,6 @@ function ResetPassword() {
         isClosable: true,
       });
     }
-
-
-    
   };
 
   return (

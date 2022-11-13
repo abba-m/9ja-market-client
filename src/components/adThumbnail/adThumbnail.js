@@ -6,7 +6,6 @@ import { BsBookmarkHeartFill, BsBookmarkHeart } from "react-icons/bs";
 function AdThumbnail({
   imageSrc,
   adTitle,
-  postId,
   adPrice,
   adLocation,
   hideSaveBtn = false,

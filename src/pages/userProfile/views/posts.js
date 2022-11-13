@@ -13,13 +13,13 @@ function PostsView() {
   const [userPosts, setUserPosts] = useState([]);
   const [totalPostsCount, setTotalPostsCount] = useState(0);
   const toast = useToast();
-  const toggleIsLoading = () => setIsLoading(val => !val);
+  const toggleIsLoading = () => setIsLoading((val) => !val);
 
   const { _currentUser } = useSelector((state) => ({
     currentUser: state.auth.user,
   }));
 
-  const getUserPosts = async () => { 
+  const getUserPosts = async () => {
     toggleIsLoading();
 
     if (isLoading) return;
@@ -35,19 +35,19 @@ function PostsView() {
         title: "Something is wrong! Please try again.",
         status: "error",
         isClosable: true,
-      }); 
+      });
       console.log("[getUserPostERR]:", err);
       toggleIsLoading();
     }
   };
 
-
   useEffect(() => {
     getUserPosts();
 
-    (async () => 
-      setTotalPostsCount((await rpcClient.request("getUserPostsCount"))?.count || 0)
-    )();
+    (async () =>
+      setTotalPostsCount(
+        (await rpcClient.request("getUserPostsCount"))?.count || 0
+      ))();
   }, []);
 
   if (isLoading) {
@@ -56,17 +56,22 @@ function PostsView() {
 
   return (
     <Box>
-      <Heading mb={4} color="secondary" size="lg">
-       Your posts ({totalPostsCount})
+      <Heading pt="2.9rem" mt="-2rem" mb={4} color="secondary" size="lg">
+        Your posts ({totalPostsCount})
       </Heading>
-      <SimpleGrid columns={[2, 3, 4]} spacing={4}>
+      <SimpleGrid
+        overflowY="scroll"
+        height="80vh"
+        columns={[2, 3, 4]}
+        spacing={4}
+      >
         {userPosts?.length ? (
           userPosts.map(({ postId, images, title, price, location, slug }) => {
             //TODO: optimize images
             const imagesUrl = images.split(",");
 
             return (
-              <Link to={`/post/${slug}`}>
+              <Link key={postId} to={`/post/${slug}`}>
                 <AdThumbnail
                   key={postId}
                   postId={postId}

@@ -12,8 +12,30 @@ import { BsFillChatRightTextFill } from "react-icons/bs";
 
 import { WHITE_COLOR } from "utils/constants.utils";
 import { formatAmount } from "utils/format.utils";
+import { useNavigate } from "react-router-dom";
 
-export default function AdContactCardBig({ price, fullName, dateJoined, isPostOwner, avatar, phone }) {
+export default function AdContactCardBig({
+  price,
+  fullName,
+  dateJoined,
+  isPostOwner,
+  userId,
+  avatar,
+  phone,
+}) {
+  const navigate = useNavigate();
+
+  const handleChatNav = (id) => {
+    navigate(`/chats/message/${id}`);
+  };
+
+  const handleProfilePageNav = (userId) => {
+    if (isPostOwner) {
+      navigate("/profile");
+    } else {
+      navigate(`/profilePage/${userId}`);
+    }
+  };
   return (
     <Box
       minWidth={["80vw", "40vw"]}
@@ -28,16 +50,18 @@ export default function AdContactCardBig({ price, fullName, dateJoined, isPostOw
               {formatAmount(price || 0)}
             </Text>
           </Center>
-          <a href={`tel:${phone}`}><Button
-            isFullWidth
-            textColor="primary"
-            bg="white"
-            leftIcon={<PhoneIcon />}
-            variant="solid"
-            isDisabled={isPostOwner}
-          >
-            Place a call
-          </Button></a>
+          <a href={`tel:${phone}`}>
+            <Button
+              isFullWidth
+              textColor="primary"
+              bg="white"
+              leftIcon={<PhoneIcon />}
+              variant="solid"
+              isDisabled={isPostOwner}
+            >
+              Place a call
+            </Button>
+          </a>
         </VStack>
         <Box height="50%" p="4" pl="1" gap="1rem" display="flex">
           <Box
@@ -48,6 +72,8 @@ export default function AdContactCardBig({ price, fullName, dateJoined, isPostOw
             alignItems="flex-start"
           >
             <Text
+              onClick={() => handleProfilePageNav(userId)}
+              cursor="pointer"
               fontSize="xl"
               color="primary"
               mb="1"
@@ -62,6 +88,8 @@ export default function AdContactCardBig({ price, fullName, dateJoined, isPostOw
           </Box>
           <Box display="flex" alignItems="center" flexGrow="1">
             <Avatar
+              onClick={() => handleProfilePageNav(userId)}
+              cursor="pointer"
               size="xl"
               name={fullName || "New User"}
               src={avatar}
@@ -77,6 +105,7 @@ export default function AdContactCardBig({ price, fullName, dateJoined, isPostOw
           leftIcon={<BsFillChatRightTextFill />}
           variant="solid"
           isDisabled={isPostOwner}
+          onClick={() => handleChatNav(userId)}
         >
           Start chat
         </Button>

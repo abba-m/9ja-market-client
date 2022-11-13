@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { createRef, useEffect, useMemo, useState } from "react";
 import {
   Box,
   Container,
@@ -6,6 +6,8 @@ import {
   SimpleGrid,
   Text,
   Spinner,
+  Center,
+  Button,
 } from "@chakra-ui/react";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -16,19 +18,62 @@ import CategoriesGrid from "components/categoriesGrid/categoriesGrid";
 import AdThumbnail from "components/adThumbnail/adThumbnail";
 import { getRequest } from "services/request";
 import defaultImage from "assets/images/defaultImage.jpeg";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { rpcClient } from "services/rpcClient";
+import { useInView } from "react-intersection-observer";
+import { ArrowUpIcon } from "@chakra-ui/icons";
 
 function Dashboard() {
   const uid = new ShortUniqueId({ length: 5 });
+  const scrollRef = createRef();
 
+
+  const { ref, inView } = useInView();
+  const { ref: topRef, inView: topInView } = useInView();
   const { state } = useLocation();
   const { displayLoginForm } = useSelector((state) => ({
     displayLoginForm: state.auth.displayLoginForm,
   }));
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
-  // React query fetch All posts { NOTE: Remember to paginate }
-  const getLatestPosts = async () => getRequest("api/posts");
-  const { isLoading, isError, data } = useQuery(["ALL_POSTS"], getLatestPosts);
+  const [latestPosts, setLatestPosts] = useState([]);
+
+  const getLatestPosts = async () => {
+    const posts = await rpcClient.request("getLatestPosts");
+    if (!posts.length) return;
+    setLatestPosts(posts);
+  };
+
+  const getAllPosts = async ({ pageParam = 1 }) => getRequest("api/posts?page=" + pageParam);
+  const { 
+    isLoading, 
+    isError, 
+    data, 
+    isFetching,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery(
+    ["ALL_POSTS"], 
+    getAllPosts, 
+    {
+      getNextPageParam: (lastPage) => lastPage.data.nextPage ?? 0 // (page ?? 0) + 1,
+    }
+  );
+
+  useMemo(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  } ,[inView]);
+
+  useMemo(() => {
+    if (!topInView) {
+      setShowBackToTop(true);
+    } else {
+      setShowBackToTop(false);
+    }
+  }, [topInView]);
+
 
   useEffect(() => {
     if (state && state?.openLogin) {
@@ -36,6 +81,8 @@ function Dashboard() {
         displayLoginForm();
       }
     }
+
+    getLatestPosts();
   }, []);
 
   if (isLoading) {
@@ -71,17 +118,24 @@ function Dashboard() {
       maxWidth={["100%", "90vw"]}
       h="calc(100vh - 80px)"
       justifyContent="center"
+      ref={scrollRef}
     >
+      <Box ref={topRef} id="top"></Box>
       <CategoriesGrid />
       <Heading my={3}>Latest Ads</Heading>
-      <SimpleGrid columns={[2, 3, 4, 5]} spacing={4}>
-        {data?.data.length ? (
-          data?.data.map(({ postId, images, title, price, location, slug }) => {
+      <SimpleGrid
+        marginInline="auto"
+        maxW="1200px"
+        columns={[2, 2, 4]}
+        spacing={4}
+      >
+        {latestPosts.length ? (
+          latestPosts.map(({ postId, images, title, price, location, slug }) => {
             //TODO: optimize images
             const imagesUrl = images.split(",");
 
             return (
-              <Link to={`/post/${slug}`}>
+              <Link key={uid()} to={`/post/${slug}`}>
                 <AdThumbnail
                   key={uid()}
                   postId={postId}
@@ -98,64 +152,53 @@ function Dashboard() {
         )}
       </SimpleGrid>
       <Heading my={4}>All Ads</Heading>
-      <SimpleGrid columns={[2, 3, 4, 5]} spacing={4}>
-        <AdThumbnail
-          imageSrc="https://source.unsplash.com/random"
-          adTitle="Lorem ipsom"
-          adPrice={2000}
-          adLocation="Garki, Abuja"
-          key={uid()}
-        />
-        <AdThumbnail
-          imageSrc="https://picsum.photos/200"
-          adTitle="Doloe pica see"
-          adPrice={2500}
-          adLocation="Tarauni, Kano"
-          key={uid()}
-        />
-        <AdThumbnail
-          imageSrc="https://source.unsplash.com/random"
-          adTitle="Inceptos facilisi nisl"
-          adPrice={10100}
-          adLocation="Enim, Mauris"
-          key={uid()}
-        />
-        <AdThumbnail
-          imageSrc="https://picsum.photos/200"
-          adTitle="Laoreet placerat mus gravida"
-          adPrice={500}
-          adLocation="Libero, Sodales"
-          key={uid()}
-        />
-        <AdThumbnail
-          imageSrc="https://source.unsplash.com/random"
-          adTitle="Mi habitant dignissim"
-          adPrice={78900}
-          adLocation="Aenean, Leo pellentesque"
-          key={uid()}
-        />
-        <AdThumbnail
-          imageSrc="https://picsum.photos/200"
-          adTitle="Porttitor ut leo dignissim"
-          adPrice={30000}
-          adLocation="Malesuada, Ridiculus"
-          key={uid()}
-        />
-        <AdThumbnail
-          imageSrc="https://source.unsplash.com/random"
-          adTitle="Himenaeos scelerisque"
-          adPrice={200000}
-          adLocation="Lobortis neque, Phasellus"
-          key={uid()}
-        />
-        <AdThumbnail
-          imageSrc="https://picsum.photos/200"
-          adTitle="Aenean leo pellentesque proin iaculis habitasse"
-          adPrice={4000}
-          adLocation="Himenaeos, Scelerisque"
-          key={uid()}
-        />
+      <SimpleGrid 
+        columns={[2, 2, 4]}
+        spacing={4}
+      >
+        {data?.pages?.length !== 0 ? 
+          data?.pages?.map( page => page.data.posts.map(({ postId, images, title, price, location, slug }) => {
+            //TODO: optimize images
+            const imagesUrl = images.split(",");
+
+            return (
+              <Link key={uid()} to={`/post/${slug}`}>
+                <AdThumbnail
+                  key={uid()}
+                  postId={postId}
+                  imageSrc={imagesUrl.length ? imagesUrl[0] : defaultImage}
+                  adTitle={title}
+                  adPrice={price}
+                  adLocation={location}
+                />
+              </Link>
+            );
+          })
+          ) : (
+            <Text my={4}>No ads yet.</Text>
+          )}
       </SimpleGrid>
+      {isFetchingNextPage && (
+        <Center mt={3}>
+          <Spinner />
+        </Center>
+      )}
+      <Box ref={ref}></Box>
+      {isFetching && !isFetchingNextPage
+        ? <Text>Background Updating...</Text>
+        : null}
+      { showBackToTop && (
+        <Button 
+          pos="fixed"
+          bottom="10%"
+          right="10%"
+          zIndex="2"
+          // onClick={() => scroll.scrollTo(target)}
+          onClick={() => window?.scrollTo(0, 0)}
+          variant="primaryOutline"
+        >
+          <ArrowUpIcon />
+        </Button>)}
     </Container>
   );
 }

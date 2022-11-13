@@ -7,17 +7,15 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { useMediaQuery } from "@chakra-ui/react";
-
 import { NavLink, useLocation } from "react-router-dom";
 import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
 
 import { Rating } from "react-simple-star-rating";
 import { FiCamera } from "react-icons/fi";
-import UserProfileNavMobile from "./views/navBar.userProfileMobile";
+import { MdCancel } from "react-icons/md";
 
-function UserProfileNav({ navToggle, setNavToggle }) {
+function UserProfileNavMobile({ navToggle, setNavToggle }) {
   const rating = 3;
   const token = localStorage.getItem("token");
   const toast = useToast();
@@ -41,7 +39,7 @@ function UserProfileNav({ navToggle, setNavToggle }) {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_SERVER_URL}/api/users/upload/`,
+        "http://localhost:1335/api/users/upload/",
         {
           method: "POST",
           headers: {
@@ -85,18 +83,35 @@ function UserProfileNav({ navToggle, setNavToggle }) {
   const styleActiveLink = ({ isActive }) =>
     isActive ? activeClassName : notActiveClass;
 
-  const [isLargeScreen] = useMediaQuery([
-    "(min-width: 768px)",
-    "(max-width: 480px)",
-  ]);
-
-  return isLargeScreen ? (
+  return (
     <Box
-      w={{ base: "100%", md: "25%" }}
-      display="flex"
+      backgroundColor="white"
+      w={{ base: "55%", md: "30%" }}
+      borderRight=".5px solid #2C3E50"
+      h="calc(100vh - 80px)"
+      zIndex={{ base: "10", md: "0" }}
+      position="fixed"
+      display={navToggle ? "flex" : "none"}
       flexDirection="column"
-      pl={{ base: 1, md: 4 }}
+      pl="20px"
+      // border="1px solid red"
     >
+      <Box
+        pos="absolute"
+        width="fit-content"
+        mx="75%"
+      >
+        <MdCancel
+          fontSize={"1.8rem"}
+          color="#E53E3E"
+          onClick={() => setNavToggle(false)}
+        />
+      </Box>
+      {/* <MdCancel
+        fontSize={"1.8rem"}
+        color="#E53E3E"
+        onClick={() => setNavToggle(false)}
+      /> */}
       {/* avatar section */}
       <Box mb="3">
         <Avatar
@@ -138,65 +153,94 @@ function UserProfileNav({ navToggle, setNavToggle }) {
           {!rating && <Text pl="2">No Reviews</Text>}
         </Box>
       </Box>
-      <Divider size="40" />
+      <Divider shadow="dark-lg" />
       <Box mt="3" mb="3">
-        <Text>
+        <NavListItem>
           <NavLink
+            onClick={() => setNavToggle(false)}
             style={isProfileIndex ? styleActiveLink : notActiveClass}
             to="/profile"
           >
             Profile
           </NavLink>
-        </Text>
-        <Text>
-          <NavLink style={styleActiveLink} to="/profile/posts">
+        </NavListItem>
+        <NavListItem>
+          <NavLink
+            onClick={() => setNavToggle(false)}
+            style={styleActiveLink}
+            to="/profile/posts"
+          >
             Posts
           </NavLink>
-        </Text>
-        <Text>
+        </NavListItem>
+        <NavListItem>
           <NavLink
+            onClick={() => setNavToggle(false)}
             style={styleActiveLink}
             to="/profile/addresses"
           >
             Address
           </NavLink>
-        </Text>
-        <Text>
-          <NavLink style={styleActiveLink} to="/profile/orders">
+        </NavListItem>
+        <NavListItem>
+          <NavLink
+            onClick={() => setNavToggle(false)}
+            style={styleActiveLink}
+            to="/profile/orders"
+          >
             Orders
           </NavLink>
-        </Text>
+        </NavListItem>
       </Box>
-      <Divider />
+      <Divider shadow="dark-lg" />
       <Box mt="3" mb="3">
-        <Text>
-          <NavLink style={styleActiveLink} to="/profile/favorites">
+        <NavListItem>
+          <NavLink
+            onClick={() => setNavToggle(false)}
+            style={styleActiveLink}
+            to="/profile/favorites"
+          >
             Favorites
           </NavLink>
-        </Text>
-        <Text>
-          <NavLink style={styleActiveLink} to="/profile/notifications">
+        </NavListItem>
+        <NavListItem>
+          <NavLink
+            onClick={() => setNavToggle(false)}
+            style={styleActiveLink}
+            to="/profile/notifications"
+          >
             Notifications
           </NavLink>
-        </Text>
+        </NavListItem>
       </Box>
-      <Divider />
+      <Divider shadow="dark-lg" />
       <Box mt="3" mb="3">
-        <Text>
-          <NavLink style={styleActiveLink} to="/profile/reviews">
+        <NavListItem>
+          <NavLink
+            onClick={() => setNavToggle(false)}
+            style={styleActiveLink}
+            to="/profile/reviews"
+          >
             Reviews
           </NavLink>
-        </Text>
-        <Text>
-          <NavLink style={styleActiveLink} to="/profile/settings">
+        </NavListItem>
+        <NavListItem>
+          <NavLink
+            onClick={() => setNavToggle(false)}
+            style={styleActiveLink}
+            to="/profile/settings"
+          >
             Settings
           </NavLink>
-        </Text>
+        </NavListItem>
       </Box>
     </Box>
-  ) : (
-    <UserProfileNavMobile navToggle={navToggle} setNavToggle={setNavToggle} />
   );
 }
 
-export default UserProfileNav;
+export default UserProfileNavMobile;
+
+
+const NavListItem = ({ children }) => {
+  return <Text my={1}>{children}</Text>;
+};

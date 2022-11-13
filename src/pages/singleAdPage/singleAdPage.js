@@ -5,7 +5,6 @@ import {
   Flex,
   Heading,
   Portal,
-  Spinner,
   Text,
   useDisclosure,
   useMediaQuery,
@@ -13,7 +12,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "components/adImagesCarousel/imagesCarousel";
 import AdContactCard from "components/adContactCard/adContactCard";
@@ -25,6 +24,7 @@ import { useSelector } from "react-redux";
 import DeletePostModal from "components/modals/deletePostModal";
 import EditPostModal from "components/modals/editPostModal";
 import { getEditPostData } from "utils/format.utils";
+import { DotLoader } from "react-spinners";
 
 export default function SingleAdPage() {
   const { slug } = useParams();
@@ -32,22 +32,25 @@ export default function SingleAdPage() {
   const [postToDisplay, setPostToDisplay] = useState({});
   const [postErrorStatus, setPostErrorStatus] = useState("");
   const [postImages, setPostImages] = useState([]);
-  const currentUser = useSelector((state) => (state.auth.user));
+  const currentUser = useSelector((state) => state.auth.user);
   const [editPostData, setEditPostData] = useState({});
-  const { 
-    isOpen: isDeleteModalOpen, 
-    onOpen: onDeleteModalOpen, 
-    onClose: onDeleteModalClose 
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onClose: onDeleteModalClose,
   } = useDisclosure();
-  const { 
-    isOpen: isEditModalOpen, 
-    onOpen: onEditModalOpen, 
-    onClose: onEditModalClose 
+  const {
+    isOpen: isEditModalOpen,
+    onOpen: onEditModalOpen,
+    onClose: onEditModalClose,
   } = useDisclosure();
   const navigate = useNavigate();
 
   const getDetailedPost = () => getRequest(`api/posts/${slug}`);
-  const { isLoading, error, data, refetch } = useQuery([`DETAILED_POST_${slug}`], getDetailedPost, );
+  const { isLoading, error, data, refetch } = useQuery(
+    [`DETAILED_POST_${slug}`],
+    getDetailedPost
+  );
   const isPostOwner = postToDisplay?.User?.userId === currentUser?.userId;
 
   const [isLargeScreen] = useMediaQuery([
@@ -74,7 +77,7 @@ export default function SingleAdPage() {
       });
       console.log("[GetPostError]:", error);
     }
-  }, [data, error]);
+  }, [data, error, toast]);
 
   useMemo(() => {
     if (postToDisplay?.images) {
@@ -94,7 +97,7 @@ export default function SingleAdPage() {
         alignItems="center"
         justifyContent="center"
       >
-        <Spinner color="primary" thickness="5px" size="xl" />
+        <DotLoader color="#36d7b7" />
       </Box>
     );
   }
@@ -109,21 +112,23 @@ export default function SingleAdPage() {
         justifyContent="center"
       >
         <VStack>
-          {postErrorStatus === "not_found" && <Heading>Uh oh! No post found...</Heading>}
-          {postErrorStatus === "error" && <Heading>Something went wrong, Check network connection...</Heading>}
-          <Button onClick={() => navigate("/")} variant="primary">Go to home</Button>
+          {postErrorStatus === "not_found" && (
+            <Heading>Uh oh! No post found...</Heading>
+          )}
+          {postErrorStatus === "error" && (
+            <Heading>Something went wrong, Check network connection...</Heading>
+          )}
+          <Button onClick={() => navigate("/")} variant="primary">
+            Go to home
+          </Button>
         </VStack>
       </Box>
     );
   }
 
   return (
-    <Suspense fallback={<Spinner />}>
-      <Container
-        maxWidth="90vw"
-        h="calc(100vh - 80px)"
-        centerContent
-      >
+    <Suspense fallback={<DotLoader color="#36d7b7" />}>
+      <Container maxWidth="90vw" h="calc(100vh - 80px)" centerContent>
         <Heading my={3} textAlign="left">
           {postToDisplay?.title}
         </Heading>
@@ -131,12 +136,14 @@ export default function SingleAdPage() {
         <Flex
           //border="2px solid red"
           w="100%"
-          direction={ isLargeScreen ? "row" : "column" }
+          direction={isLargeScreen ? "row" : "column"}
           justifyContent="space-between"
           gap="5%"
           p={2}
         >
-          <Box w="100%">{postImages.length && <ImagesCarousel data={postImages} />}</Box>
+          <Box w="100%">
+            {postImages.length && <ImagesCarousel data={postImages} />}
+          </Box>
 
           <Box w="100%">
             {postToDisplay?.title && (
@@ -147,6 +154,7 @@ export default function SingleAdPage() {
                 avatar={postToDisplay?.User?.avatarUrl}
                 phone={postToDisplay?.User?.phone}
                 isPostOwner={isPostOwner}
+                userId={postToDisplay?.User?.userId}
               />
             )}
           </Box>
@@ -154,27 +162,37 @@ export default function SingleAdPage() {
         <Box p={4}>
           <Heading size="md">Description</Heading>
           <Text>{postToDisplay?.description}</Text>
-          <Heading mt={3} size="md">Location</Heading>
+          <Heading mt={3} size="md">
+            Location
+          </Heading>
           <Text casing="capitalize">{postToDisplay?.location}</Text>
-          
         </Box>
 
-        {
-          isPostOwner &&
+        {isPostOwner && (
           <>
-            <Flex gap="4rem" p={2} mb={6} w="100%" justifyContent="space-between">
-              <Button w="100%" onClick={onEditModalOpen} variant="primary">Edit Post</Button>
-              <Button w="100%" onClick={onDeleteModalOpen} colorScheme="red">Delete Post</Button>
+            <Flex
+              gap="4rem"
+              p={2}
+              mb={6}
+              w="100%"
+              justifyContent="space-between"
+            >
+              <Button w="100%" onClick={onEditModalOpen} variant="primary">
+                Edit Post
+              </Button>
+              <Button w="100%" onClick={onDeleteModalOpen} colorScheme="red">
+                Delete Post
+              </Button>
             </Flex>
             <Portal>
-              <DeletePostModal 
-                isOpen={isDeleteModalOpen} 
-                onClose={onDeleteModalClose} 
-                postTitle={postToDisplay?.title} 
-                postId={postToDisplay?.postId} 
+              <DeletePostModal
+                isOpen={isDeleteModalOpen}
+                onClose={onDeleteModalClose}
+                postTitle={postToDisplay?.title}
+                postId={postToDisplay?.postId}
               />
 
-              <EditPostModal 
+              <EditPostModal
                 isOpen={isEditModalOpen}
                 onClose={onEditModalClose}
                 data={editPostData}
@@ -183,7 +201,7 @@ export default function SingleAdPage() {
               />
             </Portal>
           </>
-        }
+        )}
       </Container>
     </Suspense>
   );

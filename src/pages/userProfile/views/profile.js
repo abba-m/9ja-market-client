@@ -10,14 +10,13 @@ function ProfileView() {
   }));
 
   return (
-    <Box>
+    <Box w="80vw">
       <HStack>
         <Heading size="lg" color="secondary">
           {currentUser?.fullName || "9jaMarket User"}
         </Heading>
-        <FaRegEdit style={{ color: "#2C3E50" }} />
+        <FaRegEdit cursor="pointer" style={{ color: "#2C3E50" }} />
       </HStack>
-
       <Box my={2}>
         <Text color="primary">Date Joined</Text>
         <Text>{formatDateJoined(currentUser?.createdAt)}</Text>

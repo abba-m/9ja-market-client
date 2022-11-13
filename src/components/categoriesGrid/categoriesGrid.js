@@ -85,7 +85,7 @@ export default function CategoriesGrid() {
       {isLargeScreen && (
         <Breadcrumb separator="|">
           {categoriesList.map((category) => (
-            <CategoryPill category={category} />
+            <CategoryPill key={uid()} category={category} />
           ))}
         </Breadcrumb>
       )}

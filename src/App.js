@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Box, Spinner } from "@chakra-ui/react";
+import { Box, Spinner, useMediaQuery } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -21,6 +21,7 @@ import PostAd from "pages/postAd/postAd";
 import ResetPassword from "pages/resetPasswordPage/resetPassword";
 import UpdatePassword from "pages/resetPasswordPage/updatePassword";
 import ProfilePage from "pages/ProfilePage";
+import Footer from "components/footer/footer";
 
 /** Actions */
 import { userLoaded, authError } from "store/actions";
@@ -28,8 +29,11 @@ import { userLoaded, authError } from "store/actions";
 import GoogleAuthRedirect from "components/auth/googleAuthRedirect";
 import SingleAdPage from "pages/singleAdPage/singleAdPage";
 import { getRequest } from "services/request";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import ChatPage from "pages/chatPage/chatPage";
+import { SocketClient } from "services/socket";
+import ChatMainArea from "pages/chatPage/chatMainArea";
+import BgImage from "pages/chatPage/backgroundImg";
+import Address from "pages/userProfile/views/addresses";
 
 function App() {
   const dispatch = useDispatch();
@@ -39,16 +43,24 @@ function App() {
     if (isLoading) return;
 
     getRequest("api/users/me")
-      .then(data => dispatch(userLoaded(data?.data)))
-      .catch(err => {
+      .then((data) => dispatch(userLoaded(data?.data)))
+      .catch((err) => {
         dispatch(authError());
         console.log("[AUTH_ERROR]:", err);
       });
-
   };
+
+  const [isLargeScreen] = useMediaQuery([
+    "(min-width: 768px)",
+    "(max-width: 480px)",
+  ]);
 
   useEffect(() => {
     getCurrentUser();
+  }, []);
+
+  useEffect(() => {
+    SocketClient.init().emit("user:connect");
   }, []);
 
   if (isLoading) {
@@ -65,10 +77,18 @@ function App() {
     );
   }
 
-
   return (
     <Router>
-      <Box className="App">
+      <Box
+        css={{
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        }}
+        marginInline="auto"
+        maxW="1800px"
+        className="App"
+      >
         <Box w="100%">
           <NavBar />
         </Box>
@@ -80,22 +100,38 @@ function App() {
             <Route path="/profile" element={<UserProfile />}>
               <Route index element={<ProfileView />} />
               <Route path="favorites" element={<FavoritesView />} />
+              <Route path="addresses" element={<Address />} />
               <Route path="notifications" element={<NotificationsVeiw />} />
               <Route path="orders" element={<OrdersView />} />
               <Route path="posts" element={<PostsView />} />
               <Route path="reviews" element={<ReviewsView />} />
-              <Route path="notifications" element={<SettingsView />} />
+              <Route path="settings" element={<SettingsView />} />
             </Route>
             <Route
               path="/connect/google/callback"
               element={<GoogleAuthRedirect />}
             />
             <Route path="/test" element={<TestPage />} />
-            <Route path="/profilePage" element={<ProfilePage />} />
+            <Route path="/profilePage/:userId" element={<ProfilePage />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="*" element={<NotFound />} />
+            {isLargeScreen ? (
+              <Route path="/chats" element={<ChatPage />}>
+                <Route index element={<BgImage />} />
+                <Route path="message/:userId" element={<ChatMainArea />} />
+              </Route>
+            ) : (
+              <>
+                <Route path="/chats" element={<ChatPage />} />
+                <Route
+                  path="/chats/message/:userId"
+                  element={<ChatMainArea />}
+                />
+              </>
+            )}
           </Routes>
+          <Box w="100%">{/* <Footer /> */}</Box>
         </Box>
       </Box>
     </Router>
