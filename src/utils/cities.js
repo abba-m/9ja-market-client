@@ -1,4 +1,4 @@
-export const cities = [
+export const states = [
   {
     state: "Abia",
     stateId: 1,

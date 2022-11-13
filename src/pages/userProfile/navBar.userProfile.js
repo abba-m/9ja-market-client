@@ -149,16 +149,16 @@ function UserProfileNav({ navToggle, setNavToggle }) {
           </NavLink>
         </Text>
         <Text>
-          <NavLink
-            style={isProfileIndex ? styleActiveLink : notActiveClass}
-            to="/profile/addresses"
-          >
-            Addresses
+          <NavLink style={styleActiveLink} to="/profile/posts">
+            Posts
           </NavLink>
         </Text>
         <Text>
-          <NavLink style={styleActiveLink} to="/profile/posts">
-            Posts
+          <NavLink
+            style={styleActiveLink}
+            to="/profile/addresses"
+          >
+            Addresses
           </NavLink>
         </Text>
         <Text>

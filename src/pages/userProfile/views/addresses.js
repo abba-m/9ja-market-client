@@ -1,5 +1,6 @@
 import {
   Box,
+  Center,
   FormControl,
   Input,
   Select,
@@ -12,13 +13,17 @@ import {
   Thead,
   Tr,
   useMediaQuery,
+  useToast,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { cities } from "utils/cities";
+import { rpcClient } from "services/rpcClient";
+import { states } from "utils/cities";
 import AddressCard from "./addressCard";
 
 const Address = () => {
+  const toast = useToast();
+  const formRef = useRef();
   const [isLargeScreen] = useMediaQuery([
     "(min-width: 768px)",
     "(max-width: 480px)",
@@ -28,49 +33,80 @@ const Address = () => {
     currentUser: state.auth.user,
   }));
 
-  const [phone, setPhone] = useState("");
+  const [addresses, setAddresses] = useState([]);
+
   const [street, setStreet] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [sId, setSId] = useState(0);
+  const [cityId, setCityId] = useState(0);
+  const [stateId, setStateId] = useState(0);
   const [country, setCountry] = useState("Nigeria");
 
-  const citie = cities.find((data) => data.stateId === sId);
-  console.log(citie);
+  const fetchAddresses = async () => {
+    const addresses = await rpcClient.request("getAddresses");
+    if (!addresses) return;
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-
-    const address = {
-      street: street,
-      city: city,
-      state: state,
-      country: country,
-    };
-
-    const formData = {
-      phone: phone,
-      address: address,
-    };
-    console.log(formData, "form");
-
-    setPhone("");
-    setStreet("");
-    setCity("");
-    setState("");
-    setCountry("Nigeria");
+    setAddresses(addresses);
   };
 
-  const handleStateChange = (e) => {
-    setSId(e.target.value);
-    console.log("state value", e.target.value);
-    console.log(sId);
-    console.log(state);
+  useEffect(() => {
+    fetchAddresses();
+  }, []);
+
+  const handleDeleteAddress = async (userAddressId) => {
+    if (!userAddressId) return;
+
+    // eslint-disable-next-line no-restricted-globals
+    if (!confirm("Are you sure you want to delete Address?")) return;
+
+    await rpcClient.request("deleteAddress", { userAddressId });
+    fetchAddresses();
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!street) return toast({
+      position: "top",
+      title: "Please input street address",
+      status: "info",
+      isClosable: true,
+    });
+
+    const state = states.find((state) => Number(state.stateId) === Number(stateId));
+    
+    if (!state) return toast({
+      position: "top",
+      title: "Please select a State for address",
+      status: "info",
+      isClosable: true,
+    });
+
+    const city = state.data.find(city => Number(cityId) === Number(city.id));
+    if (!city) return toast({
+      position: "top",
+      title: "Please select a City for address",
+      status: "info",
+      isClosable: true,
+    });
+
+    const data = {
+      street,
+      state: state.state,
+      city: city?.name,
+      country,
+    };
+
+    setStateId(0);
+    setCountry("Nigeria");
+
+    await rpcClient.request("createAddress", data);
+    if (formRef) formRef?.current?.reset();
+    setStreet("");
+    fetchAddresses();
   };
 
   return (
     <Box w="80vw">
-      <form onSubmit={(e) => handleFormSubmit(e)}>
+      <form ref={formRef} onSubmit={(e) => handleFormSubmit(e)}>
         <FormControl>
           <Box my={2}>
             <Text color="primary">Street Name</Text>
@@ -83,14 +119,16 @@ const Address = () => {
           </Box>
           <Box my={2}>
             <Text color="primary">state</Text>
-            <Select onChange={handleStateChange} placeholder="State">
-              {cities.map((state, stateId) => (
+            <Select 
+              onChange={({ target }) => setStateId(target.value)} 
+              placeholder="--select state--"
+            >
+              {states.map(({state, stateId}) => (
                 <option
-                  onChange={(e) => setState(e.target.value)}
                   key={stateId}
-                  value={state.stateId}
+                  value={stateId}
                 >
-                  {state.state}
+                  {state}
                 </option>
               ))}
             </Select>
@@ -98,21 +136,16 @@ const Address = () => {
           <Box my={2}>
             <Text color="primary">City</Text>
             <Select
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="City"
+              onChange={({ target }) => setCityId(target.value)}
+              placeholder="--select city--"
             >
-              {citie?.data?.map((ct) => (
-                <option key={ct.id} value={ct.name}>
-                  {ct.name}
-                </option>
-              ))}
+              {states.find((state) => Number(state.stateId) === Number(stateId))
+                ?.data?.map((ct) => (
+                  <option key={ct.id} value={ct.id}>
+                    {ct.name}
+                  </option>
+                ))}
             </Select>
-            {/* <Input
-              type="text"
-              placeholder={currentUser?.city || "city"}
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            /> */}
           </Box>
           <Box my={2}>
             <Text color="primary">Country</Text>
@@ -121,7 +154,7 @@ const Address = () => {
             </Select>
           </Box>
           <Box my={2}>
-            <Input bgColor="primary" type="submit" value="Update account" />
+            <Input bgColor="primary" type="submit" value="Create address" />
           </Box>
         </FormControl>
       </form>
@@ -131,36 +164,31 @@ const Address = () => {
           <Table variant="simple" size="sm">
             <Thead>
               <Tr>
-                <Th> Country </Th>
+                <Th>Country</Th>
                 <Th>State</Th>
                 <Th>City</Th>
                 <Th>Street</Th>
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
-                <Td>Nigeria</Td>
-                <Td>Niger</Td>
-                <Td>Minna</Td>
-                <Td>Opposite CBN Quarters Tunga Minna</Td>
-              </Tr>
-              <Tr>
-                <Td>Nigeria</Td>
-                <Td>Niger</Td>
-                <Td>Minna</Td>
-                <Td>Opposite CBN Quarters Tunga Minna</Td>
-              </Tr>
-              <Tr>
-                <Td>Nigeria</Td>
-                <Td>Niger</Td>
-                <Td>Minna</Td>
-                <Td>Opposite CBN Quarters Tunga Minna</Td>
-              </Tr>
+              {addresses?.length !== 0 && (
+                addresses.map(({ country, state, city, street }) => ( <Tr>
+                  <Td>{country}</Td>
+                  <Td>{state}</Td>
+                  <Td>{city}</Td>
+                  <Td>{street}</Td>
+                </Tr>
+                )))}
             </Tbody>
           </Table>
         </TableContainer>
       ) : (
-        <AddressCard />
+        <AddressCard handleDeleteAddress={handleDeleteAddress} addresses={addresses} />
+      )}
+      {addresses?.length !== 0 && (
+        <Center my={3}>
+          <Text color="teal.500" fontSize="sm">Double tap to delete address</Text>
+        </Center>
       )}
     </Box>
   );

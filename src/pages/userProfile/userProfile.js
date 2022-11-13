@@ -46,7 +46,7 @@ function UserProfile() {
         setNavToggle={setNavToggle}
         navToggle={navToggle}
       />
-      <Box ml={{ base: "2rem", md: "3rem" }}>
+      <Box ml={{ base: "1rem", md: "2rem" }}>
         <Outlet />
       </Box>
     </Container>

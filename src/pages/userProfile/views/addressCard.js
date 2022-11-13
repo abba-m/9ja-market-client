@@ -1,61 +1,53 @@
 import { Box, Text } from "@chakra-ui/react";
 
-const AddressCard = () => {
-  const addressses = [
-    {
-      street: "Opposite CBN Quarters Tunga Minna",
-      city: "Minna",
-      state: "Niger",
-      country: "Nigeria",
-    },
-    {
-      street: "Opposite CBN Quarters Tunga Minna",
-      city: "Minna",
-      state: "Niger",
-      country: "Nigeria",
-    },
-    {
-      street: "Opposite CBN Quarters Tunga Minna",
-      city: "Minna",
-      state: "Niger",
-      country: "Nigeria",
-    },
-  ];
-  return addressses.map((address) => (
-    <Box mt="5" boxShadow="base">
-      <Box
-        paddingX="2"
-        borderBottom="0.01rem solid #474747"
-        display="flex"
-        justifyContent="space-between"
+const AddressCard = ({ addresses, handleDeleteAddress }) => {
+  
+  return (
+    addresses?.length > 0 ? addresses?.map((address) => (
+      <Box 
+        mt="5" 
+        onDoubleClick={() => 
+          handleDeleteAddress(address.userAddressId)
+        } 
+        p={1} 
+        shadow="lg"
       >
-        <Text as="b">STREET</Text>
-        <Text fontSize="sm">{address.street}</Text>
+        <Box
+          paddingX="2"
+          py="0.5"
+          borderBottom="0.01rem solid #474747"
+          display="flex"
+          justifyContent="space-between"
+        >
+          <Text fontSize="sm" fontWeight="semibold">Street</Text>
+          <Text fontSize="sm">{address.street}</Text>
+        </Box>
+        <Box
+          paddingX="2"
+          py="0.5"
+          borderBottom="0.01rem solid #474747"
+          display="flex"
+          justifyContent="space-between"
+        >
+          <Text fontSize="sm" fontWeight="semibold">City</Text>
+          <Text fontSize="sm">{address.city}</Text>
+        </Box>
+        <Box
+          paddingX="2"
+          py="0.5"
+          borderBottom="0.01rem solid #474747"
+          display="flex"
+          justifyContent="space-between"
+        >
+          <Text fontSize="sm" fontWeight="semibold">State</Text>
+          <Text fontSize="sm">{address.state}</Text>
+        </Box>
+        <Box paddingX="2" py="0.5" display="flex" justifyContent="space-between">
+          <Text fontWeight="semibold" fontSize="sm">Country</Text>
+          <Text fontSize="sm">{address.country}</Text>
+        </Box>
       </Box>
-      <Box
-        paddingX="2"
-        borderBottom="0.01rem solid #474747"
-        display="flex"
-        justifyContent="space-between"
-      >
-        <Text as="b">CITY</Text>
-        <Text fontSize="sm">{address.city}</Text>
-      </Box>
-      <Box
-        paddingX="2"
-        borderBottom="0.01rem solid #474747"
-        display="flex"
-        justifyContent="space-between"
-      >
-        <Text as="b">STATE</Text>
-        <Text fontSize="sm">{address.state}</Text>
-      </Box>
-      <Box paddingX="2" display="flex" justifyContent="space-between">
-        <Text as="b">COUNTRY</Text>
-        <Text fontSize="sm">{address.country}</Text>
-      </Box>
-    </Box>
-  ));
+    )) : <Text fontSize="sm" mt={8}>You have not added any address yet.</Text>);
 };
 
 export default AddressCard;
