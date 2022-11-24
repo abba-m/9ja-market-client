@@ -11,8 +11,6 @@ const ChatFooter = ({ recipientId, messages, setMessages }) => {
     "(max-width: 480px)",
   ]);
 
-  console.log({ serverUrl: process.env.REACT_APP_SERVER_URL });
-
   // const handleTyping = () =>
   //   socket?.emit("typing", `${localStorage.getItem("userName")} is typing`);
 
