@@ -1,19 +1,22 @@
-import { Button, Icon, Input, useMediaQuery } from "@chakra-ui/react";
-import { useState, useRef } from "react";
+import { Button, Icon, Input, useMediaQuery, useToast } from "@chakra-ui/react";
+import { useRef } from "react";
 import { GrSend } from "react-icons/gr";
-import { SocketClient } from "services/socket";
+import { postRequest } from "services/request";
 
 const ChatFooter = ({ recipientId, messages, setMessages }) => {
+  const toast = useToast();
   const inputRef = useRef();
   const [_isLargeScreen, isSmallScreen] = useMediaQuery([
     "(min-width: 768px)",
     "(max-width: 480px)",
   ]);
 
+  console.log({ serverUrl: process.env.REACT_APP_SERVER_URL });
+
   // const handleTyping = () =>
   //   socket?.emit("typing", `${localStorage.getItem("userName")} is typing`);
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
 
     // TODO: refactor
@@ -26,10 +29,20 @@ const ChatFooter = ({ recipientId, messages, setMessages }) => {
       createdAt: new Date().toISOString(),
     };
 
-    SocketClient.client?.emit("message:send-message", data);
+    try {
+      const resp = await postRequest("api/chats/send-message", data);
 
-    setMessages([...messages, data]);
-    inputRef.current.value = "";
+      setMessages([...messages, resp.data]);
+      inputRef.current.value = "";
+    } catch (e) {
+      toast({
+        position: "top",
+        title: e.message ?? "An Error occured! Please try again.",
+        status: "error",
+        isClosable: true,
+      });
+    }
+
   };
 
   return (

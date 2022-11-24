@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text, useToast } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 import { rpcClient } from "services/rpcClient";
@@ -9,18 +9,27 @@ import { DotLoader } from "react-spinners";
 import "../styles/chat.style.css";
 
 const ChatBody = ({ recipientId, messages, setMessages }) => {
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const lastMessageRef = useRef(null);
 
   const getChatMessages = async () => {
     setIsLoading(true);
-    const response = await rpcClient.request("getChatMessages", {
-      recipientId,
-    });
-    setIsLoading(false);
+    try {
+      const response = await rpcClient.request("getChatMessages", {
+        recipientId,
+      });
 
-    if (response === null) throw new Error("Something went wrong");
-    setMessages(response);
+      setMessages(response);
+    } catch (e) {
+      toast({
+        position: "top",
+        title: e.message ?? "[Unknown]: Error occured",
+        status: "error",
+        isClosable: true,
+      });
+    }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -49,8 +58,8 @@ const ChatBody = ({ recipientId, messages, setMessages }) => {
       >
         {!isLoading ? (
           <div>
-            {messages.length !== 0 &&
-              messages.map((message) => {
+            {messages?.length !== 0 &&
+              messages?.map((message) => {
                 const isSender = message.recipientId === recipientId;
                 return (
                   <ChatMessagePill
