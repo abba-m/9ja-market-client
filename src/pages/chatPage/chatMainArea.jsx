@@ -12,7 +12,7 @@ const ChatMainArea = () => {
 
   useEffect(() => {
     setRecipientId(userId);
-  }, [recipientId, userId]);
+  }, [userId]);
 
   return (
     <Box>

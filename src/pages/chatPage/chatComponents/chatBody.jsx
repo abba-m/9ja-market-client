@@ -34,7 +34,7 @@ const ChatBody = ({ recipientId, messages, setMessages }) => {
 
   useEffect(() => {
     SocketClient.client?.on("message:receive-message", (data) =>
-      setMessages([...messages, data])
+      setMessages((messages) => [...messages, data])
     );
   }, []);
 

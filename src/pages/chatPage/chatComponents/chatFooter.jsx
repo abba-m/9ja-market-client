@@ -2,8 +2,9 @@ import { Button, Icon, Input, useMediaQuery, useToast } from "@chakra-ui/react";
 import { useRef } from "react";
 import { GrSend } from "react-icons/gr";
 import { postRequest } from "services/request";
+import { v4 as uuid } from "uuid";
 
-const ChatFooter = ({ recipientId, messages, setMessages }) => {
+const ChatFooter = ({ recipientId, setMessages }) => {
   const toast = useToast();
   const inputRef = useRef();
   const [_isLargeScreen, isSmallScreen] = useMediaQuery([
@@ -17,20 +18,18 @@ const ChatFooter = ({ recipientId, messages, setMessages }) => {
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
-    // TODO: refactor
-    if (!inputRef.current.value) return;
-    if (!inputRef.current?.value?.trim()) return;
+    if (!inputRef.current.value || !inputRef.current?.value?.trim()) return;
 
     const data =  {
+      messageId: uuid(),
       text: inputRef.current.value,
       recipientId,
       createdAt: new Date().toISOString(),
     };
 
     try {
-      const resp = await postRequest("api/chats/send-message", data);
-
-      setMessages([...messages, resp.data]);
+      await postRequest("api/chats/send-message", data);
+      setMessages((messages) => [...messages, data]);
       inputRef.current.value = "";
     } catch (e) {
       toast({
