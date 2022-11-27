@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Box, Image, Text } from "@chakra-ui/react";
 import { formatAmount } from "utils/format.utils";
 import { BsBookmarkHeartFill, BsBookmarkHeart } from "react-icons/bs";
+import fallback from "assets/images/fallback.png";
 
 function AdThumbnail({
   imageSrc,
@@ -20,7 +21,7 @@ function AdThumbnail({
       minW="5rem"
       boxShadow="md"
     >
-      <Image src={imageSrc} alt="ad" h="60%" w="100%" />
+      <Image loading="lazy" fallbackSrc={fallback} src={imageSrc} alt="ad" h="60%" w="100%" />
 
       <Box p="2">
         <Box display="flex">
